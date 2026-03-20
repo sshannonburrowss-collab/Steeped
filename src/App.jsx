@@ -56,7 +56,7 @@ const FONTS = [
 const EMOJIS = ["❤️","🌹","✨","🌸","💫","🌟","🌺","🌈","🦋","🌻","💝","🌙","⭐","💐","😊","🎶","🌷","☀️","🌿","💞","🪷","🌼","🌊","🐝","🍀","🌴","🦜","🍋","🌮","🎵"];
 
 const CSS = `
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Lora:ital,wght@0,400;0,500;1,400&family=Dancing+Script:wght@500;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;1,300&family=Jost:wght@300;400;500&display=swap');
+0,400;0,600;0,700;1,400;1,600&family=Lora:ital,wght@0,400;0,500;1,400&family=Dancing+Script:wght@500;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;1,300&family=Jost:wght@300;400;500&display=swap');
 *{box-sizing:border-box;margin:0;padding:0;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 @keyframes cardIn{from{opacity:0;transform:scale(.96) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
