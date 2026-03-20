@@ -377,22 +377,21 @@ const handleUpload=(e)=>{ Array.from(e.target.files).forEach(f=>{ const r=new Fi
           cardUrl: window.location.href,
         }),
       });
+      const data = await res.json();
       if (res.ok) {
         setSent(true);
         setTimeout(() => { setSent(false); setShowSend(false); }, 2800);
       } else {
-        alert("Could not send email. Please check the address and try again.");
+        alert("Email error: " + (data.error || "Unknown error"));
       }
     } catch(e) {
-      alert("Something went wrong. Check your connection.");
+      alert("Network error: " + e.message);
     }
   } else {
-    // SMS, schedule, PDF, print — confirm for now
     setSent(true);
     setTimeout(() => { setSent(false); setShowSend(false); }, 2800);
   }
 };
-
   const NavLogo=({onClick})=>(
     <div onClick={onClick} style={{ cursor:"pointer" }}>
       <div className="nav-wordmark">St<em>ee</em>ped</div>
