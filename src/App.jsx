@@ -400,7 +400,8 @@ const handleUpload=(e)=>{ Array.from(e.target.files).forEach(f=>{ const r=new Fi
   );
 
   if(view==="home") return (
-      <nav className="nav">
+  <div className="app">
+    <nav className="nav">
         <NavLogo onClick={()=>{}}/>
         <button className="btn-dark" onClick={()=>setView("themes")}>Create a card {Icon.arrow(14,"#FAF5EE")}</button>
       </nav>
@@ -419,7 +420,8 @@ const handleUpload=(e)=>{ Array.from(e.target.files).forEach(f=>{ const r=new Fi
   );
 
   if(view==="themes") return (
-      <nav className="nav">
+  <div className="app">
+    <nav className="nav">
         <NavLogo onClick={()=>setView("home")}/>
         <button className="btn-ghost" onClick={()=>setView("home")}>{Icon.back(13)} Back</button>
       </nav>
