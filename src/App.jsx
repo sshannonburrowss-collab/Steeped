@@ -362,9 +362,32 @@ export default function Steeped() {
   const addPage=()=>{ const p=makePage(pages.length+1); setPages(prev=>[...prev,p]); setActivePage(pages.length+1); };
   const delPage=(idx)=>{ if(pages.length===1)return; const u=pages.filter((_,i)=>i!==idx).map((p,i)=>({...p,num:i+1})); setPages(u); if(activePage>u.length)setActivePage(u.length); };
   const handleUpload=(e)=>{ Array.from(e.target.files).forEach(f=>{ const r=new FileReader(); r.onload=ev=>setUploads(p=>[...p,{id:uid(),url:ev.target.result,label:f.name}]); r.readAsDataURL(f); }); };
-  const doSend=()=>{ setSent(true); setTimeout(()=>{setSent(false);setShowSend(false);},2800); };
-  const desel=()=>{ setSelCover(null); setSelPage(null); };
-  const totalItems=pages.reduce((a,p)=>a+p.items.length,0);
+  const doSend = async () => {
+  const cardUrl = window.location.href;
+  const endpoint = sendTab === "email" ? "/api/send-email" : "/api/send-sms";
+
+  try {
+    const res = await fetch(endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        to: form.to,
+        recipientName: form.name || "there",
+        senderNote: form.note,
+        cardUrl,
+      }),
+    });
+
+    if (res.ok) {
+      setSent(true);
+      setTimeout(() => { setSent(false); setShowSend(false); }, 2800);
+    } else {
+      alert("Something went wrong. Please try again.");
+    }
+  } catch(e) {
+    alert("Could not send. Check your connection.");
+  }
+};
 
   const NavLogo=({onClick})=>(
     <div onClick={onClick} style={{ cursor:"pointer" }}>
