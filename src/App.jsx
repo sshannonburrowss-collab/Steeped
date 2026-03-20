@@ -400,7 +400,7 @@ const handleUpload=(e)=>{ Array.from(e.target.files).forEach(f=>{ const r=new Fi
   );
 
   if(view==="home") return (
-  <div className="app">
+  <div className="app"><style>{CSS}</style>
     <nav className="nav">
         <NavLogo onClick={()=>{}}/>
         <button className="btn-dark" onClick={()=>setView("themes")}>Create a card {Icon.arrow(14,"#FAF5EE")}</button>
@@ -420,7 +420,7 @@ const handleUpload=(e)=>{ Array.from(e.target.files).forEach(f=>{ const r=new Fi
   );
 
   if(view==="themes") return (
-  <div className="app">
+  <div className="app"><style>{CSS}</style>
     <nav className="nav">
         <NavLogo onClick={()=>setView("home")}/>
         <button className="btn-ghost" onClick={()=>setView("home")}>{Icon.back(13)} Back</button>
@@ -433,7 +433,8 @@ const handleUpload=(e)=>{ Array.from(e.target.files).forEach(f=>{ const r=new Fi
   );
 
   return (
-      <nav className="nav">
+  <div className="app"><style>{CSS}</style>
+    <nav className="nav">
         <NavLogo onClick={()=>setView("home")}/>
         <div style={{display:"flex",gap:8}}>
           <button className="btn-ghost" onClick={()=>setView("themes")}>{Icon.back(13)} Themes</button>
