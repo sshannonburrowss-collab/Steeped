@@ -410,16 +410,77 @@ export default function Steeped() {
   const desel = () => { setSelCover(null); setSelPage(null); };
   const totalItems = pages.reduce((a,p)=>a+p.items.length,0);
 
-  // ── Media panel (shared) ──
-  const MediaPanel = () => (
+ function PhotosPanel({ onAdd, uploads, onUpload, fileRef }) {
+  const [query, setQuery] = useState("");
+  const [photos, setPhotos] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const debounceRef = useRef(null);
+
+  const search = async (q) => {
+    const endpoint = q.trim()
+      ? `https://api.unsplash.com/search/photos?query=${encodeURIComponent(q)}&per_page=12&orientation=landscape`
+      : `https://api.unsplash.com/photos?per_page=12&order_by=popular`;
+    setLoading(true);
+    const res = await fetch(endpoint, {
+      headers: { Authorization: `Client-ID ${import.meta.env.VITE_UNSPLASH_KEY}` }
+    });
+    const data = await res.json();
+    setPhotos(q.trim() ? data.results : data);
+    setLoading(false);
+  };
+
+  useEffect(() => { search(""); }, []);
+
+  const handleInput = (e) => {
+    setQuery(e.target.value);
+    clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => search(e.target.value), 500);
+  };
+
+  return (
     <div>
-      <button className="btn-upload" onClick={()=>fileRef.current?.click()}>📤 Upload your own photo</button>
-      <input ref={fileRef} type="file" accept="image/*" multiple style={{display:"none"}} onChange={handleUpload}/>
-      {uploads.length>0&&<><div className="sub-label" style={{marginBottom:8}}>Your uploads</div><div className="media-grid" style={{marginBottom:14}}>{uploads.map(p=><img key={p.id} src={p.url} alt={p.label} className="media-thumb" onClick={()=>spawnPageItem({type:"photo",url:p.url})}/>)}</div></>}
-      <div className="sub-label" style={{marginBottom:8}}>Stock photos</div>
-      <div className="media-grid">{STOCK_PHOTOS.map(p=><img key={p.id} src={p.url} alt={p.label} className="media-thumb" onClick={()=>spawnPageItem({type:"photo",url:p.url})}/>)}</div>
+      <button className="btn-upload" onClick={() => fileRef.current?.click()}>
+        📤 Upload your own photo
+      </button>
+      <input ref={fileRef} type="file" accept="image/*" multiple
+        style={{ display:"none" }} onChange={onUpload} />
+
+      {uploads.length > 0 && (
+        <>
+          <div className="sub-label" style={{ marginBottom:8 }}>Your uploads</div>
+          <div className="media-grid" style={{ marginBottom:14 }}>
+            {uploads.map(p => (
+              <img key={p.id} src={p.url} alt={p.label} className="media-thumb"
+                onClick={() => onAdd(p.url)} />
+            ))}
+          </div>
+        </>
+      )}
+
+      <input className="f-input" placeholder="Search free photos…"
+        value={query} onChange={handleInput}
+        style={{ marginBottom:10 }} />
+
+      {loading && <p style={{ fontSize:12, color:"#9A7A5A", marginBottom:8 }}>Searching…</p>}
+
+      <div className="media-grid">
+        {photos.map(photo => (
+          <img key={photo.id}
+            src={photo.urls.small}
+            alt={photo.alt_description || "photo"}
+            className="media-thumb"
+            onClick={() => onAdd(photo.urls.regular)}
+            title={`Photo by ${photo.user.name} on Unsplash`} />
+        ))}
+      </div>
+
+      <p style={{ fontSize:10.5, color:"#C0B0A0", marginTop:10, textAlign:"center" }}>
+        Photos by <a href="https://unsplash.com" target="_blank" rel="noreferrer"
+          style={{ color:"#C0B0A0" }}>Unsplash</a>
+      </p>
     </div>
   );
+}
 
   // ── HOME ──
   if(view==="home") return (
@@ -546,7 +607,14 @@ export default function Steeped() {
               )
             )}
 
-            {activePanel==="photos"&&<MediaPanel/>}
+            {activePanel === "photos" && (
+  <PhotosPanel
+    onAdd={(url) => spawnPageItem({ type: "photo", url })}
+    uploads={uploads}
+    onUpload={handleUpload}
+    fileRef={fileRef}
+  />
+)}
 
             {activePanel === "gifs" && (
   <GiphyPanel onAdd={(url) => spawnPageItem({ type: "gif", url })} />
