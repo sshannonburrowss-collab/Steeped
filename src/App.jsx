@@ -24,7 +24,6 @@ const Icon = {
   printer:  (s=17,c="currentColor")=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>,
   check:    (s=52,c="#d4a843") =><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>,
   arrow:    (s=16,c="currentColor")=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>,
-  // theme symbols
   cake:     (s=32,c="currentColor")=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M4 16s.5-1 2-1 2.5 2 4 2 2.5-2 4-2 2.5 2 4 2 2-1 2-1"/><path d="M2 21h20M7 8v2M12 8v2M17 8v2M7 4h.01M12 4h.01M17 4h.01"/></svg>,
   snowflake:(s=32,c="currentColor")=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="2" x2="12" y2="22"/><path d="M17 7l-5-5-5 5M17 17l-5 5-5-5"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M7 7l-5 5 5 5M17 7l5 5-5 5"/></svg>,
   heart:    (s=32,c="currentColor")=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>,
@@ -33,6 +32,7 @@ const Icon = {
   star:     (s=32,c="currentColor")=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>,
   leaf:     (s=32,c="currentColor")=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>,
   mail:     (s=32,c="currentColor")=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>,
+  users:    (s=16,c="currentColor")=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
 };
 
 const THEMES = [
@@ -62,6 +62,7 @@ const CSS = `
 @keyframes steamRise{0%{transform:translateY(0) scale(1);opacity:0}25%{opacity:.13}100%{transform:translateY(-160px) scale(2.2);opacity:0}}
 @keyframes sentPop{0%{transform:scale(.8);opacity:0}60%{transform:scale(1.04)}100%{transform:scale(1);opacity:1}}
 @keyframes pageFlip{0%{opacity:.5;transform:perspective(1200px) rotateY(-5deg)}100%{opacity:1;transform:perspective(1200px) rotateY(0)}}
+@keyframes slideUp{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
 .app{font-family:'Lora',serif;background:#FAF5EE;color:#2A1508;min-height:100vh;}
 .nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px;height:68px;border-bottom:1px solid rgba(42,21,8,.08);background:rgba(250,245,238,.97);backdrop-filter:blur(16px);position:sticky;top:0;z-index:100;}
 .nav-wordmark{font-family:'Playfair Display',serif;font-size:24px;font-weight:400;letter-spacing:-.4px;color:#2A1508;line-height:1;cursor:pointer;}
@@ -104,6 +105,8 @@ const CSS = `
 .theme-card:hover{transform:translateY(-4px);box-shadow:0 14px 36px rgba(42,21,8,.13);}
 .theme-card-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:400;margin-top:17px;}
 .theme-card-sub{font-family:'Jost',sans-serif;font-size:10.5px;font-weight:300;letter-spacing:.8px;margin-top:7px;opacity:.45;text-transform:uppercase;}
+
+/* ── Desktop editor layout ── */
 .editor-layout{display:grid;grid-template-columns:272px 1fr 220px;height:calc(100vh - 68px);overflow:hidden;}
 .panel-left{border-right:1px solid rgba(42,21,8,.08);background:white;display:flex;flex-direction:column;overflow:hidden;}
 .panel-tabs{display:grid;grid-template-columns:repeat(5,1fr);gap:2px;padding:8px;background:#FAF5EE;border-bottom:1px solid rgba(42,21,8,.07);flex-shrink:0;}
@@ -117,9 +120,9 @@ const CSS = `
 .f-input:focus{border-color:rgba(212,168,67,.5);background:white;}
 .f-textarea{width:100%;padding:10px 12px;border:1px solid rgba(42,21,8,.13);border-radius:5px;font-family:'Lora',serif;font-size:13.5px;color:#2A1508;background:#FAF5EE;outline:none;resize:vertical;line-height:1.65;transition:border-color .15s;}
 .f-textarea:focus{border-color:rgba(212,168,67,.5);background:white;}
-.f-select{padding:8px 10px;border:1px solid rgba(42,21,8,.13);border-radius:5px;font-family:'Jost',sans-serif;font-size:12px;background:#FAF5EE;color:#2A1508;outline:none;cursor:pointer;}
+.f-select{padding:8px 10px;border:1px solid rgba(42,21,8,.13);border-radius:5px;font-family:'Jost',sans-serif;font-size:12px;background:#FAF5EE;color:#2A1508;outline:none;cursor:pointer;max-width:100%;}
 .f-color{width:38px;height:34px;border:1px solid rgba(42,21,8,.13);border-radius:5px;cursor:pointer;padding:2px;background:#FAF5EE;}
-.style-row{display:flex;gap:8px;align-items:flex-end;}
+.style-row{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;}
 .style-col{display:flex;flex-direction:column;}
 .sub-label{font-family:'Jost',sans-serif;font-size:9.5px;color:rgba(42,21,8,.38);margin-bottom:4px;letter-spacing:.5px;text-transform:uppercase;}
 .msg-preview{padding:13px 15px;background:#FAF5EE;border-radius:6px;margin-top:12px;border:1px solid rgba(42,21,8,.1);line-height:1.65;word-break:break-word;}
@@ -162,6 +165,7 @@ const CSS = `
 .d-edit{position:absolute;top:-12px;left:-12px;width:23px;height:23px;border-radius:50%;background:#2A1508;color:#FAF5EE;border:none;cursor:pointer;display:none;align-items:center;justify-content:center;z-index:20;}
 .d-item.sel .d-edit{display:flex;}
 .d-text{white-space:pre-wrap;word-break:break-word;line-height:1.6;min-width:50px;min-height:1em;outline:none;}
+.d-signer-name{font-style:italic;opacity:0.65;margin-top:4px;line-height:1.4;}
 .panel-right{border-left:1px solid rgba(42,21,8,.08);background:white;padding:24px;overflow-y:auto;}
 .sidebar-title{font-family:'Jost',sans-serif;font-size:10px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:rgba(42,21,8,.38);margin-bottom:14px;}
 .signer-row{display:flex;align-items:center;gap:9px;padding:10px 12px;border-radius:6px;background:#FAF5EE;margin-bottom:6px;}
@@ -197,6 +201,141 @@ const CSS = `
 .modal-sec-title{font-family:'Playfair Display',serif;font-size:20px;margin:18px 0 10px;}
 .modal-sec-body{font-family:'Jost',sans-serif;font-weight:300;color:#8B6E4E;font-size:14px;line-height:1.85;margin-bottom:24px;letter-spacing:.2px;}
 .date-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+
+/* ── Mobile bottom sheet panel toggle ── */
+.mobile-panel-toggle{display:none;}
+.mobile-signers-btn{display:none;}
+
+/* ─────────────────────────────────────────
+   RESPONSIVE — tablet  (≤ 900px)
+───────────────────────────────────────── */
+@media (max-width:900px){
+  .editor-layout{grid-template-columns:240px 1fr;height:auto;min-height:calc(100vh - 68px);}
+  .panel-right{display:none;}
+  .card-wrap,.card-cover,.card-page{width:100%;max-width:480px;}
+  .canvas-footer{width:100%;max-width:480px;}
+}
+
+/* ─────────────────────────────────────────
+   RESPONSIVE — mobile  (≤ 680px)
+───────────────────────────────────────── */
+@media (max-width:680px){
+  .nav{padding:0 16px;height:56px;}
+  .nav-tagline{display:none;}
+  .nav-wordmark{font-size:20px;}
+  .btn-ghost{padding:7px 12px;font-size:12px;}
+  .btn-send{padding:8px 14px;font-size:12px;}
+
+  /* Stack the editor: canvas on top, panel below */
+  .editor-layout{
+    grid-template-columns:1fr;
+    grid-template-rows:1fr auto;
+    height:auto;
+    min-height:calc(100vh - 56px);
+    overflow:visible;
+  }
+  .panel-right{display:none;}
+
+  /* Canvas */
+  .canvas-area{
+    padding:14px 12px 12px;
+    order:1;
+    overflow-y:visible;
+  }
+  .page-tabs-wrap{
+    flex-wrap:nowrap;
+    overflow-x:auto;
+    justify-content:flex-start;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+    padding:0 2px;
+    margin-bottom:14px;
+    gap:4px;
+  }
+  .page-tabs-wrap::-webkit-scrollbar{display:none;}
+  .page-tab-btn{flex-shrink:0;padding:6px 12px;font-size:11px;}
+  .card-wrap,.card-cover,.card-page{width:100%;max-width:100%;}
+  .card-cover{min-height:260px;border-radius:10px;}
+  .cover-canvas{min-height:260px;padding:16px;}
+  .card-page{min-height:360px;border-radius:10px;}
+  .page-canvas{min-height:360px;padding:18px 18px 24px;}
+  .page-empty{font-size:14px;padding:32px 12px;}
+  .canvas-footer{width:100%;flex-direction:column;gap:10px;align-items:stretch;margin-top:16px;}
+  .canvas-footer .btn-send{width:100%;justify-content:center;}
+  .canvas-meta{text-align:center;}
+  .btn-page-add{padding:12px;}
+
+  /* Left panel — slides up from bottom */
+  .panel-left{
+    order:2;
+    border-right:none;
+    border-top:2px solid rgba(42,21,8,.08);
+    max-height:340px;
+    flex-shrink:0;
+  }
+  .panel-tabs{padding:6px;}
+  .panel-tab{padding:8px 3px;}
+  .panel-tab .tab-label{font-size:8px;}
+  .panel-content{padding:14px;}
+
+  /* Compact style controls on mobile */
+  .style-row{gap:6px;}
+  .f-select{font-size:11px;padding:7px 6px;}
+  .f-color{width:32px;height:30px;}
+  .fmt-btn{padding:6px 12px;font-size:12px;}
+  .btn-dark{padding:10px 16px;font-size:12px;}
+
+  /* Mobile-friendly modal — bottom sheet */
+  .modal-overlay{align-items:flex-end;padding:0;}
+  .modal{
+    border-radius:20px 20px 0 0;
+    max-height:88vh;
+    animation:slideUp .3s ease;
+  }
+  .modal-header{padding:18px 20px 14px;}
+  .modal-title{font-size:18px;}
+  .modal-tabs{padding:6px;}
+  .modal-tab{padding:8px 2px;}
+  .modal-tab-label{font-size:8px;}
+  .modal-body{padding:18px 20px;}
+  .date-row{grid-template-columns:1fr;}
+
+  /* Mobile signers button (floating) */
+  .mobile-signers-btn{
+    display:flex;align-items:center;gap:6px;
+    position:fixed;bottom:360px;right:14px;z-index:50;
+    background:white;border:1px solid rgba(42,21,8,.15);
+    border-radius:100px;padding:8px 14px;
+    font-family:'Jost',sans-serif;font-size:11px;font-weight:500;
+    color:#2A1508;cursor:pointer;
+    box-shadow:0 4px 18px rgba(42,21,8,.15);
+    transition:all .15s;
+  }
+  .mobile-signers-btn:hover{background:#FAF5EE;}
+
+  /* Home page */
+  .hero{padding:48px 20px 32px;}
+  .hero-title{font-size:clamp(32px,10vw,50px);}
+  .hero-sub{font-size:15px;}
+  .btn-hero{padding:13px 28px;font-size:13px;}
+  .hero-pills{gap:7px;}
+  .pill{font-size:10.5px;padding:6px 13px;}
+  .fan-wrap{gap:0;}
+  .fan-card{width:90px;height:72px;margin:0 -14px;}
+  .fan-card-name{font-size:9px;}
+
+  /* Themes */
+  .themes-view{padding:28px 16px;}
+  .section-title{font-size:26px;}
+  .themes-grid{grid-template-columns:repeat(2,1fr);gap:10px;}
+  .theme-card{padding:24px 12px 20px;}
+  .theme-card-name{font-size:13px;}
+
+  /* Drawer for signatures on mobile */
+  .sig-drawer-overlay{position:fixed;inset:0;background:rgba(42,21,8,.38);z-index:150;backdrop-filter:blur(6px);}
+  .sig-drawer{position:fixed;bottom:0;left:0;right:0;background:white;border-radius:20px 20px 0 0;z-index:160;padding:20px;max-height:70vh;overflow-y:auto;animation:slideUp .3s ease;}
+  .sig-drawer-handle{width:36px;height:4px;background:rgba(42,21,8,.15);border-radius:2px;margin:0 auto 18px;}
+}
 `;
 
 const uid = () => Date.now() + Math.random();
@@ -276,37 +415,130 @@ function DItem({ item, selected, onSelect, onDelete, onMove, onResize, onTextCha
   const getDefaultH = () => item.type==="text"?60:item.type==="emoji"?52:100;
   const w = item.width||getDefaultW();
   const h = item.height||getDefaultH();
-  const handleMouseDown = useCallback((e) => {
+
+  // Unified pointer handler (works for both mouse and touch)
+  const handlePointerDown = useCallback((e) => {
     if (editing||resizing.current) return;
-    e.stopPropagation(); onSelect(item.id); dragging.current=true;
-    const r=ref.current.getBoundingClientRect(); off.current={x:e.clientX-r.left,y:e.clientY-r.top};
-    const move=(e)=>{ if(!dragging.current||!containerRef.current)return; const c=containerRef.current.getBoundingClientRect(); onMove(item.id,Math.max(0,e.clientX-c.left-off.current.x),Math.max(0,e.clientY-c.top-off.current.y)); };
-    const up=()=>{ dragging.current=false; window.removeEventListener("mousemove",move); window.removeEventListener("mouseup",up); };
-    window.addEventListener("mousemove",move); window.addEventListener("mouseup",up);
-  },[editing,item.id,onSelect,onMove,containerRef]);
+    e.stopPropagation();
+    onSelect(item.id);
+    dragging.current = true;
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    const r = ref.current.getBoundingClientRect();
+    off.current = { x: clientX - r.left, y: clientY - r.top };
+
+    const move = (e) => {
+      if (!dragging.current || !containerRef.current) return;
+      const cx = e.touches ? e.touches[0].clientX : e.clientX;
+      const cy = e.touches ? e.touches[0].clientY : e.clientY;
+      const c = containerRef.current.getBoundingClientRect();
+      onMove(item.id, Math.max(0, cx - c.left - off.current.x), Math.max(0, cy - c.top - off.current.y));
+    };
+    const up = () => {
+      dragging.current = false;
+      window.removeEventListener("mousemove", move);
+      window.removeEventListener("mouseup", up);
+      window.removeEventListener("touchmove", move);
+      window.removeEventListener("touchend", up);
+    };
+    window.addEventListener("mousemove", move);
+    window.addEventListener("mouseup", up);
+    window.addEventListener("touchmove", move, { passive: false });
+    window.addEventListener("touchend", up);
+  }, [editing, item.id, onSelect, onMove, containerRef]);
+
   const handleResizeDown = useCallback((e) => {
-    e.stopPropagation(); e.preventDefault(); resizing.current=true;
-    startMouse.current={x:e.clientX,y:e.clientY}; startSize.current={w:item.width||getDefaultW(),h:item.height||getDefaultH()};
-    const move=(e)=>{ if(!resizing.current)return; onResize(item.id,Math.max(40,startSize.current.w+e.clientX-startMouse.current.x),Math.max(30,startSize.current.h+e.clientY-startMouse.current.y)); };
-    const up=()=>{ resizing.current=false; window.removeEventListener("mousemove",move); window.removeEventListener("mouseup",up); };
-    window.addEventListener("mousemove",move); window.addEventListener("mouseup",up);
-  },[item,onResize]);
-  const startEdit=(e)=>{ e.stopPropagation(); setEditing(true); setTimeout(()=>{ if(textRef.current){ textRef.current.focus(); const r=document.createRange(); r.selectNodeContents(textRef.current); r.collapse(false); const s=window.getSelection(); s.removeAllRanges(); s.addRange(r); }},40); };
-  const finishEdit=()=>{ setEditing(false); if(textRef.current) onTextChange(item.id,textRef.current.innerText); };
+    e.stopPropagation(); e.preventDefault(); resizing.current = true;
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    startMouse.current = { x: clientX, y: clientY };
+    startSize.current = { w: item.width||getDefaultW(), h: item.height||getDefaultH() };
+    const move = (e) => {
+      if (!resizing.current) return;
+      const cx = e.touches ? e.touches[0].clientX : e.clientX;
+      const cy = e.touches ? e.touches[0].clientY : e.clientY;
+      onResize(item.id, Math.max(40, startSize.current.w + cx - startMouse.current.x), Math.max(30, startSize.current.h + cy - startMouse.current.y));
+    };
+    const up = () => {
+      resizing.current = false;
+      window.removeEventListener("mousemove", move);
+      window.removeEventListener("mouseup", up);
+      window.removeEventListener("touchmove", move);
+      window.removeEventListener("touchend", up);
+    };
+    window.addEventListener("mousemove", move);
+    window.addEventListener("mouseup", up);
+    window.addEventListener("touchmove", move, { passive: false });
+    window.addEventListener("touchend", up);
+  }, [item, onResize]);
+
+  const startEdit = (e) => {
+    e.stopPropagation(); setEditing(true);
+    setTimeout(() => {
+      if (textRef.current) {
+        textRef.current.focus();
+        const r = document.createRange(); r.selectNodeContents(textRef.current); r.collapse(false);
+        const s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+      }
+    }, 40);
+  };
+  const finishEdit = () => { setEditing(false); if (textRef.current) onTextChange(item.id, textRef.current.innerText); };
+
   return (
     <div ref={ref} className={`d-item${selected?" sel":""}`}
-      style={{ left:item.x,top:item.y,width:w,height:item.type==="text"?"auto":h,zIndex:selected?50:10 }}
-      onMouseDown={handleMouseDown} onClick={(e)=>{ e.stopPropagation(); onSelect(item.id); }}>
+      style={{ left:item.x, top:item.y, width:w, height:item.type==="text"?"auto":h, zIndex:selected?50:10 }}
+      onMouseDown={handlePointerDown}
+      onTouchStart={handlePointerDown}
+      onClick={(e) => { e.stopPropagation(); onSelect(item.id); }}>
       <div className="d-border"/>
-      <button className="d-del" onClick={(e)=>{ e.stopPropagation(); onDelete(item.id); }}>{Icon.x(10,"#FAF5EE")}</button>
-      {item.type==="text"&&<button className="d-edit" onClick={startEdit}>{Icon.edit(10,"#FAF5EE")}</button>}
-      {item.type==="text"&&<div ref={textRef} className="d-text" contentEditable={editing} suppressContentEditableWarning onBlur={finishEdit} onKeyDown={(e)=>{ if(e.key==="Escape")finishEdit(); }} style={{ fontFamily:item.font,fontSize:item.size,color:item.color,fontWeight:item.bold?700:400,fontStyle:item.italic?"italic":"normal",width:"100%",minHeight:"1em" }}>{item.text}</div>}
-      {item.type==="emoji"&&<span style={{ fontSize:Math.max(20,w*0.62),lineHeight:1,display:"block",textAlign:"center",width:w,height:h,lineHeight:h+"px" }}>{item.content}</span>}
-      {(item.type==="photo"||item.type==="gif")&&<img src={item.url} alt="" style={{ width:w,height:h,objectFit:"cover",borderRadius:7,display:"block",boxShadow:"0 4px 18px rgba(42,21,8,.15)" }} onError={(e)=>{ e.target.style.opacity=".3"; }}/>}
-      {item.type==="audio"&&<div style={{ width:w,padding:"10px 12px",background:"#FAF5EE",borderRadius:8,border:"1px solid rgba(42,21,8,.1)",display:"flex",alignItems:"center",gap:8 }}>{Icon.music(17,"#8B6E4E")}<audio controls style={{ width:"100%",height:32 }} src={item.url}/></div>}
-      {selected&&<>
-        <div onMouseDown={handleResizeDown} style={{ position:"absolute",bottom:-8,right:-8,width:20,height:20,background:"#2A1508",borderRadius:"50%",cursor:"nwse-resize",zIndex:30,border:"2px solid white",boxShadow:"0 1px 5px rgba(0,0,0,.22)",display:"flex",alignItems:"center",justifyContent:"center" }}>{Icon.resize(8,"#FAF5EE")}</div>
-        <div style={{ position:"absolute",bottom:-23,left:0,fontFamily:"'Jost',sans-serif",fontSize:9,letterSpacing:".3px",color:"rgba(42,21,8,.3)",whiteSpace:"nowrap",pointerEvents:"none" }}>{Math.round(w)} × {Math.round(h)}</div>
+      <button className="d-del" onClick={(e) => { e.stopPropagation(); onDelete(item.id); }}>{Icon.x(10,"#FAF5EE")}</button>
+      {item.type==="text" && <button className="d-edit" onClick={startEdit}>{Icon.edit(10,"#FAF5EE")}</button>}
+
+      {/* ── TEXT ITEM: message + signer name ── */}
+      {item.type==="text" && (
+        <div>
+          <div
+            ref={textRef}
+            className="d-text"
+            contentEditable={editing}
+            suppressContentEditableWarning
+            onBlur={finishEdit}
+            onKeyDown={(e) => { if (e.key==="Escape") finishEdit(); }}
+            style={{
+              fontFamily: item.font,
+              fontSize: item.size,
+              color: item.color,
+              fontWeight: item.bold ? 700 : 400,
+              fontStyle: item.italic ? "italic" : "normal",
+              width: "100%",
+              minHeight: "1em",
+            }}
+          >{item.text}</div>
+          {/* ✅ FIX: render the signer's name below their message */}
+          {item.signerName && !editing && (
+            <div
+              className="d-signer-name"
+              style={{
+                fontFamily: item.font,
+                fontSize: Math.max(10, item.size * 0.72),
+                color: item.color,
+              }}
+            >— {item.signerName}</div>
+          )}
+        </div>
+      )}
+
+      {item.type==="emoji" && <span style={{ fontSize:Math.max(20,w*0.62), lineHeight:1, display:"block", textAlign:"center", width:w, height:h, lineHeight:h+"px" }}>{item.content}</span>}
+      {(item.type==="photo"||item.type==="gif") && <img src={item.url} alt="" style={{ width:w, height:h, objectFit:"cover", borderRadius:7, display:"block", boxShadow:"0 4px 18px rgba(42,21,8,.15)" }} onError={(e) => { e.target.style.opacity=".3"; }}/>}
+      {item.type==="audio" && <div style={{ width:w, padding:"10px 12px", background:"#FAF5EE", borderRadius:8, border:"1px solid rgba(42,21,8,.1)", display:"flex", alignItems:"center", gap:8 }}>{Icon.music(17,"#8B6E4E")}<audio controls style={{ width:"100%", height:32 }} src={item.url}/></div>}
+
+      {selected && <>
+        <div
+          onMouseDown={handleResizeDown}
+          onTouchStart={handleResizeDown}
+          style={{ position:"absolute", bottom:-8, right:-8, width:22, height:22, background:"#2A1508", borderRadius:"50%", cursor:"nwse-resize", zIndex:30, border:"2px solid white", boxShadow:"0 1px 5px rgba(0,0,0,.22)", display:"flex", alignItems:"center", justifyContent:"center", touchAction:"none" }}
+        >{Icon.resize(8,"#FAF5EE")}</div>
+        <div style={{ position:"absolute", bottom:-23, left:0, fontFamily:"'Jost',sans-serif", fontSize:9, letterSpacing:".3px", color:"rgba(42,21,8,.3)", whiteSpace:"nowrap", pointerEvents:"none" }}>{Math.round(w)} × {Math.round(h)}</div>
       </>}
     </div>
   );
@@ -339,6 +571,7 @@ export default function Steeped() {
   const [sent,setSent]=useState(false);
   const [uploads,setUploads]=useState([]);
   const [form,setForm]=useState({name:"",to:"",note:"",date:"",time:""});
+  const [showSigDrawer,setShowSigDrawer]=useState(false);
   const fileRef=useRef(null);
   const coverRef=useRef(null);
   const pageRefs=useRef({});
@@ -360,38 +593,26 @@ export default function Steeped() {
   const addSig=()=>{ if(!msgText.trim()||activePage===0)return; spawnPageItem({type:"text",text:msgText,signerName:signerName||"Anonymous",font:tFont,size:tSize,color:tColor,bold:tBold,italic:tItalic}); setMsgText(""); };
   const addPage=()=>{ const p=makePage(pages.length+1); setPages(prev=>[...prev,p]); setActivePage(pages.length+1); };
   const delPage=(idx)=>{ if(pages.length===1)return; const u=pages.filter((_,i)=>i!==idx).map((p,i)=>({...p,num:i+1})); setPages(u); if(activePage>u.length)setActivePage(u.length); };
+  const desel=()=>{ setSelCover(null); setSelPage(null); };
+  const totalItems=pages.reduce((a,p)=>a+p.items.length,0);
+  const handleUpload=(e)=>{ Array.from(e.target.files).forEach(f=>{ const r=new FileReader(); r.onload=ev=>setUploads(p=>[...p,{id:uid(),url:ev.target.result,label:f.name}]); r.readAsDataURL(f); }); };
+  const allSigs = pages.flatMap(pg => pg.items.filter(it=>it.type==="text").map(s=>({...s,pageNum:pg.num})));
 
-const desel = () => { setSelCover(null); setSelPage(null); };
-const totalItems = pages.reduce((a,p) => a + p.items.length, 0);  
-const handleUpload=(e)=>{ Array.from(e.target.files).forEach(f=>{ const r=new FileReader(); r.onload=ev=>setUploads(p=>[...p,{id:uid(),url:ev.target.result,label:f.name}]); r.readAsDataURL(f); }); };
- const doSend = async () => {
-  if (sendTab === "email") {
-    try {
-      const res = await fetch("/api/send-email", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          to: form.to,
-          recipientName: form.name || "there",
-          senderNote: form.note,
-          cardUrl: window.location.href,
-        }),
-      });
-      const data = await res.json();
-      if (res.ok) {
-        setSent(true);
-        setTimeout(() => { setSent(false); setShowSend(false); }, 2800);
-      } else {
-        alert("Email error: " + (data.error || "Unknown error"));
-      }
-    } catch(e) {
-      alert("Network error: " + e.message);
-    }
-  } else {
-    setSent(true);
-    setTimeout(() => { setSent(false); setShowSend(false); }, 2800);
-  }
-};
+  const doSend = async () => {
+    if (sendTab === "email") {
+      try {
+        const res = await fetch("/api/send-email", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ to:form.to, recipientName:form.name||"there", senderNote:form.note, cardUrl:window.location.href }),
+        });
+        const data = await res.json();
+        if (res.ok) { setSent(true); setTimeout(()=>{ setSent(false); setShowSend(false); },2800); }
+        else { alert("Email error: "+(data.error||"Unknown error")); }
+      } catch(e) { alert("Network error: "+e.message); }
+    } else { setSent(true); setTimeout(()=>{ setSent(false); setShowSend(false); },2800); }
+  };
+
   const NavLogo=({onClick})=>(
     <div onClick={onClick} style={{ cursor:"pointer" }}>
       <div className="nav-wordmark">St<em>ee</em>ped</div>
@@ -399,9 +620,45 @@ const handleUpload=(e)=>{ Array.from(e.target.files).forEach(f=>{ const r=new Fi
     </div>
   );
 
+  const SignPanel = () => activePage===0 ? (
+    <div>
+      <div className="info-box">Cover editor — add text, then drag &amp; resize it on the card.</div>
+      <label className="field-label">Add text</label>
+      <input className="f-input" placeholder="e.g. Happy Birthday, Sarah!" value={covText} onChange={e=>setCovText(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addCovText()}/>
+      <label className="field-label">Style</label>
+      <div className="style-row">
+        <div className="style-col"><span className="sub-label">Font</span><select className="f-select" value={covFont} onChange={e=>setCovFont(e.target.value)}>{FONTS.map(f=><option key={f.value} value={f.value}>{f.label}</option>)}</select></div>
+        <div className="style-col"><span className="sub-label">Size</span><select className="f-select" value={covSize} onChange={e=>setCovSize(Number(e.target.value))}>{[12,14,16,18,20,22,24,28,32,36,42].map(s=><option key={s} value={s}>{s}</option>)}</select></div>
+        <div className="style-col"><span className="sub-label">Color</span><input type="color" className="f-color" value={covColor} onChange={e=>setCovColor(e.target.value)}/></div>
+      </div>
+      <div style={{display:"flex",gap:8,marginTop:10}}><button className={`fmt-btn${covBold?" on":""}`} onClick={()=>setCovBold(b=>!b)}><strong>B</strong></button><button className={`fmt-btn${covItalic?" on":""}`} onClick={()=>setCovItalic(it=>!it)}><em>I</em></button></div>
+      <button className="btn-dark" style={{width:"100%",marginTop:16,justifyContent:"center"}} onClick={addCovText}>Add to Cover</button>
+    </div>
+  ) : (
+    <div>
+      <label className="field-label">Your name</label>
+      <input className="f-input" placeholder="How should we sign this?" value={signerName} onChange={e=>setSignerName(e.target.value)}/>
+      <label className="field-label">Your message</label>
+      <textarea className="f-textarea" rows={3} placeholder="Write something wonderful…" value={msgText} onChange={e=>setMsgText(e.target.value)}/>
+      <label className="field-label">Style</label>
+      <div className="style-row">
+        <div className="style-col"><span className="sub-label">Font</span><select className="f-select" value={tFont} onChange={e=>setTFont(e.target.value)}>{FONTS.map(f=><option key={f.value} value={f.value}>{f.label}</option>)}</select></div>
+        <div className="style-col"><span className="sub-label">Size</span><select className="f-select" value={tSize} onChange={e=>setTSize(Number(e.target.value))}>{[12,13,14,15,16,18,20,22,24].map(s=><option key={s} value={s}>{s}</option>)}</select></div>
+        <div className="style-col"><span className="sub-label">Color</span><input type="color" className="f-color" value={tColor} onChange={e=>setTColor(e.target.value)}/></div>
+      </div>
+      <div style={{display:"flex",gap:8,marginTop:10}}><button className={`fmt-btn${tBold?" on":""}`} onClick={()=>setTBold(b=>!b)}><strong>B</strong></button><button className={`fmt-btn${tItalic?" on":""}`} onClick={()=>setTItalic(it=>!it)}><em>I</em></button></div>
+      {msgText&&<div className="msg-preview" style={{fontFamily:tFont,fontSize:tSize,color:tColor,fontWeight:tBold?700:400,fontStyle:tItalic?"italic":"normal",marginTop:12}}>
+        <div>{msgText}</div>
+        {signerName&&<div style={{fontSize:tSize*.72,marginTop:6,opacity:.6,fontStyle:"italic"}}>— {signerName}</div>}
+      </div>}
+      <button className="btn-dark" style={{width:"100%",marginTop:14,justifyContent:"center"}} onClick={addSig}>Add to Page {activePage}</button>
+      <p style={{fontFamily:"'Jost',sans-serif",fontSize:11,color:"rgba(42,21,8,.35)",lineHeight:1.75,marginTop:8,letterSpacing:".2px"}}>Tap to select · drag to move · corner to resize</p>
+    </div>
+  );
+
   if(view==="home") return (
-  <div className="app"><style>{CSS}</style>
-    <nav className="nav">
+    <div className="app"><style>{CSS}</style>
+      <nav className="nav">
         <NavLogo onClick={()=>{}}/>
         <button className="btn-dark" onClick={()=>setView("themes")}>Create a card {Icon.arrow(14,"#FAF5EE")}</button>
       </nav>
@@ -410,7 +667,7 @@ const handleUpload=(e)=>{ Array.from(e.target.files).forEach(f=>{ const r=new Fi
         <div className="hero">
           <div className="hero-eyebrow">a little warmth, sent with care</div>
           <h1 className="hero-title">Cards <em>brewed</em><br/>with kindness</h1>
-          <p className="hero-sub">Beautiful multi-page cards for every occasion.<br/>Sign together, add photos & GIFs, share warmly.</p>
+          <p className="hero-sub">Beautiful multi-page cards for every occasion.<br/>Sign together, add photos &amp; GIFs, share warmly.</p>
           <button className="btn-hero" onClick={()=>setView("themes")}>Brew a card {Icon.arrow(16,"#FAF5EE")}</button>
           <div className="hero-pills">{["Multiple signing pages","Custom cover design","Drag & resize anything","Photos & GIFs","Email, text or print"].map(f=><span key={f} className="pill">{f}</span>)}</div>
         </div>
@@ -420,8 +677,8 @@ const handleUpload=(e)=>{ Array.from(e.target.files).forEach(f=>{ const r=new Fi
   );
 
   if(view==="themes") return (
-  <div className="app"><style>{CSS}</style>
-    <nav className="nav">
+    <div className="app"><style>{CSS}</style>
+      <nav className="nav">
         <NavLogo onClick={()=>setView("home")}/>
         <button className="btn-ghost" onClick={()=>setView("home")}>{Icon.back(13)} Back</button>
       </nav>
@@ -433,16 +690,17 @@ const handleUpload=(e)=>{ Array.from(e.target.files).forEach(f=>{ const r=new Fi
   );
 
   return (
-  <div className="app"><style>{CSS}</style>
-    <nav className="nav">
+    <div className="app"><style>{CSS}</style>
+      <nav className="nav">
         <NavLogo onClick={()=>setView("home")}/>
         <div style={{display:"flex",gap:8}}>
           <button className="btn-ghost" onClick={()=>setView("themes")}>{Icon.back(13)} Themes</button>
-          <button className="btn-send" onClick={()=>setShowSend(true)}>{Icon.send(14,"#FAF5EE")} Send Card</button>
+          <button className="btn-send" onClick={()=>setShowSend(true)}>{Icon.send(14,"#FAF5EE")} Send</button>
         </div>
       </nav>
 
       <div className="editor-layout">
+        {/* ── Left panel ── */}
         <div className="panel-left">
           <div className="panel-tabs">
             {[{id:"text",ic:Icon.pen(16),lbl:"Sign"},{id:"photos",ic:Icon.photo(16),lbl:"Photos"},{id:"gifs",ic:Icon.gif(16),lbl:"GIFs"},{id:"emojis",ic:Icon.smile(16),lbl:"Emoji"},{id:"audio",ic:Icon.music(16),lbl:"Audio"}].map(t=>(
@@ -450,38 +708,7 @@ const handleUpload=(e)=>{ Array.from(e.target.files).forEach(f=>{ const r=new Fi
             ))}
           </div>
           <div className="panel-content">
-            {activePanel==="text"&&(activePage===0?(
-              <div>
-                <div className="info-box">Cover editor — add text, then drag &amp; resize it on the card.</div>
-                <label className="field-label">Add text</label>
-                <input className="f-input" placeholder="e.g. Happy Birthday, Sarah!" value={covText} onChange={e=>setCovText(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addCovText()}/>
-                <label className="field-label">Style</label>
-                <div className="style-row">
-                  <div className="style-col"><span className="sub-label">Font</span><select className="f-select" value={covFont} onChange={e=>setCovFont(e.target.value)}>{FONTS.map(f=><option key={f.value} value={f.value}>{f.label}</option>)}</select></div>
-                  <div className="style-col"><span className="sub-label">Size</span><select className="f-select" value={covSize} onChange={e=>setCovSize(Number(e.target.value))}>{[12,14,16,18,20,22,24,28,32,36,42].map(s=><option key={s} value={s}>{s}</option>)}</select></div>
-                  <div className="style-col"><span className="sub-label">Color</span><input type="color" className="f-color" value={covColor} onChange={e=>setCovColor(e.target.value)}/></div>
-                </div>
-                <div style={{display:"flex",gap:8,marginTop:10}}><button className={`fmt-btn${covBold?" on":""}`} onClick={()=>setCovBold(b=>!b)}><strong>B</strong></button><button className={`fmt-btn${covItalic?" on":""}`} onClick={()=>setCovItalic(it=>!it)}><em>I</em></button></div>
-                <button className="btn-dark" style={{width:"100%",marginTop:16,justifyContent:"center"}} onClick={addCovText}>Add to Cover</button>
-              </div>
-            ):(
-              <div>
-                <label className="field-label">Your name</label>
-                <input className="f-input" placeholder="How should we sign this?" value={signerName} onChange={e=>setSignerName(e.target.value)}/>
-                <label className="field-label">Your message</label>
-                <textarea className="f-textarea" rows={4} placeholder="Write something wonderful…" value={msgText} onChange={e=>setMsgText(e.target.value)}/>
-                <label className="field-label">Style</label>
-                <div className="style-row">
-                  <div className="style-col"><span className="sub-label">Font</span><select className="f-select" value={tFont} onChange={e=>setTFont(e.target.value)}>{FONTS.map(f=><option key={f.value} value={f.value}>{f.label}</option>)}</select></div>
-                  <div className="style-col"><span className="sub-label">Size</span><select className="f-select" value={tSize} onChange={e=>setTSize(Number(e.target.value))}>{[12,13,14,15,16,18,20,22,24].map(s=><option key={s} value={s}>{s}</option>)}</select></div>
-                  <div className="style-col"><span className="sub-label">Color</span><input type="color" className="f-color" value={tColor} onChange={e=>setTColor(e.target.value)}/></div>
-                </div>
-                <div style={{display:"flex",gap:8,marginTop:10}}><button className={`fmt-btn${tBold?" on":""}`} onClick={()=>setTBold(b=>!b)}><strong>B</strong></button><button className={`fmt-btn${tItalic?" on":""}`} onClick={()=>setTItalic(it=>!it)}><em>I</em></button></div>
-                {msgText&&<div className="msg-preview" style={{fontFamily:tFont,fontSize:tSize,color:tColor,fontWeight:tBold?700:400,fontStyle:tItalic?"italic":"normal",marginTop:12}}><div>{msgText}</div>{signerName&&<div style={{fontSize:tSize*.72,marginTop:6,opacity:.6}}>— {signerName}</div>}</div>}
-                <button className="btn-dark" style={{width:"100%",marginTop:16,justifyContent:"center"}} onClick={addSig}>Add to Page {activePage}</button>
-                <p style={{fontFamily:"'Jost',sans-serif",fontSize:11,color:"rgba(42,21,8,.35)",lineHeight:1.75,marginTop:10,letterSpacing:".2px"}}>Click to select · drag to move · corner to resize</p>
-              </div>
-            ))}
+            {activePanel==="text"&&<SignPanel/>}
             {activePanel==="photos"&&<PhotosPanel onAdd={(url)=>spawnPageItem({type:"photo",url})} uploads={uploads} onUpload={handleUpload} fileRef={fileRef}/>}
             {activePanel==="gifs"&&<GiphyPanel onAdd={(url)=>spawnPageItem({type:"gif",url})}/>}
             {activePanel==="emojis"&&<div><p style={{fontFamily:"'Jost',sans-serif",fontSize:12,fontWeight:300,color:"#8B6E4E",marginBottom:14,lineHeight:1.7}}>Tap to place — drag to move, corner to resize.</p><div className="emoji-grid">{EMOJIS.map(e=><button key={e} className="emoji-btn" onClick={()=>spawnPageItem({type:"emoji",content:e})}>{e}</button>)}</div></div>}
@@ -489,6 +716,7 @@ const handleUpload=(e)=>{ Array.from(e.target.files).forEach(f=>{ const r=new Fi
           </div>
         </div>
 
+        {/* ── Canvas ── */}
         <div className="canvas-area" onClick={desel}>
           <div className="page-tabs-wrap" onClick={e=>e.stopPropagation()}>
             <button className={`page-tab-btn${activePage===0?" active":""}`} onClick={()=>setActivePage(0)}>Cover</button>
@@ -506,7 +734,7 @@ const handleUpload=(e)=>{ Array.from(e.target.files).forEach(f=>{ const r=new Fi
             <div className="card-wrap" key="cover" onClick={e=>e.stopPropagation()}>
               <div className="card-cover" style={{background:theme.cover}}>
                 <div style={{position:"absolute",top:22,right:24,opacity:.15,pointerEvents:"none"}}>{Icon[theme.icon](40,theme.accent)}</div>
-                <div ref={coverRef} className="cover-canvas" onClick={desel} style={{minHeight:390}}>
+                <div ref={coverRef} className="cover-canvas" onClick={desel}>
                   {coverItems.map(item=>(
                     <DItem key={item.id} item={item} selected={selCover===item.id}
                       onSelect={id=>{setSelCover(id);setSelPage(null);}}
@@ -517,7 +745,7 @@ const handleUpload=(e)=>{ Array.from(e.target.files).forEach(f=>{ const r=new Fi
                 </div>
               </div>
               <div style={{marginTop:12,padding:"10px 16px",background:"rgba(255,255,255,.68)",borderRadius:8,fontFamily:"'Jost',sans-serif",fontSize:12,fontWeight:300,color:"#8B6E4E",lineHeight:1.85,textAlign:"center",letterSpacing:".2px"}}>
-                Use the <strong style={{fontWeight:500}}>Sign tab</strong> to add text · drag to reposition · corner to resize · ✎ edit inline
+                Use the <strong style={{fontWeight:500}}>Sign tab</strong> to add text · drag to reposition · corner to resize
               </div>
             </div>
           )}
@@ -540,7 +768,7 @@ const handleUpload=(e)=>{ Array.from(e.target.files).forEach(f=>{ const r=new Fi
                       onTextChange={(id,text)=>editPageText(activePage-1,id,text)}
                       containerRef={{current:pageRefs.current[activePage-1]}}/>
                   ))}
-                  {curPage.items.length>0&&<div className="drop-hint">Click to select · drag to move · corner to resize · ✎ edit · × remove</div>}
+                  {curPage.items.length>0&&<div className="drop-hint">Tap to select · drag to move · corner to resize · ✎ edit · × remove</div>}
                 </div>
               </div>
               <button className="btn-page-add" onClick={e=>{e.stopPropagation();addPage();}}>{Icon.plus(13)} Add another signing page</button>
@@ -553,6 +781,7 @@ const handleUpload=(e)=>{ Array.from(e.target.files).forEach(f=>{ const r=new Fi
           </div>
         </div>
 
+        {/* ── Right panel (desktop) ── */}
         <div className="panel-right">
           <div className="sidebar-title">Pages</div>
           <div className="pages-list">
@@ -572,9 +801,18 @@ const handleUpload=(e)=>{ Array.from(e.target.files).forEach(f=>{ const r=new Fi
           <button className="btn-ghost-sm" style={{width:"100%"}} onClick={addPage}>+ Add page</button>
           <div style={{marginTop:24}}>
             <div className="sidebar-title">Signatures</div>
-            {pages.every(p=>p.items.filter(it=>it.type==="text").length===0)?<p className="empty-note">No signatures yet — be the first!</p>:pages.map(pg=>pg.items.filter(it=>it.type==="text").map(s=>(
-              <div key={s.id} className="signer-row"><div className="signer-dot" style={{background:s.color}}/><div className="signer-info"><div className="signer-name" style={{color:s.color}}>{s.signerName||"—"} <span style={{fontWeight:400,fontSize:10,color:"rgba(42,21,8,.32)"}}>· p.{pg.num}</span></div><div className="signer-preview">{s.text}</div></div></div>
-            )))}
+            {allSigs.length===0
+              ?<p className="empty-note">No signatures yet — be the first!</p>
+              :allSigs.map(s=>(
+                <div key={s.id} className="signer-row">
+                  <div className="signer-dot" style={{background:s.color}}/>
+                  <div className="signer-info">
+                    <div className="signer-name" style={{color:s.color}}>{s.signerName||"—"} <span style={{fontWeight:400,fontSize:10,color:"rgba(42,21,8,.32)"}}>· p.{s.pageNum}</span></div>
+                    <div className="signer-preview">{s.text}</div>
+                  </div>
+                </div>
+              ))
+            }
           </div>
           <div className="invite-box" style={{marginTop:20}}>
             <p className="invite-note" style={{display:"flex",alignItems:"flex-start",gap:7}}>{Icon.link(13,"#8B6E4E")}<span><strong style={{fontWeight:500}}>Invite others to sign</strong> — share a link so anyone can add their message.</span></p>
@@ -583,6 +821,43 @@ const handleUpload=(e)=>{ Array.from(e.target.files).forEach(f=>{ const r=new Fi
         </div>
       </div>
 
+      {/* ── Mobile floating signers button ── */}
+      <button className="mobile-signers-btn" onClick={()=>setShowSigDrawer(true)}>
+        {Icon.users(14,"#2A1508")}
+        {allSigs.length} signature{allSigs.length!==1?"s":""}
+      </button>
+
+      {/* ── Mobile signatures drawer ── */}
+      {showSigDrawer&&(
+        <>
+          <div className="sig-drawer-overlay" onClick={()=>setShowSigDrawer(false)}/>
+          <div className="sig-drawer">
+            <div className="sig-drawer-handle"/>
+            <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:16}}>
+              <div className="sidebar-title" style={{margin:0}}>Signatures</div>
+              <button className="close-btn" onClick={()=>setShowSigDrawer(false)}>{Icon.x(13)}</button>
+            </div>
+            {allSigs.length===0
+              ?<p className="empty-note">No signatures yet — be the first!</p>
+              :allSigs.map(s=>(
+                <div key={s.id} className="signer-row">
+                  <div className="signer-dot" style={{background:s.color}}/>
+                  <div className="signer-info">
+                    <div className="signer-name" style={{color:s.color}}>{s.signerName||"—"} <span style={{fontWeight:400,fontSize:10,color:"rgba(42,21,8,.32)"}}>· p.{s.pageNum}</span></div>
+                    <div className="signer-preview">{s.text}</div>
+                  </div>
+                </div>
+              ))
+            }
+            <div className="invite-box" style={{marginTop:16}}>
+              <p className="invite-note" style={{display:"flex",alignItems:"flex-start",gap:7}}>{Icon.link(13,"#8B6E4E")}<span><strong style={{fontWeight:500}}>Invite others to sign</strong></span></p>
+              <button className="btn-ghost" style={{width:"100%",marginTop:10,fontSize:12}}>Copy invite link</button>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* ── Send modal ── */}
       {showSend&&(
         <div className="modal-overlay" onClick={e=>e.target===e.currentTarget&&setShowSend(false)}>
           <div className="modal">
@@ -617,7 +892,7 @@ const handleUpload=(e)=>{ Array.from(e.target.files).forEach(f=>{ const r=new Fi
                     <input className="f-input" placeholder="Who is this for?" value={form.name} onChange={fSet("name")}/>
                     <label className="field-label">Email or phone</label>
                     <input className="f-input" placeholder="Where should we send it?" value={form.to} onChange={fSet("to")}/>
-                    <label className="field-label">Delivery date & time</label>
+                    <label className="field-label">Delivery date &amp; time</label>
                     <div className="date-row"><input type="date" className="f-input" value={form.date} onChange={fSet("date")}/><input type="time" className="f-input" value={form.time} onChange={fSet("time")}/></div>
                     <button className="btn-send" style={{width:"100%",marginTop:16,justifyContent:"center"}} onClick={doSend}>{Icon.calendar(14,"#FAF5EE")} Schedule this Card</button>
                   </div>
