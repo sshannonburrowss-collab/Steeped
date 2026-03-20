@@ -1,4 +1,65 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
+function GiphyPanel({ onAdd }) {
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const debounceRef = useRef(null);
+
+  const search = async (q) => {
+    if (!q.trim()) {
+      // Show trending when empty
+      const res = await fetch(
+        `https://api.giphy.com/v1/gifs/trending?api_key=${import.meta.env.VITE_GIPHY_KEY}&limit=12&rating=g`
+      );
+      const data = await res.json();
+      setResults(data.data);
+      return;
+    }
+    setLoading(true);
+    const res = await fetch(
+      `https://api.giphy.com/v1/gifs/search?api_key=${import.meta.env.VITE_GIPHY_KEY}&q=${encodeURIComponent(q)}&limit=12&rating=g`
+    );
+    const data = await res.json();
+    setResults(data.data);
+    setLoading(false);
+  };
+
+  useEffect(() => { search(""); }, []);
+
+  const handleInput = (e) => {
+    setQuery(e.target.value);
+    clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => search(e.target.value), 500);
+  };
+
+  return (
+    <div>
+      <input
+        className="f-input"
+        placeholder="Search GIFs…"
+        value={query}
+        onChange={handleInput}
+        style={{ marginBottom: 12 }}
+      />
+      {loading && <p style={{ fontSize:12, color:"#9A7A5A", marginBottom:8 }}>Searching…</p>}
+      <div className="media-grid">
+        {results.map(gif => (
+          <img
+            key={gif.id}
+            src={gif.images.fixed_height_small.url}
+            alt={gif.title}
+            className="media-thumb"
+            style={{ height: 68 }}
+            onClick={() => onAdd(gif.images.original.url)}
+          />
+        ))}
+      </div>
+      <p style={{ fontSize:10.5, color:"#C0B0A0", marginTop:10, textAlign:"center" }}>
+        Powered by GIPHY
+      </p>
+    </div>
+  );
+}
 
 const THEMES = [
   { id:"birthday",    name:"Happy Birthday",   emoji:"🎂", accent:"#C0503A", cover:"linear-gradient(145deg,#FFF0E8,#FFD8C0,#FFBFA8)", pattern:["🎈","🎂","🎊","✨"] },
@@ -487,12 +548,9 @@ export default function Steeped() {
 
             {activePanel==="photos"&&<MediaPanel/>}
 
-            {activePanel==="gifs"&&(
-              <div>
-                <p style={{fontSize:13,color:"#9A7A5A",marginBottom:14,lineHeight:1.65}}>Tap a GIF to add it — then drag to place.</p>
-                <div className="media-grid">{SAMPLE_GIFS.map(g=><img key={g.id} src={g.url} alt={g.label} className="media-thumb" style={{height:68}} onClick={()=>spawnPageItem({type:"gif",url:g.url})}/>)}</div>
-              </div>
-            )}
+            {activePanel === "gifs" && (
+  <GiphyPanel onAdd={(url) => spawnPageItem({ type: "gif", url })} />
+)}
 
             {activePanel==="emojis"&&(
               <div>
