@@ -1,65 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from "react";
-function GiphyPanel({ onAdd }) {
-  const [query, setQuery] = useState("");
-  const [results, setResults] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const debounceRef = useRef(null);
 
-  const search = async (q) => {
-    if (!q.trim()) {
-      // Show trending when empty
-      const res = await fetch(
-        `https://api.giphy.com/v1/gifs/trending?api_key=${import.meta.env.VITE_GIPHY_KEY}&limit=12&rating=g`
-      );
-      const data = await res.json();
-      setResults(data.data);
-      return;
-    }
-    setLoading(true);
-    const res = await fetch(
-      `https://api.giphy.com/v1/gifs/search?api_key=${import.meta.env.VITE_GIPHY_KEY}&q=${encodeURIComponent(q)}&limit=12&rating=g`
-    );
-    const data = await res.json();
-    setResults(data.data);
-    setLoading(false);
-  };
-
-  useEffect(() => { search(""); }, []);
-
-  const handleInput = (e) => {
-    setQuery(e.target.value);
-    clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => search(e.target.value), 500);
-  };
-
-  return (
-    <div>
-      <input
-        className="f-input"
-        placeholder="Search GIFs…"
-        value={query}
-        onChange={handleInput}
-        style={{ marginBottom: 12 }}
-      />
-      {loading && <p style={{ fontSize:12, color:"#9A7A5A", marginBottom:8 }}>Searching…</p>}
-      <div className="media-grid">
-        {results.map(gif => (
-          <img
-            key={gif.id}
-            src={gif.images.fixed_height_small.url}
-            alt={gif.title}
-            className="media-thumb"
-            style={{ height: 68 }}
-            onClick={() => onAdd(gif.images.original.url)}
-          />
-        ))}
-      </div>
-      <p style={{ fontSize:10.5, color:"#C0B0A0", marginTop:10, textAlign:"center" }}>
-        Powered by GIPHY
-      </p>
-    </div>
-  );
-}
+// ─── CONSTANTS ────────────────────────────────────────────────────────────────
 
 const THEMES = [
   { id:"birthday",    name:"Happy Birthday",   emoji:"🎂", accent:"#C0503A", cover:"linear-gradient(145deg,#FFF0E8,#FFD8C0,#FFBFA8)", pattern:["🎈","🎂","🎊","✨"] },
@@ -81,26 +22,7 @@ const FONTS = [
 
 const EMOJIS = ["❤️","🌹","🎉","✨","🌸","🤗","💫","🌟","🎊","🌺","💕","🥳","🌈","🦋","🌻","💝","🎁","🌙","⭐","💐","😊","🥰","😍","🎶","🍰","🎂","🌷","💌","🫂","☀️","🍵","🌿","🫶","💞","🎈","🪷","🌼","🌊","🦚","🐝","🍀","🌴","🦜","🍋","🫐","🍓","🎵"];
 
-const STOCK_PHOTOS = [
-  { id:1, url:"https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=300&fit=crop", label:"Birthday Cake" },
-  { id:2, url:"https://images.unsplash.com/photo-1490750967868-88df5691cc0c?w=300&fit=crop", label:"Spring Flowers" },
-  { id:3, url:"https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=300&fit=crop", label:"Pink Hearts" },
-  { id:4, url:"https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=300&fit=crop", label:"Forest Path" },
-  { id:5, url:"https://images.unsplash.com/photo-1471879832106-c7ab9e0cee23?w=300&fit=crop", label:"Ocean Sunset" },
-  { id:6, url:"https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?w=300&fit=crop", label:"Wildflowers" },
-  { id:7, url:"https://images.unsplash.com/photo-1543362906-acfc16c67564?w=300&fit=crop", label:"Warm Candle" },
-  { id:8, url:"https://images.unsplash.com/photo-1519682337058-a94d519337bc?w=300&fit=crop", label:"Golden Hour" },
-  { id:9, url:"https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&fit=crop", label:"Mountains" },
-];
-
-const SAMPLE_GIFS = [
-  { id:1, url:"https://media.giphy.com/media/26AHONQ79FqaZmQLu/giphy.gif", label:"Warm Hug" },
-  { id:2, url:"https://media.giphy.com/media/l4KhQo2MESJkc6G52/giphy.gif", label:"Birthday" },
-  { id:3, url:"https://media.giphy.com/media/26ufdipQqU2lhNA4g/giphy.gif", label:"Hearts" },
-  { id:4, url:"https://media.giphy.com/media/3otPoS81loriI9sO8o/giphy.gif", label:"Sparkles" },
-  { id:5, url:"https://media.giphy.com/media/xT9IgG50Lg7russDDy/giphy.gif", label:"Celebrate" },
-  { id:6, url:"https://media.giphy.com/media/ycagynlDKKP96/giphy.gif", label:"Flowers" },
-];
+// ─── CSS ──────────────────────────────────────────────────────────────────────
 
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Lora:ital,wght@0,400;0,500;1,400&family=Dancing+Script:wght@500;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;1,300&display=swap');
@@ -180,12 +102,10 @@ const CSS = `
 .page-tab-btn:hover:not(.active){background:rgba(255,255,255,.85);}
 .page-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
 .card-wrap{width:500px;animation:pageFlip .35s ease;position:relative;}
-/* cover */
 .card-cover{width:500px;min-height:380px;border-radius:16px;box-shadow:0 32px 72px rgba(61,43,31,.25),0 6px 18px rgba(61,43,31,.12);overflow:hidden;position:relative;}
 .card-cover::before{content:'';position:absolute;inset:0;background:linear-gradient(to bottom right,rgba(255,255,255,.28),transparent 60%);pointer-events:none;z-index:1;}
 .cover-canvas{position:relative;width:100%;min-height:380px;padding:20px;user-select:none;}
 .cover-corner{position:absolute;font-size:22px;opacity:.32;line-height:1;z-index:0;pointer-events:none;}
-/* draggable */
 .d-item{position:absolute;cursor:grab;touch-action:none;z-index:10;}
 .d-item:active{cursor:grabbing;}
 .d-item.sel .d-border{display:block;}
@@ -195,7 +115,6 @@ const CSS = `
 .d-edit{position:absolute;top:-11px;left:-11px;width:22px;height:22px;border-radius:50%;background:#3D2B1F;color:white;border:none;font-size:11px;cursor:pointer;display:none;align-items:center;justify-content:center;z-index:20;line-height:1;}
 .d-item.sel .d-edit{display:flex;}
 .d-text{white-space:pre-wrap;word-break:break-word;line-height:1.55;min-width:50px;min-height:1em;outline:none;}
-/* signing page */
 .card-page{width:500px;min-height:440px;border-radius:16px;box-shadow:0 32px 72px rgba(61,43,31,.22),0 6px 18px rgba(61,43,31,.1);background:white;position:relative;overflow:visible;}
 .card-page::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;border-radius:16px 16px 0 0;background:var(--acc,#C0503A);opacity:.7;}
 .page-canvas{position:relative;min-height:440px;padding:24px 28px 28px;}
@@ -247,19 +166,132 @@ const CSS = `
 .fmt-btn.on{background:#3D2B1F;color:white;border-color:#3D2B1F;}
 `;
 
+// ─── HELPERS ──────────────────────────────────────────────────────────────────
+
 const uid = () => Date.now() + Math.random();
 const makePage = (num) => ({ id: uid(), num, items: [] });
 
-// ── Draggable Item ────────────────────────────────────────────────────────────
-function DItem({ item, selected, onSelect, onDelete, onMove, onTextChange, containerRef }) {
+// ─── GIPHY PANEL ──────────────────────────────────────────────────────────────
+
+function GiphyPanel({ onAdd }) {
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const debounceRef = useRef(null);
+
+  const search = async (q) => {
+    try {
+      const url = q.trim()
+        ? `https://api.giphy.com/v1/gifs/search?api_key=${import.meta.env.VITE_GIPHY_KEY}&q=${encodeURIComponent(q)}&limit=12&rating=g`
+        : `https://api.giphy.com/v1/gifs/trending?api_key=${import.meta.env.VITE_GIPHY_KEY}&limit=12&rating=g`;
+      setLoading(true);
+      const res = await fetch(url);
+      const data = await res.json();
+      setResults(data.data || []);
+    } catch(e) { console.error(e); }
+    setLoading(false);
+  };
+
+  useEffect(() => { search(""); }, []);
+
+  const handleInput = (e) => {
+    setQuery(e.target.value);
+    clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => search(e.target.value), 500);
+  };
+
+  return (
+    <div>
+      <input className="f-input" placeholder="Search GIFs…" value={query} onChange={handleInput} style={{ marginBottom:12 }}/>
+      {loading && <p style={{ fontSize:12, color:"#9A7A5A", marginBottom:8 }}>Searching…</p>}
+      <div className="media-grid">
+        {results.map(gif => (
+          <img key={gif.id} src={gif.images.fixed_height_small.url} alt={gif.title}
+            className="media-thumb" style={{ height:68 }}
+            onClick={() => onAdd(gif.images.original.url)}/>
+        ))}
+      </div>
+      <p style={{ fontSize:10.5, color:"#C0B0A0", marginTop:10, textAlign:"center" }}>Powered by GIPHY</p>
+    </div>
+  );
+}
+
+// ─── PHOTOS PANEL ─────────────────────────────────────────────────────────────
+
+function PhotosPanel({ onAdd, uploads, onUpload, fileRef }) {
+  const [query, setQuery] = useState("");
+  const [photos, setPhotos] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const debounceRef = useRef(null);
+
+  const search = async (q) => {
+    try {
+      const endpoint = q.trim()
+        ? `https://api.unsplash.com/search/photos?query=${encodeURIComponent(q)}&per_page=12&orientation=landscape`
+        : `https://api.unsplash.com/photos?per_page=12&order_by=popular`;
+      setLoading(true);
+      const res = await fetch(endpoint, { headers: { Authorization: `Client-ID ${import.meta.env.VITE_UNSPLASH_KEY}` } });
+      const data = await res.json();
+      setPhotos(q.trim() ? (data.results || []) : (data || []));
+    } catch(e) { console.error(e); }
+    setLoading(false);
+  };
+
+  useEffect(() => { search(""); }, []);
+
+  const handleInput = (e) => {
+    setQuery(e.target.value);
+    clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => search(e.target.value), 500);
+  };
+
+  return (
+    <div>
+      <button className="btn-upload" onClick={() => fileRef.current?.click()}>📤 Upload your own photo</button>
+      <input ref={fileRef} type="file" accept="image/*" multiple style={{ display:"none" }} onChange={onUpload}/>
+      {uploads.length > 0 && (
+        <>
+          <div className="sub-label" style={{ marginBottom:8 }}>Your uploads</div>
+          <div className="media-grid" style={{ marginBottom:14 }}>
+            {uploads.map(p => <img key={p.id} src={p.url} alt={p.label} className="media-thumb" onClick={() => onAdd(p.url)}/>)}
+          </div>
+        </>
+      )}
+      <input className="f-input" placeholder="Search free photos…" value={query} onChange={handleInput} style={{ marginBottom:10 }}/>
+      {loading && <p style={{ fontSize:12, color:"#9A7A5A", marginBottom:8 }}>Searching…</p>}
+      <div className="media-grid">
+        {photos.map(photo => (
+          <img key={photo.id} src={photo.urls.small} alt={photo.alt_description || "photo"}
+            className="media-thumb" onClick={() => onAdd(photo.urls.regular)}
+            title={`Photo by ${photo.user?.name} on Unsplash`}/>
+        ))}
+      </div>
+      <p style={{ fontSize:10.5, color:"#C0B0A0", marginTop:10, textAlign:"center" }}>
+        Photos by <a href="https://unsplash.com" target="_blank" rel="noreferrer" style={{ color:"#C0B0A0" }}>Unsplash</a>
+      </p>
+    </div>
+  );
+}
+
+// ─── DRAGGABLE ITEM ───────────────────────────────────────────────────────────
+
+function DItem({ item, selected, onSelect, onDelete, onMove, onResize, onTextChange, containerRef }) {
   const ref = useRef(null);
   const dragging = useRef(false);
-  const off = useRef({ x: 0, y: 0 });
+  const resizing = useRef(false);
+  const off = useRef({ x:0, y:0 });
+  const startSize = useRef({ w:0, h:0 });
+  const startMouse = useRef({ x:0, y:0 });
   const [editing, setEditing] = useState(false);
   const textRef = useRef(null);
 
+  const getDefaultW = () => item.type==="text" ? 200 : item.type==="emoji" ? 50 : 130;
+  const getDefaultH = () => item.type==="text" ? 60  : item.type==="emoji" ? 50 : 100;
+  const w = item.width  || getDefaultW();
+  const h = item.height || getDefaultH();
+
   const handleMouseDown = useCallback((e) => {
-    if (editing) return;
+    if (editing || resizing.current) return;
     e.stopPropagation();
     onSelect(item.id);
     dragging.current = true;
@@ -275,6 +307,21 @@ function DItem({ item, selected, onSelect, onDelete, onMove, onTextChange, conta
     window.addEventListener("mouseup", up);
   }, [editing, item.id, onSelect, onMove, containerRef]);
 
+  const handleResizeDown = useCallback((e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    resizing.current = true;
+    startMouse.current = { x: e.clientX, y: e.clientY };
+    startSize.current = { w: item.width || getDefaultW(), h: item.height || getDefaultH() };
+    const move = (e) => {
+      if (!resizing.current) return;
+      onResize(item.id, Math.max(40, startSize.current.w + e.clientX - startMouse.current.x), Math.max(30, startSize.current.h + e.clientY - startMouse.current.y));
+    };
+    const up = () => { resizing.current = false; window.removeEventListener("mousemove", move); window.removeEventListener("mouseup", up); };
+    window.addEventListener("mousemove", move);
+    window.addEventListener("mouseup", up);
+  }, [item, onResize]);
+
   const startEdit = (e) => {
     e.stopPropagation();
     setEditing(true);
@@ -286,40 +333,56 @@ function DItem({ item, selected, onSelect, onDelete, onMove, onTextChange, conta
       }
     }, 40);
   };
-
-  const finishEdit = () => {
-    setEditing(false);
-    if (textRef.current) onTextChange(item.id, textRef.current.innerText);
-  };
+  const finishEdit = () => { setEditing(false); if (textRef.current) onTextChange(item.id, textRef.current.innerText); };
 
   return (
     <div ref={ref} className={`d-item${selected?" sel":""}`}
-      style={{ left: item.x, top: item.y, zIndex: selected ? 50 : 10, maxWidth: item.type === "text" ? 320 : item.type === "emoji" ? 64 : 150 }}
+      style={{ left:item.x, top:item.y, width:w, height:item.type==="text"?"auto":h, zIndex:selected?50:10 }}
       onMouseDown={handleMouseDown}
       onClick={(e) => { e.stopPropagation(); onSelect(item.id); }}>
-      <div className="d-border" />
+      <div className="d-border"/>
       <button className="d-del" onClick={(e) => { e.stopPropagation(); onDelete(item.id); }}>×</button>
-      {item.type === "text" && (
+      {item.type==="text" && <button className="d-edit" onClick={startEdit} title="Edit text">✎</button>}
+
+      {item.type==="text" && (
+        <div ref={textRef} className="d-text" contentEditable={editing} suppressContentEditableWarning
+          onBlur={finishEdit} onKeyDown={(e) => { if(e.key==="Escape") finishEdit(); }}
+          style={{ fontFamily:item.font, fontSize:item.size, color:item.color, fontWeight:item.bold?700:400, fontStyle:item.italic?"italic":"normal", width:"100%", minHeight:"1em" }}>
+          {item.text}
+        </div>
+      )}
+      {item.type==="emoji" && (
+        <span style={{ fontSize:Math.max(20,w*0.65), lineHeight:1, display:"block", textAlign:"center", width:w, height:h, lineHeight:h+"px" }}>
+          {item.content}
+        </span>
+      )}
+      {(item.type==="photo"||item.type==="gif") && (
+        <img src={item.url} alt="" style={{ width:w, height:h, objectFit:"cover", borderRadius:9, display:"block", boxShadow:"0 3px 12px rgba(61,43,31,.18)" }}
+          onError={(e) => { e.target.style.opacity=".3"; }}/>
+      )}
+      {item.type==="audio" && (
+        <div style={{ width:w, padding:"10px 12px", background:"#FAF7F2", borderRadius:10, border:"1px solid rgba(61,43,31,.12)", display:"flex", alignItems:"center", gap:8 }}>
+          <span style={{ fontSize:20 }}>🎵</span>
+          <audio controls style={{ width:"100%", height:32 }} src={item.url}/>
+        </div>
+      )}
+
+      {selected && (
         <>
-          <button className="d-edit" onClick={startEdit} title="Edit text">✎</button>
-          <div ref={textRef} className="d-text"
-            contentEditable={editing} suppressContentEditableWarning
-            onBlur={finishEdit}
-            onKeyDown={(e) => { if (e.key === "Escape") finishEdit(); }}
-            style={{ fontFamily: item.font, fontSize: item.size, color: item.color, fontWeight: item.bold ? 700 : 400, fontStyle: item.italic ? "italic" : "normal" }}>
-            {item.text}
+          <div onMouseDown={handleResizeDown}
+            style={{ position:"absolute", bottom:-6, right:-6, width:16, height:16, background:"#3D2B1F", borderRadius:"50%", cursor:"nwse-resize", zIndex:30, border:"2px solid white", boxShadow:"0 1px 4px rgba(0,0,0,.3)" }}
+            title="Drag to resize"/>
+          <div style={{ position:"absolute", bottom:-22, left:0, fontSize:10, color:"rgba(61,43,31,.45)", whiteSpace:"nowrap", pointerEvents:"none", fontFamily:"'Lora',serif" }}>
+            {Math.round(w)} × {Math.round(h)}
           </div>
         </>
-      )}
-      {item.type === "emoji" && <span style={{ fontSize: 36, lineHeight: 1, display: "block" }}>{item.content}</span>}
-      {(item.type === "photo" || item.type === "gif") && (
-        <img src={item.url} alt="" style={{ width: 130, height: 100, objectFit: "cover", borderRadius: 9, display: "block", boxShadow: "0 3px 12px rgba(61,43,31,.18)" }} onError={(e) => { e.target.style.opacity = ".3"; }} />
       )}
     </div>
   );
 }
 
-// ── Main App ──────────────────────────────────────────────────────────────────
+// ─── MAIN APP ─────────────────────────────────────────────────────────────────
+
 export default function Steeped() {
   const [view, setView]             = useState("home");
   const [theme, setTheme]           = useState(null);
@@ -329,7 +392,6 @@ export default function Steeped() {
   const [selCover, setSelCover]     = useState(null);
   const [selPage, setSelPage]       = useState(null);
 
-  // sign form
   const [signerName, setSignerName] = useState("");
   const [msgText, setMsgText]       = useState("");
   const [tColor, setTColor]         = useState("#3D2B1F");
@@ -338,7 +400,6 @@ export default function Steeped() {
   const [tBold, setTBold]           = useState(false);
   const [tItalic, setTItalic]       = useState(false);
 
-  // cover form
   const [covText, setCovText]       = useState("");
   const [covFont, setCovFont]       = useState(FONTS[0].value);
   const [covColor, setCovColor]     = useState("#3D2B1F");
@@ -353,137 +414,50 @@ export default function Steeped() {
   const [uploads, setUploads]       = useState([]);
   const [form, setForm]             = useState({ name:"", to:"", note:"", date:"", time:"" });
 
-  const fileRef   = useRef(null);
-  const coverRef  = useRef(null);
-  const pageRefs  = useRef({});
+  const fileRef  = useRef(null);
+  const coverRef = useRef(null);
+  const pageRefs = useRef({});
 
   const goEditor = (t) => {
     setTheme(t); setView("editor"); setActivePage(0); setPages([makePage(1)]);
     setCoverItems([
-      { id: uid(), type:"text", x:70, y:130, text:t.name, font:"'Playfair Display',serif", size:30, color:t.accent, bold:true,  italic:false },
-      { id: uid(), type:"text", x:80, y:180, text:"A card made with love ✦", font:"'Lora',serif", size:14, color:t.accent, bold:false, italic:true },
+      { id:uid(), type:"text", x:70, y:130, text:t.name, font:"'Playfair Display',serif", size:30, color:t.accent, bold:true,  italic:false },
+      { id:uid(), type:"text", x:80, y:180, text:"A card made with love ✦", font:"'Lora',serif", size:14, color:t.accent, bold:false, italic:true },
     ]);
   };
 
   const fSet = (k) => (e) => setForm(p => ({ ...p, [k]: e.target.value }));
   const curPage = activePage > 0 ? pages[activePage - 1] : null;
 
-  // cover helpers
-  const addCovText = () => {
-    if (!covText.trim()) return;
-    setCoverItems(p => [...p, { id:uid(), type:"text", x:60, y:60+p.length*46, text:covText, font:covFont, size:covSize, color:covColor, bold:covBold, italic:covItalic }]);
-    setCovText("");
-  };
-  const addCovMedia = (item) => setCoverItems(p => [...p, { ...item, id:uid(), x:40+(p.length%3)*140, y:60+Math.floor(p.length/3)*120 }]);
-  const moveCovItem = useCallback((id,x,y) => setCoverItems(p => p.map(i => i.id===id?{...i,x,y}:i)),[]);
-  const delCovItem  = (id) => setCoverItems(p => p.filter(i => i.id!==id));
-  const editCovText = (id,text) => setCoverItems(p => p.map(i => i.id===id?{...i,text}:i));
+  // Cover helpers
+  const addCovText  = () => { if(!covText.trim())return; setCoverItems(p=>[...p,{id:uid(),type:"text",x:60,y:60+p.length*46,text:covText,font:covFont,size:covSize,color:covColor,bold:covBold,italic:covItalic}]); setCovText(""); };
+  const addCovMedia = (item) => setCoverItems(p=>[...p,{...item,id:uid(),x:40+(p.length%3)*140,y:60+Math.floor(p.length/3)*120}]);
+  const moveCovItem = useCallback((id,x,y) => setCoverItems(p=>p.map(i=>i.id===id?{...i,x,y}:i)),[]);
+  const resCovItem  = useCallback((id,w,h) => setCoverItems(p=>p.map(i=>i.id===id?{...i,width:w,height:h}:i)),[]);
+  const delCovItem  = (id) => setCoverItems(p=>p.filter(i=>i.id!==id));
+  const editCovText = (id,text) => setCoverItems(p=>p.map(i=>i.id===id?{...i,text}:i));
 
-  // page helpers
+  // Page helpers
   const spawnPageItem = (item) => {
-    if (activePage === 0) { addCovMedia(item); return; }
-    setPages(prev => prev.map((pg,i) => i===activePage-1
-      ? { ...pg, items:[...pg.items,{...item,id:uid(),x:20+(pg.items.length%4)*110,y:60+Math.floor(pg.items.length/4)*130}] }
-      : pg));
+    if (activePage===0) { addCovMedia(item); return; }
+    setPages(prev=>prev.map((pg,i)=>i===activePage-1?{...pg,items:[...pg.items,{...item,id:uid(),x:20+(pg.items.length%4)*110,y:60+Math.floor(pg.items.length/4)*130}]}:pg));
   };
-  const movePageItem = useCallback((pgIdx,id,x,y) => {
-    setPages(prev => prev.map((pg,i) => i===pgIdx?{...pg,items:pg.items.map(it=>it.id===id?{...it,x,y}:it)}:pg));
-  },[]);
-  const delPageItem  = (pgIdx,id) => setPages(prev => prev.map((pg,i) => i===pgIdx?{...pg,items:pg.items.filter(it=>it.id!==id)}:pg));
-  const editPageText = (pgIdx,id,text) => setPages(prev => prev.map((pg,i) => i===pgIdx?{...pg,items:pg.items.map(it=>it.id===id?{...it,text}:it)}:pg));
+  const movePageItem = useCallback((pi,id,x,y) => setPages(prev=>prev.map((pg,i)=>i===pi?{...pg,items:pg.items.map(it=>it.id===id?{...it,x,y}:it)}:pg)),[]);
+  const resPageItem  = useCallback((pi,id,w,h) => setPages(prev=>prev.map((pg,i)=>i===pi?{...pg,items:pg.items.map(it=>it.id===id?{...it,width:w,height:h}:it)}:pg)),[]);
+  const delPageItem  = (pi,id) => setPages(prev=>prev.map((pg,i)=>i===pi?{...pg,items:pg.items.filter(it=>it.id!==id)}:pg));
+  const editPageText = (pi,id,text) => setPages(prev=>prev.map((pg,i)=>i===pi?{...pg,items:pg.items.map(it=>it.id===id?{...it,text}:it)}:pg));
 
-  const addSig = () => {
-    if (!msgText.trim() || activePage===0) return;
-    spawnPageItem({ type:"text", text:msgText, signerName:signerName||"Anonymous", font:tFont, size:tSize, color:tColor, bold:tBold, italic:tItalic });
-    setMsgText("");
-  };
-
+  const addSig = () => { if(!msgText.trim()||activePage===0)return; spawnPageItem({type:"text",text:msgText,signerName:signerName||"Anonymous",font:tFont,size:tSize,color:tColor,bold:tBold,italic:tItalic}); setMsgText(""); };
   const addPage = () => { const p=makePage(pages.length+1); setPages(prev=>[...prev,p]); setActivePage(pages.length+1); };
-  const delPage = (idx) => {
-    if(pages.length===1)return;
-    const u=pages.filter((_,i)=>i!==idx).map((p,i)=>({...p,num:i+1}));
-    setPages(u); if(activePage>u.length)setActivePage(u.length);
-  };
-
+  const delPage = (idx) => { if(pages.length===1)return; const u=pages.filter((_,i)=>i!==idx).map((p,i)=>({...p,num:i+1})); setPages(u); if(activePage>u.length)setActivePage(u.length); };
   const handleUpload = (e) => { Array.from(e.target.files).forEach(f=>{ const r=new FileReader(); r.onload=ev=>setUploads(p=>[...p,{id:uid(),url:ev.target.result,label:f.name}]); r.readAsDataURL(f); }); };
   const doSend = () => { setSent(true); setTimeout(()=>{setSent(false);setShowSend(false);},2800); };
-  const desel = () => { setSelCover(null); setSelPage(null); };
+  const desel  = () => { setSelCover(null); setSelPage(null); };
   const totalItems = pages.reduce((a,p)=>a+p.items.length,0);
 
- function PhotosPanel({ onAdd, uploads, onUpload, fileRef }) {
-  const [query, setQuery] = useState("");
-  const [photos, setPhotos] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const debounceRef = useRef(null);
+  // ── HOME ──────────────────────────────────────────────────────────────────
 
-  const search = async (q) => {
-    const endpoint = q.trim()
-      ? `https://api.unsplash.com/search/photos?query=${encodeURIComponent(q)}&per_page=12&orientation=landscape`
-      : `https://api.unsplash.com/photos?per_page=12&order_by=popular`;
-    setLoading(true);
-    const res = await fetch(endpoint, {
-      headers: { Authorization: `Client-ID ${import.meta.env.VITE_UNSPLASH_KEY}` }
-    });
-    const data = await res.json();
-    setPhotos(q.trim() ? data.results : data);
-    setLoading(false);
-  };
-
-  useEffect(() => { search(""); }, []);
-
-  const handleInput = (e) => {
-    setQuery(e.target.value);
-    clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => search(e.target.value), 500);
-  };
-
-  return (
-    <div>
-      <button className="btn-upload" onClick={() => fileRef.current?.click()}>
-        📤 Upload your own photo
-      </button>
-      <input ref={fileRef} type="file" accept="image/*" multiple
-        style={{ display:"none" }} onChange={onUpload} />
-
-      {uploads.length > 0 && (
-        <>
-          <div className="sub-label" style={{ marginBottom:8 }}>Your uploads</div>
-          <div className="media-grid" style={{ marginBottom:14 }}>
-            {uploads.map(p => (
-              <img key={p.id} src={p.url} alt={p.label} className="media-thumb"
-                onClick={() => onAdd(p.url)} />
-            ))}
-          </div>
-        </>
-      )}
-
-      <input className="f-input" placeholder="Search free photos…"
-        value={query} onChange={handleInput}
-        style={{ marginBottom:10 }} />
-
-      {loading && <p style={{ fontSize:12, color:"#9A7A5A", marginBottom:8 }}>Searching…</p>}
-
-      <div className="media-grid">
-        {photos.map(photo => (
-          <img key={photo.id}
-            src={photo.urls.small}
-            alt={photo.alt_description || "photo"}
-            className="media-thumb"
-            onClick={() => onAdd(photo.urls.regular)}
-            title={`Photo by ${photo.user.name} on Unsplash`} />
-        ))}
-      </div>
-
-      <p style={{ fontSize:10.5, color:"#C0B0A0", marginTop:10, textAlign:"center" }}>
-        Photos by <a href="https://unsplash.com" target="_blank" rel="noreferrer"
-          style={{ color:"#C0B0A0" }}>Unsplash</a>
-      </p>
-    </div>
-  );
-}
-
-  // ── HOME ──
-  if(view==="home") return (
+  if (view==="home") return (
     <div className="app"><style>{CSS}</style>
       <nav className="nav">
         <div><span className="logo">Steeped<span className="logo-dot">.</span></span><span className="logo-sub">cards brewing with kindness</span></div>
@@ -497,7 +471,7 @@ export default function Steeped() {
           <p className="hero-sub">Beautiful multi-page cards for every occasion.<br/>Sign together, add photos & GIFs, share warmly.</p>
           <button className="btn-hero" onClick={()=>setView("themes")}>Brew a Card →</button>
           <div style={{display:"flex",flexWrap:"wrap",gap:10,justifyContent:"center",marginTop:28}}>
-            {["📖 Multiple signing pages","🎨 Custom cover design","🖋️ Drag & place text anywhere","📸 Photos & GIFs","✉️ Email, text or print"].map(f=><span key={f} className="pill">{f}</span>)}
+            {["📖 Multiple signing pages","🎨 Custom cover design","🖋️ Drag & resize anything","📸 Photos & GIFs","✉️ Email, text or print"].map(f=><span key={f} className="pill">{f}</span>)}
           </div>
         </div>
         <div className="fan-wrap">{THEMES.slice(0,5).map((t,i)=>{const rots=[-9,-4,0,5,10],ty=[4,2,0,2,4];return <div key={t.id} className="fan-card" onClick={()=>goEditor(t)} style={{background:t.cover,transform:`rotate(${rots[i]}deg) translateY(${ty[i]}px)`,zIndex:i===2?5:i}}><div style={{fontSize:26}}>{t.emoji}</div><div style={{fontFamily:"'Playfair Display',serif",fontSize:11,color:t.accent,marginTop:7,fontWeight:600}}>{t.name}</div></div>;})}
@@ -506,8 +480,9 @@ export default function Steeped() {
     </div>
   );
 
-  // ── THEMES ──
-  if(view==="themes") return (
+  // ── THEMES ────────────────────────────────────────────────────────────────
+
+  if (view==="themes") return (
     <div className="app"><style>{CSS}</style>
       <nav className="nav">
         <div onClick={()=>setView("home")} style={{cursor:"pointer"}}><span className="logo">Steeped<span className="logo-dot">.</span></span><span className="logo-sub">cards brewing with kindness</span></div>
@@ -526,7 +501,8 @@ export default function Steeped() {
     </div>
   );
 
-  // ── EDITOR ──
+  // ── EDITOR ────────────────────────────────────────────────────────────────
+
   return (
     <div className="app"><style>{CSS}</style>
       <nav className="nav">
@@ -539,7 +515,7 @@ export default function Steeped() {
 
       <div className="editor-layout">
 
-        {/* LEFT */}
+        {/* LEFT PANEL */}
         <div className="panel-left">
           <div className="panel-tabs">
             {[{id:"text",icon:"🖋️",label:"Sign"},{id:"photos",icon:"📸",label:"Photos"},{id:"gifs",icon:"✨",label:"GIFs"},{id:"emojis",icon:"😊",label:"Emoji"},{id:"audio",icon:"🎵",label:"Audio"}].map(t=>(
@@ -550,84 +526,58 @@ export default function Steeped() {
           </div>
           <div className="panel-content">
 
-            {activePanel==="text" && (
-              activePage===0 ? (
-                /* COVER TEXT TOOL */
-                <div>
-                  <div style={{padding:"10px 12px",background:"#FFF8F0",borderRadius:8,border:"1px solid rgba(184,132,74,.2)",fontSize:12.5,color:"#8B6E4E",lineHeight:1.7,marginBottom:14}}>
-                    🎨 <strong style={{color:"#3D2B1F"}}>Cover editor</strong> — type text below and add it to the cover. Then <strong>drag</strong> it anywhere. Click ✎ to edit words, × to delete.
-                  </div>
-                  <label className="field-label">Add text</label>
-                  <input className="f-input" placeholder="e.g. Happy Birthday, Sarah!" value={covText} onChange={e=>setCovText(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addCovText()}/>
-                  <label className="field-label">Style</label>
-                  <div className="style-row">
-                    <div className="style-col"><span className="sub-label">Font</span>
-                      <select className="f-select" value={covFont} onChange={e=>setCovFont(e.target.value)}>{FONTS.map(f=><option key={f.value} value={f.value}>{f.label}</option>)}</select>
-                    </div>
-                    <div className="style-col"><span className="sub-label">Size</span>
-                      <select className="f-select" value={covSize} onChange={e=>setCovSize(Number(e.target.value))}>{[12,14,16,18,20,22,24,28,32,36,42].map(s=><option key={s} value={s}>{s}px</option>)}</select>
-                    </div>
-                    <div className="style-col"><span className="sub-label">Color</span>
-                      <input type="color" className="f-color" value={covColor} onChange={e=>setCovColor(e.target.value)}/>
-                    </div>
-                  </div>
-                  <div style={{display:"flex",gap:8,marginTop:10}}>
-                    <button className={`fmt-btn${covBold?" on":""}`} onClick={()=>setCovBold(b=>!b)}><strong>B</strong></button>
-                    <button className={`fmt-btn${covItalic?" on":""}`} onClick={()=>setCovItalic(it=>!it)}><em>I</em></button>
-                  </div>
-                  <button className="btn-primary" style={{width:"100%",marginTop:14}} onClick={addCovText}>Add to Cover</button>
-                </div>
-              ) : (
-                /* SIGNING PAGE TEXT */
-                <div>
-                  <label className="field-label">Your name</label>
-                  <input className="f-input" placeholder="How should we sign this?" value={signerName} onChange={e=>setSignerName(e.target.value)}/>
-                  <label className="field-label">Your message</label>
-                  <textarea className="f-textarea" rows={4} placeholder="Write something wonderful..." value={msgText} onChange={e=>setMsgText(e.target.value)}/>
-                  <label className="field-label">Style</label>
-                  <div className="style-row">
-                    <div className="style-col"><span className="sub-label">Font</span>
-                      <select className="f-select" value={tFont} onChange={e=>setTFont(e.target.value)}>{FONTS.map(f=><option key={f.value} value={f.value}>{f.label}</option>)}</select>
-                    </div>
-                    <div className="style-col"><span className="sub-label">Size</span>
-                      <select className="f-select" value={tSize} onChange={e=>setTSize(Number(e.target.value))}>{[12,13,14,15,16,18,20,22,24].map(s=><option key={s} value={s}>{s}px</option>)}</select>
-                    </div>
-                    <div className="style-col"><span className="sub-label">Color</span>
-                      <input type="color" className="f-color" value={tColor} onChange={e=>setTColor(e.target.value)}/>
-                    </div>
-                  </div>
-                  <div style={{display:"flex",gap:8,marginTop:10}}>
-                    <button className={`fmt-btn${tBold?" on":""}`} onClick={()=>setTBold(b=>!b)}><strong>B</strong></button>
-                    <button className={`fmt-btn${tItalic?" on":""}`} onClick={()=>setTItalic(it=>!it)}><em>I</em></button>
-                  </div>
-                  {msgText&&<div className="msg-preview" style={{fontFamily:tFont,fontSize:tSize,color:tColor,fontWeight:tBold?700:400,fontStyle:tItalic?"italic":"normal",marginTop:12}}><div>{msgText}</div>{signerName&&<div style={{fontSize:tSize*.75,marginTop:6,opacity:.6}}>— {signerName}</div>}</div>}
-                  <button className="btn-primary" style={{width:"100%",marginTop:14}} onClick={addSig}>Add to Page {activePage}</button>
-                  <div style={{marginTop:10,fontSize:12,color:"#9A7A5A",lineHeight:1.7,fontStyle:"italic"}}>💡 Drag any item on the card to reposition it.</div>
-                </div>
-              )
-            )}
-
-            {activePanel === "photos" && (
-  <PhotosPanel
-    onAdd={(url) => spawnPageItem({ type: "photo", url })}
-    uploads={uploads}
-    onUpload={handleUpload}
-    fileRef={fileRef}
-  />
-)}
-
-            {activePanel === "gifs" && (
-  <GiphyPanel onAdd={(url) => spawnPageItem({ type: "gif", url })} />
-)}
-
-            {activePanel==="emojis"&&(
+            {activePanel==="text" && (activePage===0 ? (
               <div>
-                <p style={{fontSize:13,color:"#9A7A5A",marginBottom:12,lineHeight:1.6}}>Tap to place — then drag anywhere!</p>
+                <div style={{padding:"10px 12px",background:"#FFF8F0",borderRadius:8,border:"1px solid rgba(184,132,74,.2)",fontSize:12.5,color:"#8B6E4E",lineHeight:1.7,marginBottom:14}}>
+                  🎨 <strong style={{color:"#3D2B1F"}}>Cover editor</strong> — add text, then drag &amp; resize it anywhere.
+                </div>
+                <label className="field-label">Add text</label>
+                <input className="f-input" placeholder="e.g. Happy Birthday, Sarah!" value={covText} onChange={e=>setCovText(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addCovText()}/>
+                <label className="field-label">Style</label>
+                <div className="style-row">
+                  <div className="style-col"><span className="sub-label">Font</span><select className="f-select" value={covFont} onChange={e=>setCovFont(e.target.value)}>{FONTS.map(f=><option key={f.value} value={f.value}>{f.label}</option>)}</select></div>
+                  <div className="style-col"><span className="sub-label">Size</span><select className="f-select" value={covSize} onChange={e=>setCovSize(Number(e.target.value))}>{[12,14,16,18,20,22,24,28,32,36,42].map(s=><option key={s} value={s}>{s}px</option>)}</select></div>
+                  <div className="style-col"><span className="sub-label">Color</span><input type="color" className="f-color" value={covColor} onChange={e=>setCovColor(e.target.value)}/></div>
+                </div>
+                <div style={{display:"flex",gap:8,marginTop:10}}>
+                  <button className={`fmt-btn${covBold?" on":""}`} onClick={()=>setCovBold(b=>!b)}><strong>B</strong></button>
+                  <button className={`fmt-btn${covItalic?" on":""}`} onClick={()=>setCovItalic(it=>!it)}><em>I</em></button>
+                </div>
+                <button className="btn-primary" style={{width:"100%",marginTop:14}} onClick={addCovText}>Add to Cover</button>
+              </div>
+            ) : (
+              <div>
+                <label className="field-label">Your name</label>
+                <input className="f-input" placeholder="How should we sign this?" value={signerName} onChange={e=>setSignerName(e.target.value)}/>
+                <label className="field-label">Your message</label>
+                <textarea className="f-textarea" rows={4} placeholder="Write something wonderful..." value={msgText} onChange={e=>setMsgText(e.target.value)}/>
+                <label className="field-label">Style</label>
+                <div className="style-row">
+                  <div className="style-col"><span className="sub-label">Font</span><select className="f-select" value={tFont} onChange={e=>setTFont(e.target.value)}>{FONTS.map(f=><option key={f.value} value={f.value}>{f.label}</option>)}</select></div>
+                  <div className="style-col"><span className="sub-label">Size</span><select className="f-select" value={tSize} onChange={e=>setTSize(Number(e.target.value))}>{[12,13,14,15,16,18,20,22,24].map(s=><option key={s} value={s}>{s}px</option>)}</select></div>
+                  <div className="style-col"><span className="sub-label">Color</span><input type="color" className="f-color" value={tColor} onChange={e=>setTColor(e.target.value)}/></div>
+                </div>
+                <div style={{display:"flex",gap:8,marginTop:10}}>
+                  <button className={`fmt-btn${tBold?" on":""}`} onClick={()=>setTBold(b=>!b)}><strong>B</strong></button>
+                  <button className={`fmt-btn${tItalic?" on":""}`} onClick={()=>setTItalic(it=>!it)}><em>I</em></button>
+                </div>
+                {msgText&&<div className="msg-preview" style={{fontFamily:tFont,fontSize:tSize,color:tColor,fontWeight:tBold?700:400,fontStyle:tItalic?"italic":"normal",marginTop:12}}><div>{msgText}</div>{signerName&&<div style={{fontSize:tSize*.75,marginTop:6,opacity:.6}}>— {signerName}</div>}</div>}
+                <button className="btn-primary" style={{width:"100%",marginTop:14}} onClick={addSig}>Add to Page {activePage}</button>
+                <div style={{marginTop:10,fontSize:12,color:"#9A7A5A",lineHeight:1.7,fontStyle:"italic"}}>💡 Click to select · Drag to move · ↘ corner to resize</div>
+              </div>
+            ))}
+
+            {activePanel==="photos" && <PhotosPanel onAdd={(url)=>spawnPageItem({type:"photo",url})} uploads={uploads} onUpload={handleUpload} fileRef={fileRef}/>}
+            {activePanel==="gifs"   && <GiphyPanel  onAdd={(url)=>spawnPageItem({type:"gif",url})}/>}
+
+            {activePanel==="emojis" && (
+              <div>
+                <p style={{fontSize:13,color:"#9A7A5A",marginBottom:12,lineHeight:1.6}}>Tap to place — drag to move, corner to resize!</p>
                 <div className="emoji-grid">{EMOJIS.map(e=><button key={e} className="emoji-btn" onClick={()=>spawnPageItem({type:"emoji",content:e})}>{e}</button>)}</div>
               </div>
             )}
 
-            {activePanel==="audio"&&(
+            {activePanel==="audio" && (
               <div>
                 <p style={{fontSize:13,color:"#9A7A5A",lineHeight:1.75,marginBottom:18}}>Add a voice message or music clip.</p>
                 <button className="btn-upload">🎙️ Record a voice message</button>
@@ -640,7 +590,6 @@ export default function Steeped() {
 
         {/* CANVAS */}
         <div className="canvas-area" onClick={desel}>
-
           <div className="page-tabs-wrap" onClick={e=>e.stopPropagation()}>
             <button className={`page-tab-btn${activePage===0?" active":""}`} onClick={()=>setActivePage(0)}>
               <span style={{fontSize:14}}>{theme.emoji}</span> Cover
@@ -656,7 +605,7 @@ export default function Steeped() {
           </div>
 
           {/* COVER */}
-          {activePage===0&&(
+          {activePage===0 && (
             <div className="card-wrap" key="cover" onClick={e=>e.stopPropagation()}>
               <div className="card-cover" style={{background:theme.cover}}>
                 {theme.pattern.map((p,i)=><span key={i} className="cover-corner" style={{top:i<2?14:undefined,bottom:i>=2?14:undefined,left:i%2===0?18:undefined,right:i%2===1?18:undefined}}>{p}</span>)}
@@ -664,7 +613,7 @@ export default function Steeped() {
                   {coverItems.map(item=>(
                     <DItem key={item.id} item={item} selected={selCover===item.id}
                       onSelect={id=>{setSelCover(id);setSelPage(null);}}
-                      onDelete={delCovItem} onMove={moveCovItem} onTextChange={editCovText}
+                      onDelete={delCovItem} onMove={moveCovItem} onResize={resCovItem} onTextChange={editCovText}
                       containerRef={coverRef}/>
                   ))}
                   {coverItems.length===0&&(
@@ -676,13 +625,13 @@ export default function Steeped() {
                 </div>
               </div>
               <div style={{marginTop:12,padding:"10px 14px",background:"rgba(255,255,255,.75)",borderRadius:10,fontSize:12.5,color:"#8B6E4E",lineHeight:1.75,textAlign:"center"}}>
-                🎨 Use the <strong>Sign tab ←</strong> to add styled text. <strong>Drag</strong> items to reposition · <strong>✎</strong> to edit · <strong>×</strong> to remove
+                🎨 Use the <strong>Sign tab ←</strong> to add text · <strong>Drag</strong> to move · <strong>↘</strong> corner to resize · <strong>✎</strong> to edit
               </div>
             </div>
           )}
 
           {/* SIGNING PAGE */}
-          {activePage>0&&curPage&&(
+          {activePage>0 && curPage && (
             <div className="card-wrap" key={curPage.id} onClick={e=>e.stopPropagation()}>
               <div className="card-page" style={{"--acc":theme.accent}}>
                 <div ref={el=>pageRefs.current[activePage-1]=el} className="page-canvas" onClick={desel}>
@@ -699,10 +648,11 @@ export default function Steeped() {
                       onSelect={id=>{setSelPage(id);setSelCover(null);}}
                       onDelete={id=>delPageItem(activePage-1,id)}
                       onMove={(id,x,y)=>movePageItem(activePage-1,id,x,y)}
+                      onResize={(id,w,h)=>resPageItem(activePage-1,id,w,h)}
                       onTextChange={(id,text)=>editPageText(activePage-1,id,text)}
                       containerRef={{current:pageRefs.current[activePage-1]}}/>
                   ))}
-                  {curPage.items.length>0&&<div className="drop-hint">Click to select · Drag to move · ✎ edit · × remove</div>}
+                  {curPage.items.length>0&&<div className="drop-hint">Click to select · Drag to move · ↘ corner to resize · ✎ edit text · × remove</div>}
                 </div>
               </div>
               <button className="btn-page-add" onClick={e=>{e.stopPropagation();addPage();}}>
@@ -717,7 +667,7 @@ export default function Steeped() {
           </div>
         </div>
 
-        {/* RIGHT */}
+        {/* RIGHT PANEL */}
         <div className="panel-right">
           <h3 className="sidebar-title">Pages</h3>
           <div className="pages-list">
@@ -760,7 +710,7 @@ export default function Steeped() {
       </div>
 
       {/* SEND MODAL */}
-      {showSend&&(
+      {showSend && (
         <div className="modal-overlay" onClick={e=>e.target===e.currentTarget&&setShowSend(false)}>
           <div className="modal">
             <div className="modal-header">
@@ -775,10 +725,10 @@ export default function Steeped() {
               ))}
             </div>
             <div className="modal-body">
-              {sent?(
+              {sent ? (
                 <div className="sent-confirm"><span className="sent-icon">✨</span><h3 className="sent-title">Card sent with love!</h3><p className="sent-sub">Your kindness is on its way.<br/>May it bring a warm smile.</p></div>
-              ):<>
-                {(sendTab==="email"||sendTab==="text")&&(
+              ) : <>
+                {(sendTab==="email"||sendTab==="text") && (
                   <div>
                     <label className="field-label">Recipient's name</label>
                     <input className="f-input" placeholder="Who is this for?" value={form.name} onChange={fSet("name")}/>
@@ -789,7 +739,7 @@ export default function Steeped() {
                     <button className="btn-send" style={{width:"100%",marginTop:14}} onClick={doSend}>Send with love ✨</button>
                   </div>
                 )}
-                {sendTab==="schedule"&&(
+                {sendTab==="schedule" && (
                   <div>
                     <p style={{color:"#8B6E4E",fontSize:14,lineHeight:1.75,marginBottom:16}}>Schedule your card to arrive on a special day.</p>
                     <label className="field-label">Recipient's name</label>
@@ -801,8 +751,8 @@ export default function Steeped() {
                     <button className="btn-send" style={{width:"100%",marginTop:16}} onClick={doSend}>Schedule this Card 📅</button>
                   </div>
                 )}
-                {sendTab==="pdf"&&<div className="modal-center"><span className="modal-icon">📄</span><h3 className="modal-sec-title">Save as PDF</h3><p className="modal-sec-body">Download all {pages.length+1} pages as a beautiful PDF.</p><button className="btn-send" style={{padding:"13px 36px"}} onClick={()=>window.print()}>Download PDF</button></div>}
-                {sendTab==="print"&&<div className="modal-center"><span className="modal-icon">🖨️</span><h3 className="modal-sec-title">Print your card</h3><p className="modal-sec-body">Print all {pages.length+1} pages and hand-deliver with love.</p><button className="btn-send" style={{padding:"13px 36px"}} onClick={()=>window.print()}>Print Card</button></div>}
+                {sendTab==="pdf"   && <div className="modal-center"><span className="modal-icon">📄</span><h3 className="modal-sec-title">Save as PDF</h3><p className="modal-sec-body">Download all {pages.length+1} pages as a beautiful PDF.</p><button className="btn-send" style={{padding:"13px 36px"}} onClick={()=>window.print()}>Download PDF</button></div>}
+                {sendTab==="print" && <div className="modal-center"><span className="modal-icon">🖨️</span><h3 className="modal-sec-title">Print your card</h3><p className="modal-sec-body">Print all {pages.length+1} pages and hand-deliver with love.</p><button className="btn-send" style={{padding:"13px 36px"}} onClick={()=>window.print()}>Print Card</button></div>}
               </>}
             </div>
           </div>
