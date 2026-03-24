@@ -59,6 +59,8 @@ const EMOJIS = ["❤️","🌹","✨","🌸","💫","🌟","🌺","🌈","🦋",
 
 const CSS = `
 *{box-sizing:border-box;margin:0;padding:0;}
+html,body{width:100%;min-height:100%;background:#FAF5EE;}
+#root{width:100%;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 @keyframes cardIn{from{opacity:0;transform:scale(.96) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
 @keyframes steamRise{0%{transform:translateY(0) scale(1);opacity:0}25%{opacity:.13}100%{transform:translateY(-160px) scale(2.2);opacity:0}}
