@@ -37,6 +37,37 @@ const Icon = {
   mail:     (s=32,c="currentColor")=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>,
 };
 
+const TEMPLATES = {
+  // Each array entry is a preset set of coverItems
+  default: (theme) => [
+    { id:uid(), type:"text", x:40, y:90, text:theme.name, font:"'Playfair Display',serif", size:34, color:theme.accent, bold:false, italic:false },
+    { id:uid(), type:"text", x:42, y:140, text:"A card made with love", font:"'Lora',serif", size:14, color:theme.accent, bold:false, italic:true },
+  ],
+  centered: (theme) => [
+    { id:uid(), type:"text", x:80, y:150, text:theme.name, font:"'Dancing Script',cursive", size:38, color:theme.accent, bold:false, italic:false },
+    { id:uid(), type:"text", x:100, y:205, text:"with love ♥", font:"'Lora',serif", size:13, color:theme.accent, bold:false, italic:true },
+  ],
+  minimal: (theme) => [
+    { id:uid(), type:"text", x:32, y:280, text:theme.name.toUpperCase(), font:"'Jost',sans-serif", size:18, color:theme.accent, bold:true, italic:false },
+    { id:uid(), type:"text", x:32, y:308, text:"— a card from us to you", font:"'Lora',serif", size:12, color:theme.accent, bold:false, italic:true },
+  ],
+  bold: (theme) => [
+    { id:uid(), type:"text", x:30, y:60, text:theme.name, font:"'Playfair Display',serif", size:42, color:theme.accent, bold:true, italic:false },
+    { id:uid(), type:"text", x:32, y:120, text:"Made with kindness", font:"'Crimson Pro',serif", size:16, color:theme.accent, bold:false, italic:false },
+  ],
+  script: (theme) => [
+    { id:uid(), type:"text", x:50, y:110, text:"With love,", font:"'Dancing Script',cursive", size:20, color:theme.accent, bold:false, italic:false },
+    { id:uid(), type:"text", x:40, y:148, text:theme.name, font:"'Dancing Script',cursive", size:44, color:theme.accent, bold:false, italic:false },
+  ],
+};
+
+const TEMPLATE_LIST = [
+  { id:"default",  label:"Classic" },
+  { id:"centered", label:"Elegant" },
+  { id:"minimal",  label:"Minimal" },
+  { id:"bold",     label:"Bold" },
+  { id:"script",   label:"Script" },
+];
 const THEMES = [
   { id:"birthday",    name:"Happy Birthday",   icon:"cake",      accent:"#b85c38", cover:"linear-gradient(150deg,#fdf0e8,#f8dcc8,#f0c4a8)" },
   { id:"holiday",     name:"Happy Holidays",   icon:"snowflake", accent:"#3a6daa", cover:"linear-gradient(150deg,#eaf2ff,#cfe0ff,#b8d0ff)" },
@@ -631,6 +662,7 @@ export default function Steeped() {
   const [coverItems, setCoverItems] = useState([]);
   const [selCover, setSelCover] = useState(null);
   const [selPage, setSelPage] = useState(null);
+const [selectedTemplate, setSelectedTemplate] = useState("default");
   const [signerName, setSignerName] = useState("");
   const [msgText, setMsgText] = useState("");
   const [tColor, setTColor] = useState("#2A1508");
@@ -790,7 +822,12 @@ export default function Steeped() {
   const totalItems = pages.reduce((a,p)=>a+p.items.length,0);
   const handleUpload = (e) => { Array.from(e.target.files).forEach(f=>{ const r=new FileReader(); r.onload=ev=>setUploads(p=>[...p,{id:uid(),url:ev.target.result,label:f.name}]); r.readAsDataURL(f); }); };
   const allSigs = pages.flatMap(pg=>pg.items.filter(it=>it.type==="text").map(s=>({...s,pageNum:pg.num})));
-  const goEditor = (t) => { setTheme(t); setView("editor"); setActivePage(0); setPages([makePage(1)]); setCardId(null); setCardUrl(""); setCoverItems([{id:uid(),type:"text",x:62,y:80,text:t.name,font:"'Playfair Display',serif",size:32,color:t.accent,bold:false,italic:false},{id:uid(),type:"text",x:64,y:130,text:"A card made with love",font:"'Lora',serif",size:14,color:t.accent,bold:false,italic:true}]); };
+  const goEditor = (t) => {
+  setTheme(t); setView("editor"); setActivePage(0);
+  setPages([makePage(1)]); setCardId(null); setCardUrl("");
+  setCoverItems(TEMPLATES["default"](t));
+  setSelectedTemplate("default");
+};
 
   const NavLogo = ({ onClick }) => (
     <div onClick={onClick} style={{ cursor:"pointer" }}>
@@ -931,6 +968,33 @@ export default function Steeped() {
             {activePanel==="text" && (activePage===0 ? (
               <div>
                 <div className="info-box">Cover editor — add text, then drag &amp; resize it on the card.</div>
+<label className="field-label">Template style</label>
+<div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:7, marginBottom:16 }}>
+  {TEMPLATE_LIST.map(tmpl => (
+    <button key={tmpl.id}
+      onClick={() => {
+        setSelectedTemplate(tmpl.id);
+        setCoverItems(TEMPLATES[tmpl.id](theme));
+      }}
+      style={{
+        padding:"8px 4px",
+        borderRadius:6,
+        border: selectedTemplate===tmpl.id ? `2px solid ${theme.accent}` : "1.5px solid rgba(42,21,8,.12)",
+        background: selectedTemplate===tmpl.id ? theme.cover : "white",
+        cursor:"pointer",
+        fontFamily:"'Jost',sans-serif",
+        fontSize:11,
+        color: selectedTemplate===tmpl.id ? theme.accent : "#8B6E4E",
+        fontWeight: selectedTemplate===tmpl.id ? 600 : 400,
+        transition:"all .15s",
+      }}>
+      {tmpl.label}
+    </button>
+  ))}
+</div>
+<p style={{ fontFamily:"'Jost',sans-serif",fontSize:11,color:"rgba(42,21,8,.35)",lineHeight:1.6,marginBottom:12,marginTop:-8 }}>
+  Picking a style resets your cover text.
+</p>
                 <label className="field-label">Add text</label>
                 <input className="f-input" placeholder="e.g. Happy Birthday, Sarah!" value={covText} onChange={e=>setCovText(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addCovText()}/>
                 <label className="field-label">Style</label>
