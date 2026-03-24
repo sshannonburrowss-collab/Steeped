@@ -932,42 +932,6 @@ export default function Steeped() {
   /* ─────────────────────────────────────────────────────────────
      EDITOR
   ───────────────────────────────────────────────────────────── */
-  const SignPanelContent = () => activePage===0?(
-    <div>
-      <div className="info-box">Cover editor — add text, then drag &amp; resize it on the card.</div>
-      <label className="field-label">Add text</label>
-      <input className="f-input" placeholder="e.g. Happy Birthday, Sarah!" value={covText} onChange={e=>setCovText(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addCovText()}/>
-      <label className="field-label">Style</label>
-      <div className="style-row">
-        <div className="style-col"><span className="sub-label">Font</span><select className="f-select" value={covFont} onChange={e=>setCovFont(e.target.value)}>{FONTS.map(f=><option key={f.value} value={f.value}>{f.label}</option>)}</select></div>
-        <div className="style-col"><span className="sub-label">Size</span><select className="f-select" value={covSize} onChange={e=>setCovSize(Number(e.target.value))}>{[12,14,16,18,20,22,24,28,32,36,42].map(s=><option key={s} value={s}>{s}</option>)}</select></div>
-        <div className="style-col"><span className="sub-label">Color</span><input type="color" className="f-color" value={covColor} onChange={e=>setCovColor(e.target.value)}/></div>
-      </div>
-      <div style={{ display:"flex",gap:8,marginTop:10 }}><button className={`fmt-btn${covBold?" on":""}`} onClick={()=>setCovBold(b=>!b)}><strong>B</strong></button><button className={`fmt-btn${covItalic?" on":""}`} onClick={()=>setCovItalic(it=>!it)}><em>I</em></button></div>
-      <button className="btn-dark" style={{ width:"100%",marginTop:16,justifyContent:"center" }} onClick={addCovText}>Add to Cover</button>
-    </div>
-  ):(
-    <div>
-      <label className="field-label">Your name</label>
-      <input className="f-input" placeholder="How should we sign this?" value={signerName} onChange={e=>setSignerName(e.target.value)}/>
-      <label className="field-label">Your message</label>
-      <textarea className="f-textarea" rows={3} placeholder="Write something wonderful…" value={msgText} onChange={e=>setMsgText(e.target.value)}/>
-      <label className="field-label">Style</label>
-      <div className="style-row">
-        <div className="style-col"><span className="sub-label">Font</span><select className="f-select" value={tFont} onChange={e=>setTFont(e.target.value)}>{FONTS.map(f=><option key={f.value} value={f.value}>{f.label}</option>)}</select></div>
-        <div className="style-col"><span className="sub-label">Size</span><select className="f-select" value={tSize} onChange={e=>setTSize(Number(e.target.value))}>{[12,13,14,15,16,18,20,22,24].map(s=><option key={s} value={s}>{s}</option>)}</select></div>
-        <div className="style-col"><span className="sub-label">Color</span><input type="color" className="f-color" value={tColor} onChange={e=>setTColor(e.target.value)}/></div>
-      </div>
-      <div style={{ display:"flex",gap:8,marginTop:10 }}><button className={`fmt-btn${tBold?" on":""}`} onClick={()=>setTBold(b=>!b)}><strong>B</strong></button><button className={`fmt-btn${tItalic?" on":""}`} onClick={()=>setTItalic(it=>!it)}><em>I</em></button></div>
-      {msgText&&<div className="msg-preview" style={{ fontFamily:tFont,fontSize:tSize,color:tColor,fontWeight:tBold?700:400,fontStyle:tItalic?"italic":"normal",marginTop:12 }}>
-        <div>{msgText}</div>
-        {signerName&&<div style={{ fontSize:tSize*.72,marginTop:6,opacity:.6,fontStyle:"italic" }}>— {signerName}</div>}
-      </div>}
-      <button className="btn-dark" style={{ width:"100%",marginTop:14,justifyContent:"center" }} onClick={addSig}>Add to Page {activePage}</button>
-      <p style={{ fontFamily:"'Jost',sans-serif",fontSize:11,color:"rgba(42,21,8,.35)",lineHeight:1.75,marginTop:8 }}>Tap to select · drag to move · corner to resize</p>
-    </div>
-  );
-
   return (
     <div className="app"><style>{CSS}</style>
       <nav className="nav">
@@ -989,7 +953,41 @@ export default function Steeped() {
             ))}
           </div>
           <div className="panel-content">
-            {activePanel==="text"&&<SignPanelContent/>}
+            {activePanel==="text" && (activePage===0 ? (
+  <div>
+    <div className="info-box">Cover editor — add text, then drag &amp; resize it on the card.</div>
+    <label className="field-label">Add text</label>
+    <input className="f-input" placeholder="e.g. Happy Birthday, Sarah!" value={covText} onChange={e=>setCovText(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addCovText()}/>
+    <label className="field-label">Style</label>
+    <div className="style-row">
+      <div className="style-col"><span className="sub-label">Font</span><select className="f-select" value={covFont} onChange={e=>setCovFont(e.target.value)}>{FONTS.map(f=><option key={f.value} value={f.value}>{f.label}</option>)}</select></div>
+      <div className="style-col"><span className="sub-label">Size</span><select className="f-select" value={covSize} onChange={e=>setCovSize(Number(e.target.value))}>{[12,14,16,18,20,22,24,28,32,36,42].map(s=><option key={s} value={s}>{s}</option>)}</select></div>
+      <div className="style-col"><span className="sub-label">Color</span><input type="color" className="f-color" value={covColor} onChange={e=>setCovColor(e.target.value)}/></div>
+    </div>
+    <div style={{display:"flex",gap:8,marginTop:10}}><button className={`fmt-btn${covBold?" on":""}`} onClick={()=>setCovBold(b=>!b)}><strong>B</strong></button><button className={`fmt-btn${covItalic?" on":""}`} onClick={()=>setCovItalic(it=>!it)}><em>I</em></button></div>
+    <button className="btn-dark" style={{width:"100%",marginTop:16,justifyContent:"center"}} onClick={addCovText}>Add to Cover</button>
+  </div>
+) : (
+  <div>
+    <label className="field-label">Your name</label>
+    <input className="f-input" placeholder="How should we sign this?" value={signerName} onChange={e=>setSignerName(e.target.value)}/>
+    <label className="field-label">Your message</label>
+    <textarea className="f-textarea" rows={3} placeholder="Write something wonderful…" value={msgText} onChange={e=>setMsgText(e.target.value)}/>
+    <label className="field-label">Style</label>
+    <div className="style-row">
+      <div className="style-col"><span className="sub-label">Font</span><select className="f-select" value={tFont} onChange={e=>setTFont(e.target.value)}>{FONTS.map(f=><option key={f.value} value={f.value}>{f.label}</option>)}</select></div>
+      <div className="style-col"><span className="sub-label">Size</span><select className="f-select" value={tSize} onChange={e=>setTSize(Number(e.target.value))}>{[12,13,14,15,16,18,20,22,24].map(s=><option key={s} value={s}>{s}</option>)}</select></div>
+      <div className="style-col"><span className="sub-label">Color</span><input type="color" className="f-color" value={tColor} onChange={e=>setTColor(e.target.value)}/></div>
+    </div>
+    <div style={{display:"flex",gap:8,marginTop:10}}><button className={`fmt-btn${tBold?" on":""}`} onClick={()=>setTBold(b=>!b)}><strong>B</strong></button><button className={`fmt-btn${tItalic?" on":""}`} onClick={()=>setTItalic(it=>!it)}><em>I</em></button></div>
+    {msgText&&<div className="msg-preview" style={{fontFamily:tFont,fontSize:tSize,color:tColor,fontWeight:tBold?700:400,fontStyle:tItalic?"italic":"normal",marginTop:12}}>
+      <div>{msgText}</div>
+      {signerName&&<div style={{fontSize:tSize*.72,marginTop:6,opacity:.6,fontStyle:"italic"}}>— {signerName}</div>}
+    </div>}
+    <button className="btn-dark" style={{width:"100%",marginTop:14,justifyContent:"center"}} onClick={addSig}>Add to Page {activePage}</button>
+    <p style={{fontFamily:"'Jost',sans-serif",fontSize:11,color:"rgba(42,21,8,.35)",lineHeight:1.75,marginTop:8}}>Tap to select · drag to move · corner to resize</p>
+  </div>
+))}
             {activePanel==="photos"&&<PhotosPanel onAdd={(url)=>spawnPageItem({type:"photo",url})} uploads={uploads} onUpload={handleUpload} fileRef={fileRef}/>}
             {activePanel==="gifs"&&<GiphyPanel onAdd={(url)=>spawnPageItem({type:"gif",url})}/>}
             {activePanel==="emojis"&&<div><p style={{ fontFamily:"'Jost',sans-serif",fontSize:12,fontWeight:300,color:"#8B6E4E",marginBottom:14,lineHeight:1.7 }}>Tap to place — drag to move, corner to resize.</p><div className="emoji-grid">{EMOJIS.map(e=><button key={e} className="emoji-btn" onClick={()=>spawnPageItem({type:"emoji",content:e})}>{e}</button>)}</div></div>}
