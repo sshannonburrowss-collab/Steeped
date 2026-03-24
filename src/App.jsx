@@ -54,6 +54,61 @@ const FONTS = [
 ];
 
 const EMOJIS = ["❤️","🌹","✨","🌸","💫","🌟","🌺","🌈","🦋","🌻","💝","🌙","⭐","💐","😊","🎶","🌷","☀️","🌿","💞","🪷","🌼","🌊","🐝","🍀","🌴","🦜","🍋","🌮","🎵"];
+*/
+
+/* ── Viewer ── */
+.viewer-wrap{display:flex;flex-direction:column;min-height:calc(100vh - 68px);background:#180d05;}
+.viewer-header{text-align:center;padding:28px 20px 18px;border-bottom:1px solid rgba(212,168,67,.1);}
+.viewer-title{font-family:'Playfair Display',serif;font-size:2rem;font-weight:400;color:#FAF5EE;margin-bottom:16px;}
+.viewer-action-row{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;}
+.viewer-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 22px;border-radius:100px;border:1.5px solid rgba(212,168,67,.35);background:rgba(212,168,67,.1);color:#d4a843;font-family:'Jost',sans-serif;font-size:13px;font-weight:400;letter-spacing:.3px;cursor:pointer;transition:all .18s;}
+.viewer-btn:hover{background:rgba(212,168,67,.2);border-color:rgba(212,168,67,.65);transform:translateY(-1px);}
+.viewer-stage{flex:1;display:flex;align-items:flex-start;justify-content:center;padding:22px 20px 10px;}
+.viewer-slide{width:100%;max-width:520px;animation:cardIn .3s ease;}
+
+/* Viewer cover slide */
+.viewer-cover-card{border-radius:14px;overflow:hidden;box-shadow:0 28px 70px rgba(0,0,0,.5);line-height:0;}
+.viewer-cover-card .cover-canvas{pointer-events:none;border-radius:14px;min-height:300px;}
+
+/* Viewer message slide */
+.viewer-msg-slide{padding:36px 28px;min-height:200px;}
+.viewer-msg-text{font-family:'Lora',serif;font-size:1.05rem;line-height:1.8;color:#FAF5EE;margin-bottom:22px;word-break:break-word;}
+.viewer-msg-author{font-family:'Jost',sans-serif;font-size:0.95rem;font-weight:600;color:#FAF5EE;letter-spacing:.2px;}
+
+/* Viewer bottom bar */
+.viewer-bottom{padding:16px 20px 28px;}
+.viewer-view-row{display:flex;justify-content:center;gap:12px;margin-bottom:18px;}
+.viewer-nav-row{display:flex;align-items:center;justify-content:center;gap:18px;}
+.viewer-arrow{width:40px;height:40px;border-radius:50%;border:1.5px solid rgba(212,168,67,.3);background:rgba(212,168,67,.08);color:#d4a843;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;flex-shrink:0;}
+.viewer-arrow:hover{background:rgba(212,168,67,.18);border-color:rgba(212,168,67,.6);}
+.viewer-arrow:disabled{opacity:.3;cursor:default;transform:none;}
+.viewer-dots{display:flex;align-items:center;gap:8px;}
+.viewer-dot{width:9px;height:9px;border-radius:50%;background:rgba(212,168,67,.2);cursor:pointer;transition:all .2s;}
+.viewer-dot.active{background:#d4a843;transform:scale(1.35);}
+
+/* Board view */
+.viewer-board-header{background:linear-gradient(135deg,#4a1e08,#2e1006,#1a0804);padding:18px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid rgba(212,168,67,.12);}
+.viewer-board-back{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:100px;border:1px solid rgba(212,168,67,.25);background:rgba(212,168,67,.08);color:#d4a843;font-family:'Jost',sans-serif;font-size:12px;cursor:pointer;transition:all .15s;flex-shrink:0;}
+.viewer-board-back:hover{background:rgba(212,168,67,.18);}
+.viewer-board-titles{text-align:center;flex:1;}
+.viewer-board-name{font-family:'Playfair Display',serif;font-size:1.2rem;color:#FAF5EE;font-weight:400;}
+.viewer-board-for{font-family:'Jost',sans-serif;font-size:12px;color:rgba(212,168,67,.7);margin-top:2px;letter-spacing:.4px;}
+.viewer-board-body{padding:20px 16px;display:flex;flex-direction:column;gap:12px;}
+.viewer-sig-card{padding:20px 22px;background:#221008;border:1px solid rgba(212,168,67,.12);border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,.3);transition:border-color .2s;}
+.viewer-sig-card:hover{border-color:rgba(212,168,67,.28);}
+.viewer-sig-text{font-family:'Lora',serif;font-size:0.98rem;line-height:1.75;margin-bottom:10px;word-break:break-word;}
+.viewer-sig-name{font-family:'Jost',sans-serif;font-size:0.88rem;font-weight:500;color:rgba(250,245,238,.55);}
+.viewer-empty-board{text-align:center;padding:52px 20px;font-family:'Playfair Display',serif;font-style:italic;color:rgba(212,168,67,.4);font-size:1.1rem;}
+@media(max-width:680px){
+  .viewer-title{font-size:1.5rem;}
+  .viewer-btn{padding:8px 16px;font-size:12px;}
+  .viewer-msg-slide{padding:24px 18px;}
+  .viewer-board-body{padding:14px 12px;}
+  .viewer-sig-card{padding:16px 16px;}
+}
+
+
+/* 
 
 const CSS = `
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -544,6 +599,264 @@ function DItem({ item, selected, onSelect, onDelete, onMove, onResize, onTextCha
   );
 }
 
+──────────────────────────────────────────────────── */
+
+function CardViewer({ theme, coverItems, coverRef, pages, recipientName, onBack, onSign }) {
+  const [mode, setMode] = useState("slideshow");
+
+  // Flatten all messages across all pages into individual slides
+  const msgSlides = pages.flatMap(pg =>
+    pg.items.filter(it => it.type === "text").map(it => ({ ...it, pageNum: pg.num }))
+  );
+  // slides: [cover, ...each message]
+  const totalSlides = 1 + msgSlides.length;
+  const [slide, setSlide] = useState(0);
+
+  const prev = () => setSlide(s => Math.max(0, s - 1));
+  const next = () => setSlide(s => Math.min(totalSlides - 1, s + 1));
+
+  const ShareIcon = () => (
+    <svg width={15} height={15} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+      <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+      <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+    </svg>
+  );
+  const PenIcon = () => (
+    <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
+    </svg>
+  );
+  const ArrowL = () => (
+    <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+    </svg>
+  );
+  const ArrowR = () => (
+    <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+    </svg>
+  );
+  const GridIcon = () => (
+    <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+      <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+    </svg>
+  );
+  const SlidesIcon = () => (
+    <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="2" y="6" width="20" height="12" rx="2"/>
+      <path d="M22 10H2M22 14H2"/>
+    </svg>
+  );
+
+  /* ── Board view ── */
+  if (mode === "board") {
+    return (
+      <div className="viewer-wrap" style={{ minHeight: "calc(100vh - 68px)" }}>
+        <div className="viewer-board-header">
+          <button className="viewer-board-back" onClick={() => setMode("slideshow")}>
+            <ArrowL /> to Card
+          </button>
+          <div className="viewer-board-titles">
+            <div className="viewer-board-name">{theme.name}</div>
+            {recipientName && <div className="viewer-board-for">For {recipientName}</div>}
+          </div>
+          {/* spacer to balance layout */}
+          <div style={{ width: 88 }} />
+        </div>
+
+        <div className="viewer-board-body">
+          {msgSlides.length === 0 ? (
+            <div className="viewer-empty-board">
+              No signatures yet — be the first to sign!
+            </div>
+          ) : (
+            msgSlides.map(s => (
+              <div key={s.id} className="viewer-sig-card">
+                <div
+                  className="viewer-sig-text"
+                  style={{ color: s.color || "#FAF5EE", fontFamily: s.font }}
+                >
+                  {s.text}
+                </div>
+                {s.signerName && (
+                  <div
+                    className="viewer-sig-name"
+                    style={{ color: s.color ? s.color + "99" : undefined }}
+                  >
+                    {s.signerName}
+                  </div>
+                )}
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  /* ── Slideshow view ── */
+  const isFirstSlide = slide === 0;
+  const currentMsg = !isFirstSlide ? msgSlides[slide - 1] : null;
+
+  return (
+    <div className="viewer-wrap">
+      {/* Header */}
+      <div className="viewer-header">
+        <h1 className="viewer-title">{theme.name}</h1>
+        <div className="viewer-action-row">
+          <button className="viewer-btn" onClick={onSign}>
+            <PenIcon /> Sign Card
+          </button>
+          <button className="viewer-btn">
+            <ShareIcon /> Share
+          </button>
+        </div>
+      </div>
+
+      {/* Slide stage */}
+      <div className="viewer-stage">
+        <div className="viewer-slide" key={slide}>
+
+          {/* Slide 0 — Cover */}
+          {isFirstSlide && (
+            <div className="viewer-cover-card">
+              <div
+                className="cover-canvas"
+                style={{
+                  background: theme.cover,
+                  minHeight: 320,
+                  borderRadius: 14,
+                  position: "relative",
+                  padding: 24,
+                  pointerEvents: "none",
+                }}
+              >
+                {/* Decorative icon */}
+                <div style={{ position: "absolute", top: 20, right: 22, opacity: 0.15 }}>
+                  {Icon[theme.icon](38, theme.accent)}
+                </div>
+
+                {coverItems.length === 0 ? (
+                  <div style={{
+                    position: "absolute", inset: 0, display: "flex", flexDirection: "column",
+                    alignItems: "center", justifyContent: "center", gap: 14,
+                  }}>
+                    <div style={{ color: theme.accent }}>{Icon[theme.icon](52, theme.accent)}</div>
+                    <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 28, color: theme.accent }}>
+                      {theme.name}
+                    </div>
+                  </div>
+                ) : (
+                  coverItems.map(item => (
+                    item.type === "text" ? (
+                      <div
+                        key={item.id}
+                        style={{
+                          position: "absolute",
+                          left: item.x,
+                          top: item.y,
+                          fontFamily: item.font,
+                          fontSize: item.size,
+                          color: item.color,
+                          fontWeight: item.bold ? 700 : 400,
+                          fontStyle: item.italic ? "italic" : "normal",
+                          whiteSpace: "pre-wrap",
+                          maxWidth: item.width || 320,
+                        }}
+                      >
+                        {item.text}
+                      </div>
+                    ) : (item.type === "photo" || item.type === "gif") ? (
+                      <img
+                        key={item.id}
+                        src={item.url}
+                        alt=""
+                        style={{
+                          position: "absolute",
+                          left: item.x,
+                          top: item.y,
+                          width: item.width || 130,
+                          height: item.height || 100,
+                          objectFit: "cover",
+                          borderRadius: 7,
+                        }}
+                      />
+                    ) : null
+                  ))
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Slides 1..n — Individual messages */}
+          {!isFirstSlide && currentMsg && (
+            <div className="viewer-msg-slide">
+              <p
+                className="viewer-msg-text"
+                style={{
+                  fontFamily: currentMsg.font,
+                  color: currentMsg.color || "#FAF5EE",
+                  fontWeight: currentMsg.bold ? 700 : 400,
+                  fontStyle: currentMsg.italic ? "italic" : "normal",
+                }}
+              >
+                {currentMsg.text}
+              </p>
+              {currentMsg.signerName && (
+                <p className="viewer-msg-author">— {currentMsg.signerName}</p>
+              )}
+            </div>
+          )}
+
+          {/* Empty page message */}
+          {!isFirstSlide && !currentMsg && (
+            <div className="viewer-msg-slide">
+              <p style={{ fontFamily: "'Playfair Display',serif", color: "rgba(212,168,67,.4)", fontStyle: "italic" }}>
+                This page is empty.
+              </p>
+            </div>
+          )}
+
+        </div>
+      </div>
+
+      {/* Bottom bar */}
+      <div className="viewer-bottom">
+        <div className="viewer-view-row">
+          <button className="viewer-btn" onClick={() => { setMode("slideshow"); }}>
+            <SlidesIcon /> Slide Show
+          </button>
+          <button className="viewer-btn" onClick={() => setMode("board")}>
+            <GridIcon /> Board View
+          </button>
+        </div>
+        <div className="viewer-nav-row">
+          <button className="viewer-arrow" onClick={prev} disabled={slide === 0}>
+            <ArrowL />
+          </button>
+          <div className="viewer-dots">
+            {Array.from({ length: totalSlides }).map((_, i) => (
+              <div
+                key={i}
+                className={`viewer-dot${i === slide ? " active" : ""}`}
+                onClick={() => setSlide(i)}
+              />
+            ))}
+          </div>
+          <button className="viewer-arrow" onClick={next} disabled={slide === totalSlides - 1}>
+            <ArrowR />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+/* 
+
 export default function Steeped() {
   const [view,setView]=useState("home");
   const [theme,setTheme]=useState(null);
@@ -653,6 +966,30 @@ export default function Steeped() {
       </div>}
       <button className="btn-dark" style={{width:"100%",marginTop:14,justifyContent:"center"}} onClick={addSig}>Add to Page {activePage}</button>
       <p style={{fontFamily:"'Jost',sans-serif",fontSize:11,color:"rgba(42,21,8,.35)",lineHeight:1.75,marginTop:8,letterSpacing:".2px"}}>Tap to select · drag to move · corner to resize</p>
+    </div>
+  );
+
+ if (view === "viewer") return (
+    <div className="app"><style>{CSS}</style>
+      <nav className="nav">
+        <NavLogo onClick={() => setView("home")} />
+        <div style={{ display: "flex", gap: 8 }}>
+          <button className="btn-ghost" onClick={() => setView("editor")}>
+            {Icon.back(13)} Edit
+          </button>
+          <button className="btn-send" onClick={() => setShowSend(true)}>
+            {Icon.send(14, "#FAF5EE")} Send
+          </button>
+        </div>
+      </nav>
+      <CardViewer
+        theme={theme}
+        coverItems={coverItems}
+        pages={pages}
+        recipientName={form.name}
+        onBack={() => setView("editor")}
+        onSign={() => { setView("editor"); setActivePage(1); setActivePanel("text"); }}
+      />
     </div>
   );
 
