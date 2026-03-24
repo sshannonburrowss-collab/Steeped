@@ -594,6 +594,31 @@ function AuthModal({ authMode, setAuthMode, authForm, setAuthForm, authError, do
     </div>
   );
 }
+function ColorPicker({ value, onChange }) {
+  const PRESETS = [
+    "#2A1508","#8b4820","#b85c38","#d4a843","#a05820",
+    "#2a7a50","#3a6daa","#8b3a7a","#b84878","#e53935",
+    "#FAF5EE","#ffffff","#EDE6DC","#111111",
+  ];
+  return (
+    <div>
+      <div style={{ display:"grid", gridTemplateColumns:"repeat(7,1fr)", gap:5, marginBottom:5 }}>
+        {PRESETS.map(c=>(
+          <button key={c} onClick={()=>onChange(c)} style={{
+            width:26, height:26, borderRadius:4, background:c, padding:0, cursor:"pointer",
+            border: value===c ? "2.5px solid #2A1508" : "1.5px solid rgba(42,21,8,.15)",
+            boxShadow: value===c ? "0 0 0 1.5px #FAF5EE inset" : "none",
+          }}/>
+        ))}
+        <div style={{ position:"relative", width:26, height:26 }}>
+          <div style={{ width:26,height:26,borderRadius:4,border:"1.5px dashed rgba(42,21,8,.3)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:15,color:"#8B6E4E",background:"#FAF5EE",cursor:"pointer" }}>+</div>
+          <input type="color" value={value} onChange={e=>onChange(e.target.value)}
+            style={{ position:"absolute",inset:0,opacity:0,width:"100%",height:"100%",cursor:"pointer" }}/>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 /* ─── Main Component ─────────────────────────────────────────── */
 export default function Steeped() {
@@ -801,7 +826,10 @@ export default function Steeped() {
               </>}
               <div style={{ display:"flex",gap:8,alignItems:"flex-end",marginTop:10 }}>
                 <div className="style-col" style={{ flex:1 }}><span className="sub-label">Font</span><select className="f-select" style={{ width:"100%" }} value={viewSignFont} onChange={e=>setViewSignFont(e.target.value)}>{FONTS.map(f=><option key={f.value} value={f.value}>{f.label}</option>)}</select></div>
-                <div className="style-col"><span className="sub-label">Color</span><input type="color" className="f-color" value={viewSignColor} onChange={e=>setViewSignColor(e.target.value)}/></div>
+                <div className="style-col" style={{flex:1}}>
+  <span className="sub-label">Color</span>
+  <ColorPicker value={viewSignColor} onChange={setViewSignColor}/>
+</div>
               </div>
               <button className="btn-send" style={{ width:"100%",marginTop:16,justifyContent:"center" }} onClick={addViewSignature} disabled={viewSigning||!viewSignMsg.trim()}>
                 {viewSigning?<><span className="spinner"/> Signing…</>:<>{Icon.pen(14,"#FAF5EE")} Sign this card</>}
@@ -907,7 +935,10 @@ export default function Steeped() {
                 <div className="style-row">
                   <div className="style-col"><span className="sub-label">Font</span><select className="f-select" value={covFont} onChange={e=>setCovFont(e.target.value)}>{FONTS.map(f=><option key={f.value} value={f.value}>{f.label}</option>)}</select></div>
                   <div className="style-col"><span className="sub-label">Size</span><select className="f-select" value={covSize} onChange={e=>setCovSize(Number(e.target.value))}>{[12,14,16,18,20,22,24,28,32,36,42].map(s=><option key={s} value={s}>{s}</option>)}</select></div>
-                  <div className="style-col"><span className="sub-label">Color</span><input type="color" className="f-color" value={covColor} onChange={e=>setCovColor(e.target.value)}/></div>
+                  <div className="style-col" style={{flex:1}}>
+  <span className="sub-label">Color</span>
+  <ColorPicker value={covColor} onChange={setCovColor}/>
+</div>
                 </div>
                 <div style={{display:"flex",gap:8,marginTop:10}}><button className={`fmt-btn${covBold?" on":""}`} onClick={()=>setCovBold(b=>!b)}><strong>B</strong></button><button className={`fmt-btn${covItalic?" on":""}`} onClick={()=>setCovItalic(it=>!it)}><em>I</em></button></div>
                 <button className="btn-dark" style={{width:"100%",marginTop:16,justifyContent:"center"}} onClick={addCovText}>Add to Cover</button>
@@ -922,7 +953,10 @@ export default function Steeped() {
                 <div className="style-row">
                   <div className="style-col"><span className="sub-label">Font</span><select className="f-select" value={tFont} onChange={e=>setTFont(e.target.value)}>{FONTS.map(f=><option key={f.value} value={f.value}>{f.label}</option>)}</select></div>
                   <div className="style-col"><span className="sub-label">Size</span><select className="f-select" value={tSize} onChange={e=>setTSize(Number(e.target.value))}>{[12,13,14,15,16,18,20,22,24].map(s=><option key={s} value={s}>{s}</option>)}</select></div>
-                  <div className="style-col"><span className="sub-label">Color</span><input type="color" className="f-color" value={tColor} onChange={e=>setTColor(e.target.value)}/></div>
+                  <div className="style-col" style={{flex:1}}>
+  <span className="sub-label">Color</span>
+  <ColorPicker value={tColor} onChange={setTColor}/>
+</div>
                 </div>
                 <div style={{display:"flex",gap:8,marginTop:10}}><button className={`fmt-btn${tBold?" on":""}`} onClick={()=>setTBold(b=>!b)}><strong>B</strong></button><button className={`fmt-btn${tItalic?" on":""}`} onClick={()=>setTItalic(it=>!it)}><em>I</em></button></div>
                 {msgText&&<div className="msg-preview" style={{fontFamily:tFont,fontSize:tSize,color:tColor,fontWeight:tBold?700:400,fontStyle:tItalic?"italic":"normal",marginTop:12}}>
