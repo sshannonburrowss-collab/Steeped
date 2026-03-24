@@ -562,6 +562,35 @@ function CardViewer({ theme, coverItems, pages, recipientName, onSign }) {
     </div>
   );
 }
+function AuthModal({ authMode, setAuthMode, authForm, setAuthForm, authError, doSignUp, doSignIn, setShowAuth, authLoading }) {
+  return (
+    <div className="auth-overlay" onClick={e=>e.target===e.currentTarget&&setShowAuth(false)}>
+      <div className="auth-modal">
+        <div style={{ display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:6 }}>
+          <h2 className="auth-title">{authMode==="signup"?"Create an account":"Welcome back"}</h2>
+          <button className="close-btn" onClick={()=>setShowAuth(false)}>✕</button>
+        </div>
+        <p className="auth-sub">{authMode==="signup"?"Create an account so your card can be saved and shared with a link.":"Log in to save and send your card."}</p>
+        {authError&&<div className="auth-error">{authError}</div>}
+        {authMode==="signup"&&<><label className="field-label">Your name</label><input className="f-input" placeholder="Jane Smith" value={authForm.name} onChange={e=>setAuthForm(p=>({...p,name:e.target.value}))} style={{ marginBottom:12 }}/></>}
+        <label className="field-label">Email</label>
+        <input className="f-input" type="email" placeholder="you@example.com" value={authForm.email} onChange={e=>setAuthForm(p=>({...p,email:e.target.value}))} style={{ marginBottom:12 }}/>
+        <label className="field-label">Password</label>
+        <input className="f-input" type="password" placeholder="••••••••" value={authForm.password} onChange={e=>setAuthForm(p=>({...p,password:e.target.value}))}
+          onKeyDown={e=>{ if(e.key==="Enter") authMode==="signup"?doSignUp():doSignIn(); }}
+          style={{ marginBottom:20 }}/>
+        <button className="btn-dark" style={{ width:"100%",justifyContent:"center" }} onClick={authMode==="signup"?doSignUp:doSignIn} disabled={authLoading}>
+          {authLoading?"…":authMode==="signup"?"Create account & continue":"Log in & continue"}
+        </button>
+        <p className="auth-switch">
+          {authMode==="signup"
+            ?<>Already have an account? <button onClick={()=>{ setAuthMode("login"); }}>Log in</button></>
+            :<>No account? <button onClick={()=>{ setAuthMode("signup"); }}>Sign up free</button></>}
+        </p>
+      </div>
+    </div>
+  );
+}
 
 /* ─── Main Component ─────────────────────────────────────────── */
 export default function Steeped() {
@@ -778,7 +807,6 @@ export default function Steeped() {
     </div>
   );
 
-  const AuthModal = () => (
     <div className="auth-overlay" onClick={e=>e.target===e.currentTarget&&setShowAuth(false)}>
       <div className="auth-modal">
         <div style={{ display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:6 }}>
@@ -909,7 +937,10 @@ export default function Steeped() {
         </div>
         <div className="fan-wrap">{THEMES.slice(0,5).map((t,i)=>{ const rots=[-10,-4,0,5,11],ty=[5,2,0,2,5]; return <div key={t.id} className="fan-card" onClick={()=>goEditor(t)} style={{ background:t.cover,transform:`rotate(${rots[i]}deg) translateY(${ty[i]}px)`,zIndex:i===2?5:i }}><div style={{ color:t.accent }}>{Icon[t.icon](26,t.accent)}</div><div className="fan-card-name" style={{ color:t.accent }}>{t.name.split(" ")[0]}</div></div>; })}</div>
       </div>
-      {showAuth&&<AuthModal/>}
+       </div>  {/* closes .home div */}
+      {showAuth&&<AuthModal/>}  {/* ← find this line */}
+    </div>   {/* closes .app div */}
+  );          {/* closes the home return */}
     </div>
   );
 
@@ -1122,7 +1153,10 @@ export default function Steeped() {
         </>
       )}
 
-      {showAuth&&<AuthModal/>}
+       </div>  {/* closes .home div */}
+      {showAuth&&<AuthModal/>}  {/* ← find this line */}
+    </div>   {/* closes .app div */}
+  );          {/* closes the home return */}
 
       {showSend&&(
         <div className="modal-overlay" onClick={e=>e.target===e.currentTarget&&setShowSend(false)}>
