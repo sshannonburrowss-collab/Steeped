@@ -1,7 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { supabase } from "./supabase";
 
-/* ─── Icons ─────────────────────────────────────────────────── */
 const Icon = {
   pen:      (s=18,c="currentColor")=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>,
   photo:    (s=18,c="currentColor")=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>,
@@ -38,16 +37,15 @@ const Icon = {
   mail:     (s=32,c="currentColor")=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>,
 };
 
-/* ─── Data ───────────────────────────────────────────────────── */
 const THEMES = [
-  { id:"birthday",    name:"Happy Birthday",   icon:"cake",      accent:"#b85c38", accentLight:"#fdf0e8", cover:"linear-gradient(150deg,#fdf0e8,#f8dcc8,#f0c4a8)" },
-  { id:"holiday",     name:"Happy Holidays",   icon:"snowflake", accent:"#3a6daa", accentLight:"#eaf2ff", cover:"linear-gradient(150deg,#eaf2ff,#cfe0ff,#b8d0ff)" },
-  { id:"thinking",    name:"Thinking of You",  icon:"heart",     accent:"#8b3a7a", accentLight:"#f8eeff", cover:"linear-gradient(150deg,#f8eeff,#ead8ff,#d8c0ff)" },
-  { id:"justbecause", name:"Just Because",     icon:"flower",    accent:"#b84878", accentLight:"#fff0f6", cover:"linear-gradient(150deg,#fff0f6,#ffd0e8,#ffb8d8)" },
-  { id:"hugs",        name:"Sending Hugs",     icon:"hug",       accent:"#a05820", accentLight:"#fff8ee", cover:"linear-gradient(150deg,#fff8ee,#ffe8c0,#ffd898)" },
-  { id:"congrats",    name:"Congratulations",  icon:"star",      accent:"#2a7a50", accentLight:"#eefff6", cover:"linear-gradient(150deg,#eefff6,#c0f0d8,#a0e8c0)" },
-  { id:"thankyou",    name:"Thank You",        icon:"leaf",      accent:"#8b4820", accentLight:"#fff8f0", cover:"linear-gradient(150deg,#fff8f0,#ffe0b8,#ffd098)" },
-  { id:"blank",       name:"Just a Card",      icon:"mail",      accent:"#5a4030", accentLight:"#faf7f2", cover:"linear-gradient(150deg,#faf7f2,#f0e8dc,#e8ddd0)" },
+  { id:"birthday",    name:"Happy Birthday",   icon:"cake",      accent:"#b85c38", cover:"linear-gradient(150deg,#fdf0e8,#f8dcc8,#f0c4a8)" },
+  { id:"holiday",     name:"Happy Holidays",   icon:"snowflake", accent:"#3a6daa", cover:"linear-gradient(150deg,#eaf2ff,#cfe0ff,#b8d0ff)" },
+  { id:"thinking",    name:"Thinking of You",  icon:"heart",     accent:"#8b3a7a", cover:"linear-gradient(150deg,#f8eeff,#ead8ff,#d8c0ff)" },
+  { id:"justbecause", name:"Just Because",     icon:"flower",    accent:"#b84878", cover:"linear-gradient(150deg,#fff0f6,#ffd0e8,#ffb8d8)" },
+  { id:"hugs",        name:"Sending Hugs",     icon:"hug",       accent:"#a05820", cover:"linear-gradient(150deg,#fff8ee,#ffe8c0,#ffd898)" },
+  { id:"congrats",    name:"Congratulations",  icon:"star",      accent:"#2a7a50", cover:"linear-gradient(150deg,#eefff6,#c0f0d8,#a0e8c0)" },
+  { id:"thankyou",    name:"Thank You",        icon:"leaf",      accent:"#8b4820", cover:"linear-gradient(150deg,#fff8f0,#ffe0b8,#ffd098)" },
+  { id:"blank",       name:"Just a Card",      icon:"mail",      accent:"#5a4030", cover:"linear-gradient(150deg,#faf7f2,#f0e8dc,#e8ddd0)" },
 ];
 
 const FONTS = [
@@ -59,7 +57,6 @@ const FONTS = [
 
 const EMOJIS = ["❤️","🌹","✨","🌸","💫","🌟","🌺","🌈","🦋","🌻","💝","🌙","⭐","💐","😊","🎶","🌷","☀️","🌿","💞","🪷","🌼","🌊","🐝","🍀","🌴","🦜","🍋","🌮","🎵"];
 
-/* ─── CSS ────────────────────────────────────────────────────── */
 const CSS = `
 *{box-sizing:border-box;margin:0;padding:0;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
@@ -222,7 +219,6 @@ const CSS = `
 .nav-user-name{font-family:'Jost',sans-serif;font-size:12px;font-weight:300;color:rgba(42,21,8,.55);}
 .loading-screen{display:flex;align-items:center;justify-content:center;min-height:calc(100vh - 68px);flex-direction:column;gap:16px;}
 .loading-text{font-family:'Jost',sans-serif;font-size:13px;font-weight:300;color:#8B6E4E;letter-spacing:.5px;}
-/* ── CardViewer ── */
 .viewer-wrap{display:flex;flex-direction:column;min-height:calc(100vh - 68px);background:#180d05;}
 .viewer-header{text-align:center;padding:28px 20px 18px;border-bottom:1px solid rgba(212,168,67,.1);}
 .viewer-title{font-family:'Playfair Display',serif;font-size:2rem;font-weight:400;color:#FAF5EE;margin-bottom:16px;}
@@ -256,11 +252,9 @@ const CSS = `
 .viewer-sig-text{font-family:'Lora',serif;font-size:0.98rem;line-height:1.75;margin-bottom:10px;word-break:break-word;}
 .viewer-sig-name{font-family:'Jost',sans-serif;font-size:0.88rem;font-weight:500;color:rgba(250,245,238,.55);}
 .viewer-empty-board{text-align:center;padding:52px 20px;font-family:'Playfair Display',serif;font-style:italic;color:rgba(212,168,67,.4);font-size:1.1rem;}
-/* sign modal inside viewer */
 .sign-modal{background:white;border-radius:14px;width:100%;max-width:440px;max-height:84vh;overflow-y:auto;display:flex;flex-direction:column;box-shadow:0 44px 110px rgba(42,21,8,.28);animation:cardIn .25s ease;}
 .sign-modal-header{display:flex;align-items:center;justify-content:space-between;padding:22px 26px 16px;border-bottom:1px solid rgba(42,21,8,.08);}
 .sign-modal-body{padding:22px 26px;}
-/* mobile */
 .mobile-signers-btn{display:none;}
 @media(max-width:900px){
   .editor-layout{grid-template-columns:240px 1fr;}
@@ -305,7 +299,7 @@ const CSS = `
   .viewer-btn{padding:8px 16px;font-size:12px;}
   .viewer-msg-slide{padding:24px 18px;}
   .viewer-board-body{padding:14px 12px;}
-  .viewer-sig-card{padding:16px 16px;}
+  .viewer-sig-card{padding:16px;}
   .hero{padding:48px 20px 32px;}
   .fan-wrap{gap:0;}
   .fan-card{width:90px;height:72px;margin:0 -14px;}
@@ -319,7 +313,6 @@ const CSS = `
 }
 `;
 
-/* ─── Utilities ──────────────────────────────────────────────── */
 const uid = () => Date.now() + Math.random();
 const makePage = (num) => ({ id: uid(), num, items: [] });
 
@@ -468,7 +461,6 @@ function CardViewer({ theme, coverItems, pages, recipientName, onSign }) {
   const [slide, setSlide] = useState(0);
   const prev = () => setSlide(s=>Math.max(0,s-1));
   const next = () => setSlide(s=>Math.min(totalSlides-1,s+1));
-
   const ArrowL = () => <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>;
   const ArrowR = () => <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>;
   const GridIcon = () => <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>;
@@ -491,7 +483,7 @@ function CardViewer({ theme, coverItems, pages, recipientName, onSign }) {
           :msgSlides.map(s=>(
             <div key={s.id} className="viewer-sig-card">
               <div className="viewer-sig-text" style={{ color:s.color||"#FAF5EE",fontFamily:s.font }}>{s.text}</div>
-              {s.signerName&&<div className="viewer-sig-name" style={{ color:s.color?s.color+"99":undefined }}>{s.signerName}</div>}
+              {s.signerName&&<div className="viewer-sig-name">{s.signerName}</div>}
             </div>
           ))
         }
@@ -501,7 +493,6 @@ function CardViewer({ theme, coverItems, pages, recipientName, onSign }) {
 
   const isFirstSlide = slide===0;
   const currentMsg = !isFirstSlide?msgSlides[slide-1]:null;
-
   return (
     <div className="viewer-wrap">
       <div className="viewer-header">
@@ -551,41 +542,53 @@ function CardViewer({ theme, coverItems, pages, recipientName, onSign }) {
         </div>
         <div className="viewer-nav-row">
           <button className="viewer-arrow" onClick={prev} disabled={slide===0}><ArrowL/></button>
-          <div className="viewer-dots">
-            {Array.from({length:totalSlides}).map((_,i)=>(
-              <div key={i} className={`viewer-dot${i===slide?" active":""}`} onClick={()=>setSlide(i)}/>
-            ))}
-          </div>
+          <div className="viewer-dots">{Array.from({length:totalSlides}).map((_,i)=><div key={i} className={`viewer-dot${i===slide?" active":""}`} onClick={()=>setSlide(i)}/>)}</div>
           <button className="viewer-arrow" onClick={next} disabled={slide===totalSlides-1}><ArrowR/></button>
         </div>
       </div>
     </div>
   );
 }
+
+/* ─── AuthModal — defined OUTSIDE Steeped to prevent remount on keystroke ── */
 function AuthModal({ authMode, setAuthMode, authForm, setAuthForm, authError, doSignUp, doSignIn, setShowAuth, authLoading }) {
   return (
     <div className="auth-overlay" onClick={e=>e.target===e.currentTarget&&setShowAuth(false)}>
       <div className="auth-modal">
         <div style={{ display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:6 }}>
           <h2 className="auth-title">{authMode==="signup"?"Create an account":"Welcome back"}</h2>
-          <button className="close-btn" onClick={()=>setShowAuth(false)}>✕</button>
+          <button className="close-btn" onClick={()=>setShowAuth(false)}>{Icon.x(14)}</button>
         </div>
         <p className="auth-sub">{authMode==="signup"?"Create an account so your card can be saved and shared with a link.":"Log in to save and send your card."}</p>
         {authError&&<div className="auth-error">{authError}</div>}
+
+        {/* Google login */}
+        <button onClick={()=>supabase.auth.signInWithOAuth({ provider:"google", options:{ redirectTo:window.location.origin } })}
+          style={{ width:"100%",padding:"10px 16px",marginBottom:16,border:"1px solid rgba(42,21,8,.18)",borderRadius:4,background:"white",cursor:"pointer",fontFamily:"'Jost',sans-serif",fontSize:13,display:"flex",alignItems:"center",justifyContent:"center",gap:10 }}>
+          <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          Continue with Google
+        </button>
+        <div style={{ display:"flex",alignItems:"center",gap:10,marginBottom:16 }}>
+          <div style={{ flex:1,height:1,background:"rgba(42,21,8,.1)" }}/>
+          <span style={{ fontFamily:"'Jost',sans-serif",fontSize:11,color:"rgba(42,21,8,.35)" }}>or</span>
+          <div style={{ flex:1,height:1,background:"rgba(42,21,8,.1)" }}/>
+        </div>
+
         {authMode==="signup"&&<><label className="field-label">Your name</label><input className="f-input" placeholder="Jane Smith" value={authForm.name} onChange={e=>setAuthForm(p=>({...p,name:e.target.value}))} style={{ marginBottom:12 }}/></>}
         <label className="field-label">Email</label>
         <input className="f-input" type="email" placeholder="you@example.com" value={authForm.email} onChange={e=>setAuthForm(p=>({...p,email:e.target.value}))} style={{ marginBottom:12 }}/>
         <label className="field-label">Password</label>
-        <input className="f-input" type="password" placeholder="••••••••" value={authForm.password} onChange={e=>setAuthForm(p=>({...p,password:e.target.value}))}
+        <input className="f-input" type="password" placeholder="••••••••" value={authForm.password}
+          onChange={e=>setAuthForm(p=>({...p,password:e.target.value}))}
           onKeyDown={e=>{ if(e.key==="Enter") authMode==="signup"?doSignUp():doSignIn(); }}
           style={{ marginBottom:20 }}/>
         <button className="btn-dark" style={{ width:"100%",justifyContent:"center" }} onClick={authMode==="signup"?doSignUp:doSignIn} disabled={authLoading}>
-          {authLoading?"…":authMode==="signup"?"Create account & continue":"Log in & continue"}
+          {authLoading?<span className="spinner"/>:authMode==="signup"?"Create account & continue":"Log in & continue"}
         </button>
         <p className="auth-switch">
           {authMode==="signup"
-            ?<>Already have an account? <button onClick={()=>{ setAuthMode("login"); }}>Log in</button></>
-            :<>No account? <button onClick={()=>{ setAuthMode("signup"); }}>Sign up free</button></>}
+            ?<>Already have an account? <button onClick={()=>setAuthMode("login")}>Log in</button></>
+            :<>No account? <button onClick={()=>setAuthMode("signup")}>Sign up free</button></>}
         </p>
       </div>
     </div>
@@ -594,7 +597,6 @@ function AuthModal({ authMode, setAuthMode, authForm, setAuthForm, authError, do
 
 /* ─── Main Component ─────────────────────────────────────────── */
 export default function Steeped() {
-  // ── Editor state ──
   const [view, setView] = useState("home");
   const [theme, setTheme] = useState(null);
   const [activePage, setActivePage] = useState(0);
@@ -623,8 +625,6 @@ export default function Steeped() {
   const [form, setForm] = useState({ name:"", to:"", note:"", date:"", time:"" });
   const [showSigDrawer, setShowSigDrawer] = useState(false);
   const [copied, setCopied] = useState(false);
-
-  // ── Auth state ──
   const [user, setUser] = useState(null);
   const [showAuth, setShowAuth] = useState(false);
   const [authMode, setAuthMode] = useState("signup");
@@ -632,14 +632,10 @@ export default function Steeped() {
   const [authError, setAuthError] = useState("");
   const [authLoading, setAuthLoading] = useState(false);
   const [pendingAction, setPendingAction] = useState(null);
-
-  // ── Card persistence state ──
   const [cardId, setCardId] = useState(null);
   const [cardUrl, setCardUrl] = useState("");
   const [saving, setSaving] = useState(false);
   const [loadingCard, setLoadingCard] = useState(false);
-
-  // ── View mode state (card recipient) ──
   const [viewCard, setViewCard] = useState(null);
   const [viewSignName, setViewSignName] = useState("");
   const [viewSignMsg, setViewSignMsg] = useState("");
@@ -648,65 +644,44 @@ export default function Steeped() {
   const [viewSignColor, setViewSignColor] = useState("#2A1508");
   const [viewSigning, setViewSigning] = useState(false);
   const [viewSigned, setViewSigned] = useState(false);
-  const [showViewSignForm, setShowViewSignForm] = useState(false); // controls sign modal
+  const [showViewSignForm, setShowViewSignForm] = useState(false);
 
   const fileRef = useRef(null);
   const coverRef = useRef(null);
   const pageRefs = useRef({});
 
-  /* ── On mount ── */
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const cid = params.get("card");
     if (cid) loadCard(cid);
-
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) setUser(session.user);
-    });
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user || null);
-    });
+    supabase.auth.getSession().then(({ data: { session } }) => { if (session?.user) setUser(session.user); });
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => { setUser(session?.user||null); });
     return () => listener?.subscription?.unsubscribe();
   }, []);
 
-  /* ── Load card ── */
   const loadCard = async (cid) => {
     setLoadingCard(true);
     try {
       const res = await fetch(`/api/get-card?id=${cid}`);
       if (!res.ok) throw new Error("Not found");
       const data = await res.json();
-      setViewCard(data);
-      setCardId(cid);
-      setView("view");
+      setViewCard(data); setCardId(cid); setView("view");
     } catch(e) { console.error("loadCard:", e); }
     setLoadingCard(false);
   };
 
-  /* ── Save card ── */
   const saveCard = async (overrideUser) => {
-    const currentUser = overrideUser || user;
+    const currentUser = overrideUser||user;
     if (!currentUser) return null;
     setSaving(true);
     try {
-      const res = await fetch("/api/save-card", {
-        method:"POST", headers:{"Content-Type":"application/json"},
-        body: JSON.stringify({ theme, pages, coverItems, userId:currentUser.id, cardId:cardId||undefined }),
-      });
+      const res = await fetch("/api/save-card", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ theme, pages, coverItems, userId:currentUser.id, cardId:cardId||undefined }) });
       const data = await res.json();
-      if (data.cardId) {
-        setCardId(data.cardId);
-        const url = `${window.location.origin}/?card=${data.cardId}`;
-        setCardUrl(url);
-        setSaving(false);
-        return data.cardId;
-      }
+      if (data.cardId) { setCardId(data.cardId); const url=`${window.location.origin}/?card=${data.cardId}`; setCardUrl(url); setSaving(false); return data.cardId; }
     } catch(e) { console.error("saveCard:", e); }
-    setSaving(false);
-    return null;
+    setSaving(false); return null;
   };
 
-  /* ── Auth ── */
   const doSignUp = async () => {
     setAuthLoading(true); setAuthError("");
     try {
@@ -716,6 +691,7 @@ export default function Steeped() {
     } catch(e) { setAuthError(e.message); }
     setAuthLoading(false);
   };
+
   const doSignIn = async () => {
     setAuthLoading(true); setAuthError("");
     try {
@@ -725,20 +701,20 @@ export default function Steeped() {
     } catch(e) { setAuthError(e.message); }
     setAuthLoading(false);
   };
+
   const handleAuthSuccess = async (loggedInUser) => {
     setUser(loggedInUser); setShowAuth(false);
     if (pendingAction==="send") { setPendingAction(null); const cid=await saveCard(loggedInUser); if(cid) setShowSend(true); }
   };
+
   const doSignOut = async () => { await supabase.auth.signOut(); setUser(null); };
 
-  /* ── Send click ── */
   const handleSendClick = async () => {
     if (!user) { setPendingAction("send"); setShowAuth(true); return; }
     const cid = await saveCard();
     if (cid) setShowSend(true);
   };
 
-  /* ── doSend ── */
   const doSend = async () => {
     if (sendTab==="email") {
       try {
@@ -750,21 +726,12 @@ export default function Steeped() {
     } else { setSent(true); setTimeout(()=>{ setSent(false); setShowSend(false); },2800); }
   };
 
-  /* ── Copy URL ── */
-  const copyUrl = async (url) => {
-    await navigator.clipboard.writeText(url||cardUrl);
-    setCopied(true); setTimeout(()=>setCopied(false),2000);
-  };
+  const copyUrl = async (url) => { await navigator.clipboard.writeText(url||cardUrl); setCopied(true); setTimeout(()=>setCopied(false),2000); };
 
-  /* ── View mode: add signature ── */
   const addViewSignature = async () => {
     if (!viewSignMsg.trim()) return;
     setViewSigning(true);
-    const sig = {
-      id:uid(), type:"text", text:viewSignMsg, signerName:viewSignName||"Anonymous",
-      font:viewSignFont, size:15, color:viewSignColor, bold:false, italic:false,
-      x:22, y:62+((viewCard.pages[viewSignPage]?.items||[]).length*82)
-    };
+    const sig = { id:uid(), type:"text", text:viewSignMsg, signerName:viewSignName||"Anonymous", font:viewSignFont, size:15, color:viewSignColor, bold:false, italic:false, x:22, y:62+((viewCard.pages[viewSignPage]?.items||[]).length*82) };
     try {
       const res = await fetch("/api/add-signature", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ cardId, pageIndex:viewSignPage, signature:sig }) });
       if (res.ok) {
@@ -776,7 +743,6 @@ export default function Steeped() {
     setViewSigning(false);
   };
 
-  /* ── Editor helpers ── */
   const fSet = (k) => (e) => setForm(p=>({...p,[k]:e.target.value}));
   const curPage = activePage>0?pages[activePage-1]:null;
   const addCovText = () => { if(!covText.trim())return; setCoverItems(p=>[...p,{id:uid(),type:"text",x:62,y:62+p.length*50,text:covText,font:covFont,size:covSize,color:covColor,bold:covBold,italic:covItalic}]); setCovText(""); };
@@ -797,9 +763,8 @@ export default function Steeped() {
   const totalItems = pages.reduce((a,p)=>a+p.items.length,0);
   const handleUpload = (e) => { Array.from(e.target.files).forEach(f=>{ const r=new FileReader(); r.onload=ev=>setUploads(p=>[...p,{id:uid(),url:ev.target.result,label:f.name}]); r.readAsDataURL(f); }); };
   const allSigs = pages.flatMap(pg=>pg.items.filter(it=>it.type==="text").map(s=>({...s,pageNum:pg.num})));
-  const goEditor = (t) => { setTheme(t); setView("editor"); setActivePage(0); setPages([makePage(1)]); setCardId(null); setCardUrl(""); setCoverItems([{id:uid(),type:"text",x:62,y:128,text:t.name,font:"'Playfair Display',serif",size:32,color:t.accent,bold:false,italic:false},{id:uid(),type:"text",x:64,y:178,text:"A card made with love",font:"'Lora',serif",size:14,color:t.accent,bold:false,italic:true}]); };
+  const goEditor = (t) => { setTheme(t); setView("editor"); setActivePage(0); setPages([makePage(1)]); setCardId(null); setCardUrl(""); setCoverItems([{id:uid(),type:"text",x:62,y:80,text:t.name,font:"'Playfair Display',serif",size:32,color:t.accent,bold:false,italic:false},{id:uid(),type:"text",x:64,y:130,text:"A card made with love",font:"'Lora',serif",size:14,color:t.accent,bold:false,italic:true}]); };
 
-  /* ── Shared components ── */
   const NavLogo = ({ onClick }) => (
     <div onClick={onClick} style={{ cursor:"pointer" }}>
       <div className="nav-wordmark">St<em>ee</em>ped</div>
@@ -807,30 +772,7 @@ export default function Steeped() {
     </div>
   );
 
-    <div className="auth-overlay" onClick={e=>e.target===e.currentTarget&&setShowAuth(false)}>
-      <div className="auth-modal">
-        <div style={{ display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:6 }}>
-          <h2 className="auth-title">{authMode==="signup"?"Create an account":"Welcome back"}</h2>
-          <button className="close-btn" onClick={()=>setShowAuth(false)}>{Icon.x(14)}</button>
-        </div>
-        <p className="auth-sub">{authMode==="signup"?"Create an account so your card can be saved and shared with a link.":"Log in to save and send your card."}</p>
-        {authError&&<div className="auth-error">{authError}</div>}
-        {authMode==="signup"&&<><label className="field-label">Your name</label><input className="f-input" placeholder="Jane Smith" value={authForm.name} onChange={e=>setAuthForm(p=>({...p,name:e.target.value}))} style={{ marginBottom:12 }}/></>}
-        <label className="field-label">Email</label>
-        <input className="f-input" type="email" placeholder="you@example.com" value={authForm.email} onChange={e=>setAuthForm(p=>({...p,email:e.target.value}))} style={{ marginBottom:12 }}/>
-        <label className="field-label">Password</label>
-        <input className="f-input" type="password" placeholder="••••••••" value={authForm.password} onChange={e=>setAuthForm(p=>({...p,password:e.target.value}))} onKeyDown={e=>{ if(e.key==="Enter") authMode==="signup"?doSignUp():doSignIn(); }} style={{ marginBottom:20 }}/>
-        <button className="btn-dark" style={{ width:"100%",justifyContent:"center" }} onClick={authMode==="signup"?doSignUp:doSignIn} disabled={authLoading}>
-          {authLoading?<span className="spinner"/>:authMode==="signup"?"Create account & continue":"Log in & continue"}
-        </button>
-        <p className="auth-switch">
-          {authMode==="signup"?<>Already have an account? <button onClick={()=>{ setAuthMode("login"); setAuthError(""); }}>Log in</button></>:<>No account? <button onClick={()=>{ setAuthMode("signup"); setAuthError(""); }}>Sign up free</button></>}
-        </p>
-      </div>
-    </div>
-  );
-
-  /* ── Sign modal (for card recipients) ── */
+  /* sign modal for recipients */
   const SignModal = () => (
     <div className="modal-overlay" onClick={e=>e.target===e.currentTarget&&setShowViewSignForm(false)}>
       <div className="sign-modal">
@@ -858,16 +800,8 @@ export default function Steeped() {
                 </select>
               </>}
               <div style={{ display:"flex",gap:8,alignItems:"flex-end",marginTop:10 }}>
-                <div className="style-col" style={{ flex:1 }}>
-                  <span className="sub-label">Font</span>
-                  <select className="f-select" style={{ width:"100%" }} value={viewSignFont} onChange={e=>setViewSignFont(e.target.value)}>
-                    {FONTS.map(f=><option key={f.value} value={f.value}>{f.label}</option>)}
-                  </select>
-                </div>
-                <div className="style-col">
-                  <span className="sub-label">Color</span>
-                  <input type="color" className="f-color" value={viewSignColor} onChange={e=>setViewSignColor(e.target.value)}/>
-                </div>
+                <div className="style-col" style={{ flex:1 }}><span className="sub-label">Font</span><select className="f-select" style={{ width:"100%" }} value={viewSignFont} onChange={e=>setViewSignFont(e.target.value)}>{FONTS.map(f=><option key={f.value} value={f.value}>{f.label}</option>)}</select></div>
+                <div className="style-col"><span className="sub-label">Color</span><input type="color" className="f-color" value={viewSignColor} onChange={e=>setViewSignColor(e.target.value)}/></div>
               </div>
               <button className="btn-send" style={{ width:"100%",marginTop:16,justifyContent:"center" }} onClick={addViewSignature} disabled={viewSigning||!viewSignMsg.trim()}>
                 {viewSigning?<><span className="spinner"/> Signing…</>:<>{Icon.pen(14,"#FAF5EE")} Sign this card</>}
@@ -879,9 +813,9 @@ export default function Steeped() {
     </div>
   );
 
-  /* ─────────────────────────────────────────────────────────────
-     LOADING SCREEN
-  ───────────────────────────────────────────────────────────── */
+  /* shared auth props */
+  const authProps = { authMode, setAuthMode, authForm, setAuthForm, authError, doSignUp, doSignIn, setShowAuth, authLoading };
+
   if (loadingCard) return (
     <div className="app"><style>{CSS}</style>
       <div className="loading-screen">
@@ -891,29 +825,17 @@ export default function Steeped() {
     </div>
   );
 
-  /* ─────────────────────────────────────────────────────────────
-     VIEW MODE — recipient opens shared link
-  ───────────────────────────────────────────────────────────── */
   if (view==="view" && viewCard) return (
     <div className="app"><style>{CSS}</style>
       <nav className="nav">
         <NavLogo onClick={()=>{ window.location.href="/"; }}/>
         <button className="btn-dark" onClick={()=>setView("themes")}>Create your own {Icon.arrow(14,"#FAF5EE")}</button>
       </nav>
-      <CardViewer
-        theme={viewCard.theme}
-        coverItems={viewCard.coverItems||[]}
-        pages={viewCard.pages||[]}
-        recipientName=""
-        onSign={()=>setShowViewSignForm(true)}
-      />
+      <CardViewer theme={viewCard.theme} coverItems={viewCard.coverItems||[]} pages={viewCard.pages||[]} recipientName="" onSign={()=>setShowViewSignForm(true)}/>
       {showViewSignForm&&<SignModal/>}
     </div>
   );
 
-  /* ─────────────────────────────────────────────────────────────
-     HOME
-  ───────────────────────────────────────────────────────────── */
   if (view==="home") return (
     <div className="app"><style>{CSS}</style>
       <nav className="nav">
@@ -937,16 +859,10 @@ export default function Steeped() {
         </div>
         <div className="fan-wrap">{THEMES.slice(0,5).map((t,i)=>{ const rots=[-10,-4,0,5,11],ty=[5,2,0,2,5]; return <div key={t.id} className="fan-card" onClick={()=>goEditor(t)} style={{ background:t.cover,transform:`rotate(${rots[i]}deg) translateY(${ty[i]}px)`,zIndex:i===2?5:i }}><div style={{ color:t.accent }}>{Icon[t.icon](26,t.accent)}</div><div className="fan-card-name" style={{ color:t.accent }}>{t.name.split(" ")[0]}</div></div>; })}</div>
       </div>
-       </div>  {/* closes .home div */}
-      {showAuth&&<AuthModal/>}  {/* ← find this line */}
-    </div>   {/* closes .app div */}
-  );          {/* closes the home return */}
+      {showAuth&&<AuthModal {...authProps}/>}
     </div>
   );
 
-  /* ─────────────────────────────────────────────────────────────
-     THEMES
-  ───────────────────────────────────────────────────────────── */
   if (view==="themes") return (
     <div className="app"><style>{CSS}</style>
       <nav className="nav">
@@ -960,9 +876,7 @@ export default function Steeped() {
     </div>
   );
 
-  /* ─────────────────────────────────────────────────────────────
-     EDITOR
-  ───────────────────────────────────────────────────────────── */
+  /* EDITOR */
   return (
     <div className="app"><style>{CSS}</style>
       <nav className="nav">
@@ -985,44 +899,46 @@ export default function Steeped() {
           </div>
           <div className="panel-content">
             {activePanel==="text" && (activePage===0 ? (
-  <div>
-    <div className="info-box">Cover editor — add text, then drag &amp; resize it on the card.</div>
-    <label className="field-label">Add text</label>
-    <input className="f-input" placeholder="e.g. Happy Birthday, Sarah!" value={covText} onChange={e=>setCovText(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addCovText()}/>
-    <label className="field-label">Style</label>
-    <div className="style-row">
-      <div className="style-col"><span className="sub-label">Font</span><select className="f-select" value={covFont} onChange={e=>setCovFont(e.target.value)}>{FONTS.map(f=><option key={f.value} value={f.value}>{f.label}</option>)}</select></div>
-      <div className="style-col"><span className="sub-label">Size</span><select className="f-select" value={covSize} onChange={e=>setCovSize(Number(e.target.value))}>{[12,14,16,18,20,22,24,28,32,36,42].map(s=><option key={s} value={s}>{s}</option>)}</select></div>
-      <div className="style-col"><span className="sub-label">Color</span><input type="color" className="f-color" value={covColor} onChange={e=>setCovColor(e.target.value)}/></div>
-    </div>
-    <div style={{display:"flex",gap:8,marginTop:10}}><button className={`fmt-btn${covBold?" on":""}`} onClick={()=>setCovBold(b=>!b)}><strong>B</strong></button><button className={`fmt-btn${covItalic?" on":""}`} onClick={()=>setCovItalic(it=>!it)}><em>I</em></button></div>
-    <button className="btn-dark" style={{width:"100%",marginTop:16,justifyContent:"center"}} onClick={addCovText}>Add to Cover</button>
-  </div>
-) : (
-  <div>
-    <label className="field-label">Your name</label>
-    <input className="f-input" placeholder="How should we sign this?" value={signerName} onChange={e=>setSignerName(e.target.value)}/>
-    <label className="field-label">Your message</label>
-    <textarea className="f-textarea" rows={3} placeholder="Write something wonderful…" value={msgText} onChange={e=>setMsgText(e.target.value)}/>
-    <label className="field-label">Style</label>
-    <div className="style-row">
-      <div className="style-col"><span className="sub-label">Font</span><select className="f-select" value={tFont} onChange={e=>setTFont(e.target.value)}>{FONTS.map(f=><option key={f.value} value={f.value}>{f.label}</option>)}</select></div>
-      <div className="style-col"><span className="sub-label">Size</span><select className="f-select" value={tSize} onChange={e=>setTSize(Number(e.target.value))}>{[12,13,14,15,16,18,20,22,24].map(s=><option key={s} value={s}>{s}</option>)}</select></div>
-      <div className="style-col"><span className="sub-label">Color</span><input type="color" className="f-color" value={tColor} onChange={e=>setTColor(e.target.value)}/></div>
-    </div>
-    <div style={{display:"flex",gap:8,marginTop:10}}><button className={`fmt-btn${tBold?" on":""}`} onClick={()=>setTBold(b=>!b)}><strong>B</strong></button><button className={`fmt-btn${tItalic?" on":""}`} onClick={()=>setTItalic(it=>!it)}><em>I</em></button></div>
-    {msgText&&<div className="msg-preview" style={{fontFamily:tFont,fontSize:tSize,color:tColor,fontWeight:tBold?700:400,fontStyle:tItalic?"italic":"normal",marginTop:12}}>
-      <div>{msgText}</div>
-      {signerName&&<div style={{fontSize:tSize*.72,marginTop:6,opacity:.6,fontStyle:"italic"}}>— {signerName}</div>}
-    </div>}
-    <button className="btn-dark" style={{width:"100%",marginTop:14,justifyContent:"center"}} onClick={addSig}>Add to Page {activePage}</button>
-    <p style={{fontFamily:"'Jost',sans-serif",fontSize:11,color:"rgba(42,21,8,.35)",lineHeight:1.75,marginTop:8}}>Tap to select · drag to move · corner to resize</p>
-  </div>
-))}
+              <div>
+                <div className="info-box">Cover editor — add text, then drag &amp; resize it on the card.</div>
+                <label className="field-label">Add text</label>
+                <input className="f-input" placeholder="e.g. Happy Birthday, Sarah!" value={covText} onChange={e=>setCovText(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addCovText()}/>
+                <label className="field-label">Style</label>
+                <div className="style-row">
+                  <div className="style-col"><span className="sub-label">Font</span><select className="f-select" value={covFont} onChange={e=>setCovFont(e.target.value)}>{FONTS.map(f=><option key={f.value} value={f.value}>{f.label}</option>)}</select></div>
+                  <div className="style-col"><span className="sub-label">Size</span><select className="f-select" value={covSize} onChange={e=>setCovSize(Number(e.target.value))}>{[12,14,16,18,20,22,24,28,32,36,42].map(s=><option key={s} value={s}>{s}</option>)}</select></div>
+                  <div className="style-col"><span className="sub-label">Color</span><input type="color" className="f-color" value={covColor} onChange={e=>setCovColor(e.target.value)}/></div>
+                </div>
+                <div style={{display:"flex",gap:8,marginTop:10}}><button className={`fmt-btn${covBold?" on":""}`} onClick={()=>setCovBold(b=>!b)}><strong>B</strong></button><button className={`fmt-btn${covItalic?" on":""}`} onClick={()=>setCovItalic(it=>!it)}><em>I</em></button></div>
+                <button className="btn-dark" style={{width:"100%",marginTop:16,justifyContent:"center"}} onClick={addCovText}>Add to Cover</button>
+              </div>
+            ) : (
+              <div>
+                <label className="field-label">Your name</label>
+                <input className="f-input" placeholder="How should we sign this?" value={signerName} onChange={e=>setSignerName(e.target.value)}/>
+                <label className="field-label">Your message</label>
+                <textarea className="f-textarea" rows={3} placeholder="Write something wonderful…" value={msgText} onChange={e=>setMsgText(e.target.value)}/>
+                <label className="field-label">Style</label>
+                <div className="style-row">
+                  <div className="style-col"><span className="sub-label">Font</span><select className="f-select" value={tFont} onChange={e=>setTFont(e.target.value)}>{FONTS.map(f=><option key={f.value} value={f.value}>{f.label}</option>)}</select></div>
+                  <div className="style-col"><span className="sub-label">Size</span><select className="f-select" value={tSize} onChange={e=>setTSize(Number(e.target.value))}>{[12,13,14,15,16,18,20,22,24].map(s=><option key={s} value={s}>{s}</option>)}</select></div>
+                  <div className="style-col"><span className="sub-label">Color</span><input type="color" className="f-color" value={tColor} onChange={e=>setTColor(e.target.value)}/></div>
+                </div>
+                <div style={{display:"flex",gap:8,marginTop:10}}><button className={`fmt-btn${tBold?" on":""}`} onClick={()=>setTBold(b=>!b)}><strong>B</strong></button><button className={`fmt-btn${tItalic?" on":""}`} onClick={()=>setTItalic(it=>!it)}><em>I</em></button></div>
+                {msgText&&<div className="msg-preview" style={{fontFamily:tFont,fontSize:tSize,color:tColor,fontWeight:tBold?700:400,fontStyle:tItalic?"italic":"normal",marginTop:12}}>
+                  <div>{msgText}</div>
+                  {signerName&&<div style={{fontSize:tSize*.72,marginTop:6,opacity:.6,fontStyle:"italic"}}>— {signerName}</div>}
+                </div>}
+                <button className="btn-dark" style={{width:"100%",marginTop:14,justifyContent:"center"}} onClick={addSig}>Add to Page {activePage}</button>
+                <p style={{fontFamily:"'Jost',sans-serif",fontSize:11,color:"rgba(42,21,8,.35)",lineHeight:1.75,marginTop:8}}>Tap to select · drag to move · corner to resize</p>
+              </div>
+            ))}
             {activePanel==="photos"&&<PhotosPanel onAdd={(url)=>spawnPageItem({type:"photo",url})} uploads={uploads} onUpload={handleUpload} fileRef={fileRef}/>}
             {activePanel==="gifs"&&<GiphyPanel onAdd={(url)=>spawnPageItem({type:"gif",url})}/>}
             {activePanel==="emojis"&&<div><p style={{ fontFamily:"'Jost',sans-serif",fontSize:12,fontWeight:300,color:"#8B6E4E",marginBottom:14,lineHeight:1.7 }}>Tap to place — drag to move, corner to resize.</p><div className="emoji-grid">{EMOJIS.map(e=><button key={e} className="emoji-btn" onClick={()=>spawnPageItem({type:"emoji",content:e})}>{e}</button>)}</div></div>}
-            {activePanel==="audio"&&<div><p style={{ fontFamily:"'Jost',sans-serif",fontSize:12,fontWeight:300,color:"#8B6E4E",lineHeight:1.85,marginBottom:18 }}>Add a voice message or music clip to your card.</p><button className="btn-upload">{Icon.music(15)} Record a voice message</button><button className="btn-upload">{Icon.upload(15)} Upload an audio clip</button></div>}
+            {activePanel==="audio"&&(
+              <AudioPanel onAdd={(url)=>spawnPageItem({type:"audio",url})}/>
+            )}
           </div>
         </div>
 
@@ -1153,10 +1069,7 @@ export default function Steeped() {
         </>
       )}
 
-       </div>  {/* closes .home div */}
-      {showAuth&&<AuthModal/>}  {/* ← find this line */}
-    </div>   {/* closes .app div */}
-  );          {/* closes the home return */}
+      {showAuth&&<AuthModal {...authProps}/>}
 
       {showSend&&(
         <div className="modal-overlay" onClick={e=>e.target===e.currentTarget&&setShowSend(false)}>
@@ -1210,6 +1123,82 @@ export default function Steeped() {
                 {sendTab==="print"&&<div className="modal-center">{Icon.printer(52,"#d4a843")}<h3 className="modal-sec-title">Print your card</h3><p className="modal-sec-body">Print all {pages.length+1} pages and hand-deliver with love.</p><button className="btn-send" style={{ padding:"13px 40px" }} onClick={()=>window.print()}>Print Card</button></div>}
               </>}
             </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ─── AudioPanel — defined outside to avoid remount ─────────── */
+function AudioPanel({ onAdd }) {
+  const [recording, setRecording] = useState(false);
+  const [recorded, setRecorded] = useState(null);
+  const mediaRef = useRef(null);
+  const chunksRef = useRef([]);
+  const audioFileRef = useRef(null);
+
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mr = new MediaRecorder(stream);
+      mediaRef.current = mr;
+      chunksRef.current = [];
+      mr.ondataavailable = e => chunksRef.current.push(e.data);
+      mr.onstop = () => {
+        const blob = new Blob(chunksRef.current, { type:"audio/webm" });
+        const url = URL.createObjectURL(blob);
+        setRecorded(url);
+        stream.getTracks().forEach(t => t.stop());
+      };
+      mr.start();
+      setRecording(true);
+    } catch(e) { alert("Microphone access denied. Please allow microphone access and try again."); }
+  };
+
+  const stopRecording = () => { mediaRef.current?.stop(); setRecording(false); };
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => onAdd(ev.target.result);
+    reader.readAsDataURL(file);
+  };
+
+  return (
+    <div>
+      <p style={{ fontFamily:"'Jost',sans-serif",fontSize:12,fontWeight:300,color:"#8B6E4E",lineHeight:1.85,marginBottom:18 }}>
+        Add a voice message or music clip to your card.
+      </p>
+
+      {/* Upload file */}
+      <button className="btn-upload" onClick={()=>audioFileRef.current?.click()}>
+        {Icon.upload(15)} Upload an audio clip
+      </button>
+      <input ref={audioFileRef} type="file" accept="audio/*" style={{ display:"none" }} onChange={handleFileUpload}/>
+      <p style={{ fontFamily:"'Jost',sans-serif",fontSize:11,color:"rgba(42,21,8,.28)",textAlign:"center",marginTop:-6,marginBottom:16,letterSpacing:".3px" }}>MP3, WAV, M4A — max 5 MB</p>
+
+      {/* Record voice */}
+      {!recording && !recorded && (
+        <button className="btn-upload" onClick={startRecording}>
+          {Icon.music(15)} Record a voice message
+        </button>
+      )}
+      {recording && (
+        <div style={{ textAlign:"center",padding:"16px 0" }}>
+          <div style={{ width:12,height:12,borderRadius:"50%",background:"#e53935",display:"inline-block",marginRight:8,animation:"spin .8s linear infinite" }}/>
+          <span style={{ fontFamily:"'Jost',sans-serif",fontSize:13,color:"#8B6E4E" }}>Recording…</span>
+          <button className="btn-dark" style={{ display:"block",margin:"12px auto 0",background:"#e53935" }} onClick={stopRecording}>Stop recording</button>
+        </div>
+      )}
+      {recorded && !recording && (
+        <div style={{ padding:"14px",background:"#FAF5EE",borderRadius:8,border:"1px solid rgba(42,21,8,.1)" }}>
+          <p style={{ fontFamily:"'Jost',sans-serif",fontSize:11,color:"#8B6E4E",marginBottom:8 }}>Preview your recording:</p>
+          <audio controls src={recorded} style={{ width:"100%",height:32,marginBottom:12 }}/>
+          <div style={{ display:"flex",gap:8 }}>
+            <button className="btn-dark" style={{ flex:1,justifyContent:"center",fontSize:12 }} onClick={()=>{ onAdd(recorded); setRecorded(null); }}>Add to card</button>
+            <button className="btn-ghost-sm" onClick={()=>setRecorded(null)}>Re-record</button>
           </div>
         </div>
       )}
