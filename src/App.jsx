@@ -259,20 +259,42 @@ html,body{width:100%;min-height:100%;background:#FAF5EE;}
 .page-tab-btn.active{background:white;color:#2A1508;border-color:rgba(42,21,8,.25);box-shadow:0 2px 14px rgba(42,21,8,.1);}
 .page-tab-btn:hover:not(.active){background:rgba(255,255,255,.8);}
 .page-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
-/* ── Physical card realism ─────────────────────────────── */
-@keyframes liftIn{from{opacity:0;transform:translateY(18px) rotate(-1deg)}to{opacity:1;transform:translateY(0) rotate(-1.5deg)}}
-.card-wrap{width:clamp(300px,58vw,520px);animation:liftIn .4s cubic-bezier(.22,1,.36,1) both;position:relative;filter:drop-shadow(0 28px 48px rgba(42,21,8,.28)) drop-shadow(0 6px 16px rgba(42,21,8,.14));}
-/* Envelope peeking behind */
-.card-wrap::before{content:'';position:absolute;bottom:-18px;left:50%;transform:translateX(-50%) rotate(1.5deg);width:102%;height:60%;border-radius:4px 4px 8px 8px;z-index:-1;background:var(--env-color,#d4a843);opacity:.85;}
-/* Envelope flap */
-.card-wrap::after{content:'';position:absolute;bottom:-18px;left:50%;transform:translateX(-50%) rotate(1.5deg);width:102%;height:30%;clip-path:polygon(0 0,100% 0,50% 100%);z-index:-1;background:var(--env-color,#c89a30);opacity:.7;}
-.card-cover{width:100%;min-height:clamp(260px,36vw,400px);border-radius:6px;overflow:hidden;position:relative;transform:rotate(-1.5deg);background:white;border:1px solid rgba(42,21,8,.07);}
-/* Inner tinted cover layer — the coloured illustration area */
-.card-cover-face{position:absolute;inset:0;border-radius:6px;overflow:hidden;}
-.card-page{width:100%;min-height:clamp(320px,42vw,460px);border-radius:6px;background:white;position:relative;overflow:visible;transform:rotate(-1.5deg);border:1px solid rgba(42,21,8,.08);}
-/* Subtle paper texture overlay */
-.card-cover::after,.card-page::after{content:'';position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;border-radius:6px;z-index:100;}
-.canvas-footer{display:flex;align-items:center;justify-content:space-between;width:clamp(300px,60vw,560px);margin-top:22px;}
+/* ── Physical card & envelope ──────────────────────────── */
+@keyframes popFromEnvelope{
+  0%  {transform:translateY(56%) rotate(-1.5deg);clip-path:inset(0 0 56% 0 round 5px);opacity:0;}
+  8%  {opacity:1;}
+  38% {transform:translateY(30%) rotate(-1.5deg);clip-path:inset(0 0 30% 0 round 5px);}
+  72% {transform:translateY(9%)  rotate(-1.5deg);clip-path:inset(0 0 9%  0 round 5px);}
+  100%{transform:translateY(0)   rotate(-1.5deg);clip-path:inset(0 0 0   0 round 5px);}
+}
+/* Card scene: outer wrapper carrying drop-shadow and envelope */
+.card-scene{width:clamp(300px,58vw,520px);position:relative;padding-bottom:28px;filter:drop-shadow(0 30px 50px rgba(42,21,8,.30)) drop-shadow(0 6px 18px rgba(42,21,8,.16));}
+/* The animated card inside the scene */
+.card-wrap{position:relative;z-index:2;animation:popFromEnvelope 1.15s cubic-bezier(.16,1,.3,1) both;}
+/* Envelope shell — sits behind card, rotated opposite way for a stacked look */
+.env-shell{position:absolute;bottom:0;left:50%;transform:translateX(-50%) rotate(1.6deg);width:107%;z-index:1;pointer-events:none;}
+/* Main envelope body */
+.env-body{position:relative;height:190px;background:white;border-radius:3px;border:1px solid rgba(42,21,8,.11);overflow:hidden;box-shadow:0 5px 18px rgba(42,21,8,.16),0 1px 4px rgba(42,21,8,.08);}
+/* Colored interior liner — V shape at top, simulates open envelope showing inside */
+.env-liner{position:absolute;top:0;left:0;right:0;height:58%;clip-path:polygon(0 0,100% 0,50% 100%);border-bottom:1px solid rgba(42,21,8,.06);}
+/* Left and right diagonal fold lines */
+.env-fold-l{position:absolute;inset:0;clip-path:polygon(0 0,50% 52%,0 100%);background:rgba(42,21,8,.025);}
+.env-fold-r{position:absolute;inset:0;clip-path:polygon(100% 0,50% 52%,100% 100%);background:rgba(42,21,8,.02);}
+/* Bottom V fold */
+.env-fold-b{position:absolute;bottom:0;left:0;right:0;height:54%;clip-path:polygon(0 100%,50% 0,100% 100%);background:rgba(42,21,8,.028);}
+/* Fold crease lines */
+.env-body::before{content:'';position:absolute;inset:0;background:linear-gradient(to bottom right,transparent 49.6%,rgba(42,21,8,.05) 49.8%,transparent 50%),linear-gradient(to bottom left,transparent 49.6%,rgba(42,21,8,.04) 49.8%,transparent 50%);pointer-events:none;}
+/* Open flap — folded back, sits above the body, showing colored interior */
+.env-flap{position:absolute;top:-58px;left:-1px;right:-1px;height:76px;clip-path:polygon(0 100%,50% 0%,100% 100%);border:1px solid rgba(42,21,8,.07);}
+/* Soft shadow under flap where it meets body */
+.env-flap::after{content:'';position:absolute;bottom:0;left:0;right:0;height:4px;background:linear-gradient(to bottom,rgba(42,21,8,.06),transparent);}
+/* Card face styles */
+.card-cover{width:100%;min-height:clamp(260px,36vw,400px);border-radius:5px;overflow:hidden;position:relative;background:white;border:1px solid rgba(42,21,8,.07);}
+.card-cover-face{position:absolute;inset:0;border-radius:5px;overflow:hidden;}
+.card-page{width:100%;min-height:clamp(320px,42vw,460px);border-radius:5px;background:white;position:relative;overflow:visible;border:1px solid rgba(42,21,8,.07);}
+/* Paper texture on both */
+.card-cover::after,.card-page::after{content:'';position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");pointer-events:none;border-radius:5px;z-index:100;}
+.canvas-footer{display:flex;align-items:center;justify-content:space-between;width:clamp(300px,58vw,520px);margin-top:22px;}
 .canvas-meta{font-family:'Jost',sans-serif;font-size:11px;font-weight:300;color:rgba(42,21,8,.38);letter-spacing:.3px;}
 .d-item{position:absolute;cursor:grab;touch-action:none;z-index:10;}
 .d-item:active{cursor:grabbing;}
@@ -904,6 +926,23 @@ function ColorPicker({ value, onChange }) {
           <input type="color" value={value} onChange={e=>onChange(e.target.value)}
             style={{ position:"absolute",inset:0,opacity:0,width:"100%",height:"100%",cursor:"pointer" }}/>
         </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─── CardEnvelope ──────────────────────────────────────────── */
+function CardEnvelope({ accent }) {
+  const liner = accent + "28"; // ~16% tinted liner
+  const flap  = accent + "1e"; // ~12% flap interior
+  return (
+    <div className="env-shell">
+      <div className="env-flap" style={{ background:`linear-gradient(to bottom,${accent}22,${accent}38)` }}/>
+      <div className="env-body">
+        <div className="env-liner" style={{ background:`linear-gradient(160deg,${accent}1a 0%,${accent}10 100%)` }}/>
+        <div className="env-fold-l"/>
+        <div className="env-fold-r"/>
+        <div className="env-fold-b"/>
       </div>
     </div>
   );
@@ -1817,55 +1856,57 @@ export default function Steeped() {
           </div>
 
           {activePage===0&&(
-            <div className="card-wrap" key="cover" onClick={e=>e.stopPropagation()} style={{"--env-color":theme.accent}}>
-              <div className="card-cover">
-                {/* Coloured face fills the whole cover */}
-                <div className="card-cover-face" style={{ background:theme.cover }}>
-                  {/* Watermark icon */}
-                  <div style={{ position:"absolute",top:16,right:18,opacity:.12,pointerEvents:"none" }}>{Icon[theme.icon](52,theme.accent)}</div>
-                  {/* White paper border inset */}
-                  <div style={{ position:"absolute",inset:10,border:"1px solid rgba(255,255,255,.35)",borderRadius:4,pointerEvents:"none" }}/>
-                  <div ref={coverRef} className="cover-canvas" onClick={desel} style={{ minHeight:390,position:"relative",zIndex:10 }}>
-                    {coverItems.map(item=>(
-                      <DItem key={item.id} item={item} selected={selCover===item.id}
-                        onSelect={id=>{setSelCover(id);setSelPage(null);}}
-                        onDelete={delCovItem} onMove={moveCovItem} onResize={resCovItem} onTextChange={editCovText}
-                        containerRef={coverRef}/>
-                    ))}
-                    {coverItems.length===0&&<div style={{ position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",pointerEvents:"none" }}><div style={{ color:theme.accent,marginBottom:18,filter:"drop-shadow(0 2px 8px rgba(0,0,0,.12))" }}>{Icon[theme.icon](52,theme.accent)}</div><div style={{ fontFamily:"'Playfair Display',serif",fontSize:26,color:theme.accent,fontWeight:400,textShadow:"0 1px 4px rgba(0,0,0,.1)" }}>{theme.name}</div></div>}
+            <div className="card-scene" key="cover" onClick={e=>e.stopPropagation()}>
+              <CardEnvelope accent={theme.accent}/>
+              <div className="card-wrap">
+                <div className="card-cover">
+                  <div className="card-cover-face" style={{ background:theme.cover }}>
+                    <div style={{ position:"absolute",top:16,right:18,opacity:.11,pointerEvents:"none" }}>{Icon[theme.icon](52,theme.accent)}</div>
+                    <div style={{ position:"absolute",inset:10,border:"1px solid rgba(255,255,255,.32)",borderRadius:3,pointerEvents:"none" }}/>
+                    <div ref={coverRef} className="cover-canvas" onClick={desel} style={{ minHeight:390,position:"relative",zIndex:10 }}>
+                      {coverItems.map(item=>(
+                        <DItem key={item.id} item={item} selected={selCover===item.id}
+                          onSelect={id=>{setSelCover(id);setSelPage(null);}}
+                          onDelete={delCovItem} onMove={moveCovItem} onResize={resCovItem} onTextChange={editCovText}
+                          containerRef={coverRef}/>
+                      ))}
+                      {coverItems.length===0&&<div style={{ position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",pointerEvents:"none" }}><div style={{ color:theme.accent,marginBottom:18 }}>{Icon[theme.icon](52,theme.accent)}</div><div style={{ fontFamily:"'Playfair Display',serif",fontSize:26,color:theme.accent,fontWeight:400 }}>{theme.name}</div></div>}
+                    </div>
                   </div>
                 </div>
               </div>
-              <div style={{ marginTop:28,padding:"9px 14px",background:"rgba(255,255,255,.72)",backdropFilter:"blur(8px)",borderRadius:6,fontFamily:"'Jost',sans-serif",fontSize:11.5,fontWeight:300,color:"#8B6E4E",lineHeight:1.8,textAlign:"center",transform:"rotate(-1.5deg)" }}>
+              <div style={{ marginTop:30,padding:"8px 14px",background:"rgba(255,255,255,.7)",backdropFilter:"blur(8px)",borderRadius:5,fontFamily:"'Jost',sans-serif",fontSize:11.5,fontWeight:300,color:"#8B6E4E",lineHeight:1.8,textAlign:"center",transform:"rotate(-1.5deg)" }}>
                 Use the <strong style={{ fontWeight:500 }}>Sign tab</strong> to add text · drag to reposition · corner to resize
               </div>
             </div>
           )}
 
           {activePage>0&&curPage&&(
-            <div className="card-wrap" key={curPage.id} onClick={e=>e.stopPropagation()} style={{"--env-color":theme.accent}}>
-              <div className="card-page">
-                {/* Thin coloured top border — like a card with a stripe */}
-                <div style={{ position:"absolute",top:0,left:0,right:0,height:5,background:theme.cover,borderRadius:"6px 6px 0 0",opacity:.9 }}/>
-                <div ref={el=>pageRefs.current[activePage-1]=el} className="page-canvas" onClick={desel}>
-                  <div className="page-header">
-                    <div style={{ display:"flex",alignItems:"center",gap:8 }}>
-                      <div style={{ color:theme.accent,opacity:.6 }}>{Icon[theme.icon](14,theme.accent)}</div>
-                      <span className="page-num-label">Page {curPage.num} of {pages.length}</span>
+            <div className="card-scene" key={curPage.id} onClick={e=>e.stopPropagation()}>
+              <CardEnvelope accent={theme.accent}/>
+              <div className="card-wrap">
+                <div className="card-page">
+                  <div style={{ position:"absolute",top:0,left:0,right:0,height:5,background:theme.cover,borderRadius:"5px 5px 0 0",opacity:.9 }}/>
+                  <div ref={el=>pageRefs.current[activePage-1]=el} className="page-canvas" onClick={desel}>
+                    <div className="page-header">
+                      <div style={{ display:"flex",alignItems:"center",gap:8 }}>
+                        <div style={{ color:theme.accent,opacity:.6 }}>{Icon[theme.icon](14,theme.accent)}</div>
+                        <span className="page-num-label">Page {curPage.num} of {pages.length}</span>
+                      </div>
+                      {pages.length>1&&<button className="page-del-btn" onClick={()=>delPage(activePage-1)}>{Icon.trash(14,"rgba(42,21,8,.28)")}</button>}
                     </div>
-                    {pages.length>1&&<button className="page-del-btn" onClick={()=>delPage(activePage-1)}>{Icon.trash(14,"rgba(42,21,8,.28)")}</button>}
+                    {curPage.items.length===0&&<div className="page-empty">This page is waiting to be filled<br/>with warm words and kind hearts…</div>}
+                    {curPage.items.map(item=>(
+                      <DItem key={item.id} item={item} selected={selPage===item.id}
+                        onSelect={id=>{setSelPage(id);setSelCover(null);}}
+                        onDelete={id=>delPageItem(activePage-1,id)}
+                        onMove={(id,x,y)=>movePageItem(activePage-1,id,x,y)}
+                        onResize={(id,w,h)=>resPageItem(activePage-1,id,w,h)}
+                        onTextChange={(id,text)=>editPageText(activePage-1,id,text)}
+                        containerRef={{current:pageRefs.current[activePage-1]}}/>
+                    ))}
+                    {curPage.items.length>0&&<div className="drop-hint">Tap to select · drag to move · corner to resize · ✎ edit · × remove</div>}
                   </div>
-                  {curPage.items.length===0&&<div className="page-empty">This page is waiting to be filled<br/>with warm words and kind hearts…</div>}
-                  {curPage.items.map(item=>(
-                    <DItem key={item.id} item={item} selected={selPage===item.id}
-                      onSelect={id=>{setSelPage(id);setSelCover(null);}}
-                      onDelete={id=>delPageItem(activePage-1,id)}
-                      onMove={(id,x,y)=>movePageItem(activePage-1,id,x,y)}
-                      onResize={(id,w,h)=>resPageItem(activePage-1,id,w,h)}
-                      onTextChange={(id,text)=>editPageText(activePage-1,id,text)}
-                      containerRef={{current:pageRefs.current[activePage-1]}}/>
-                  ))}
-                  {curPage.items.length>0&&<div className="drop-hint">Tap to select · drag to move · corner to resize · ✎ edit · × remove</div>}
                 </div>
               </div>
               <button className="btn-page-add" style={{ transform:"rotate(-1.5deg)",marginTop:10 }} onClick={e=>{e.stopPropagation();addPage();}}>{Icon.plus(13)} Add another signing page</button>
