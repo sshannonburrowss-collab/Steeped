@@ -377,13 +377,11 @@ html,body{width:100%;min-height:100%;background:#FAF5EE;}
   .dashboard-drawer .f-input{font-size:14px;padding:10px 12px;}
 
 /* ── My Cards Dashboard ─────────────────────────────────── */
-.my-cards-view{min-height:calc(100vh - 68px);background:#FAF5EE;padding:44px 40px 60px;max-width:1060px;margin:0 auto;}
-.my-cards-greeting{margin-bottom:36px;animation:fadeUp .5s ease;}
-.my-cards-eyebrow{font-family:'Jost',sans-serif;font-weight:300;font-size:11px;color:#d4a843;letter-spacing:4px;text-transform:uppercase;margin-bottom:10px;}
-.my-cards-title{font-family:'Playfair Display',serif;font-size:32px;font-weight:400;color:#2A1508;margin-bottom:6px;}
-.my-cards-sub{font-family:'Jost',sans-serif;font-size:14px;font-weight:300;color:#8B6E4E;line-height:1.7;}
-.my-cards-toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;gap:12px;flex-wrap:wrap;}
-.my-cards-toolbar-title{font-family:'Jost',sans-serif;font-size:10px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:rgba(42,21,8,.38);}
+.my-cards-view{min-height:calc(100vh - 68px);background:#FAF5EE;padding:40px 44px 60px;max-width:1060px;margin:0 auto;box-sizing:border-box;}
+.my-cards-greeting{margin-bottom:0;animation:fadeUp .5s ease;}
+.my-cards-eyebrow{font-family:'Jost',sans-serif;font-weight:300;font-size:11px;color:#d4a843;letter-spacing:4px;text-transform:uppercase;margin-bottom:8px;}
+.my-cards-title{font-family:'Playfair Display',serif;font-size:30px;font-weight:400;color:#2A1508;margin-bottom:4px;line-height:1.2;}
+.my-cards-sub{font-family:'Jost',sans-serif;font-size:13px;font-weight:300;color:#8B6E4E;line-height:1.65;margin:0;}
 .my-cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(268px,1fr));gap:20px;}
 .my-card-item{background:white;border-radius:12px;overflow:hidden;box-shadow:0 2px 16px rgba(42,21,8,.07);border:1.5px solid rgba(42,21,8,.06);transition:all .22s;animation:fadeUp .4s ease both;cursor:pointer;}
 .my-card-item:hover{transform:translateY(-4px);box-shadow:0 16px 40px rgba(42,21,8,.14);border-color:rgba(42,21,8,.12);}
@@ -408,15 +406,14 @@ html,body{width:100%;min-height:100%;background:#FAF5EE;}
 .delete-confirm-overlay{position:fixed;inset:0;background:rgba(42,21,8,.45);backdrop-filter:blur(8px);z-index:400;display:flex;align-items:center;justify-content:center;padding:20px;}
 .delete-confirm-box{background:white;border-radius:12px;padding:28px 32px;max-width:380px;width:100%;box-shadow:0 24px 70px rgba(42,21,8,.22);animation:cardIn .2s ease;text-align:center;}
 @media(max-width:680px){
-  .my-cards-view{padding:24px 16px 48px;}
-  .my-cards-title{font-size:26px;}
+  .my-cards-view{padding:20px 16px 48px;}
+  .my-cards-title{font-size:24px;}
   .my-cards-grid{grid-template-columns:1fr 1fr;gap:12px;}
   .my-card-cover-wrap{height:110px;}
   .my-card-body{padding:12px 14px 11px;}
   .my-card-theme-name{font-size:13px;}
   .my-card-actions{gap:5px;}
   .my-card-btn{font-size:10px;padding:7px 4px;}
-  .my-cards-toolbar{flex-direction:column;align-items:flex-start;}
 }
 @media(max-width:400px){
   .my-cards-grid{grid-template-columns:1fr;}
@@ -1275,41 +1272,54 @@ export default function Steeped() {
 
 
   if (view==="my-cards") {
-    const firstName = user?.user_metadata?.full_name?.split(" ")[0] || "there";
+    const firstName = user?.user_metadata?.full_name?.split(" ")[0] || null;
     const timeOfDay = () => { const h=new Date().getHours(); return h<12?"morning":h<17?"afternoon":"evening"; };
     return (
       <div className="app"><style>{CSS}</style>
         <nav className="nav">
           <NavLogo onClick={()=>setView("home")}/>
           <div style={{ display:"flex",gap:8,alignItems:"center" }}>
-            <span className="nav-user-name">{user?.user_metadata?.full_name||user?.email}</span>
-            <button className="btn-ghost-sm" onClick={doSignOut}>Sign out</button>
+            {user && <span className="nav-user-name" style={{ maxWidth:160,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap" }}>{user.user_metadata?.full_name||user.email}</span>}
+            {user
+              ? <button className="btn-ghost-sm" onClick={doSignOut}>Sign out</button>
+              : <button className="btn-ghost-sm" onClick={()=>{ setAuthMode("login"); setShowAuth(true); }}>{Icon.user(13)} Log in</button>
+            }
             <button className="btn-dark" onClick={()=>setView("themes")}>New card {Icon.plus(12,"#FAF5EE")}</button>
           </div>
         </nav>
         <div className="my-cards-view">
-          <div className="my-cards-greeting">
-            <div className="my-cards-eyebrow">good {timeOfDay()}</div>
-            <h1 className="my-cards-title">Welcome back, {firstName} ✨</h1>
-            <p className="my-cards-sub">Here are all the cards you've brewed with care.</p>
-          </div>
-          <div className="my-cards-toolbar">
-            <span className="my-cards-toolbar-title">{myCardsLoading?"Loading…":`${myCards.length} card${myCards.length!==1?"s":""}`}</span>
-            <button className="btn-dark" onClick={()=>setView("themes")}>{Icon.plus(13,"#FAF5EE")} Brew a new card</button>
+
+          {/* ── Header: greeting left, CTA right ── */}
+          <div style={{ display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:16,marginBottom:32,flexWrap:"wrap" }}>
+            <div className="my-cards-greeting" style={{ margin:0 }}>
+              <div className="my-cards-eyebrow">good {timeOfDay()}</div>
+              <h1 className="my-cards-title" style={{ marginBottom:4 }}>
+                {firstName ? `Welcome back, ${firstName} ✨` : "My Cards ✨"}
+              </h1>
+              <p className="my-cards-sub">Here are all the cards you've brewed with care.</p>
+            </div>
+            <button className="btn-dark" style={{ flexShrink:0,alignSelf:"flex-start",marginTop:8 }} onClick={()=>setView("themes")}>
+              {Icon.plus(13,"#FAF5EE")} Brew a new card
+            </button>
           </div>
 
-          {/* Login nudge when not authenticated */}
+          {/* ── Login nudge ── */}
           {!user && (
-            <div style={{ display:"flex",alignItems:"center",gap:12,padding:"12px 16px",background:"linear-gradient(135deg,#FFF9F2,#FAF5EE)",border:"1px solid rgba(212,168,67,.25)",borderRadius:8,marginBottom:24,flexWrap:"wrap" }}>
-              <div style={{ flex:1,minWidth:180 }}>
-                <div style={{ fontFamily:"'Jost',sans-serif",fontSize:12,fontWeight:500,color:"#5a3a10",marginBottom:2 }}>Sign in to sync your cards across devices</div>
-                <div style={{ fontFamily:"'Jost',sans-serif",fontSize:11,fontWeight:300,color:"#8B6E4E" }}>Cards are saved locally for now — log in to keep them safe.</div>
+            <div style={{ display:"grid",gridTemplateColumns:"1fr auto",alignItems:"center",gap:16,padding:"14px 18px",background:"linear-gradient(135deg,#FFF9F2,#FAF5EE)",border:"1px solid rgba(212,168,67,.25)",borderRadius:8,marginBottom:28 }}>
+              <div>
+                <div style={{ fontFamily:"'Jost',sans-serif",fontSize:13,fontWeight:500,color:"#5a3a10",marginBottom:3 }}>Sign in to sync your cards across devices</div>
+                <div style={{ fontFamily:"'Jost',sans-serif",fontSize:12,fontWeight:300,color:"#8B6E4E",lineHeight:1.5 }}>Cards are saved locally for now — log in to keep them safe.</div>
               </div>
-              <button className="btn-dark" style={{ fontSize:12,padding:"8px 18px",flexShrink:0 }} onClick={()=>{ setAuthMode("login"); setShowAuth(true); }}>
+              <button className="btn-dark" style={{ fontSize:12,padding:"9px 20px",whiteSpace:"nowrap" }} onClick={()=>{ setAuthMode("login"); setShowAuth(true); }}>
                 {Icon.user(12,"#FAF5EE")} Log in
               </button>
             </div>
           )}
+
+          {/* ── Card count ── */}
+          <div style={{ fontFamily:"'Jost',sans-serif",fontSize:10,fontWeight:500,letterSpacing:"2px",textTransform:"uppercase",color:"rgba(42,21,8,.38)",marginBottom:20 }}>
+            {myCardsLoading ? "Loading…" : `${myCards.length} card${myCards.length!==1?"s":""}`}
+          </div>
 
           {myCardsLoading && (
             <div className="my-cards-loading">
