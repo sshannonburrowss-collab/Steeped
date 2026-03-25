@@ -375,6 +375,52 @@ html,body{width:100%;min-height:100%;background:#FAF5EE;}
   /* Dashboard drawer specific */
   .dashboard-drawer .dashboard-section{border-radius:0;border:none;background:transparent;padding:0;margin:0;}
   .dashboard-drawer .f-input{font-size:14px;padding:10px 12px;}
+
+/* ── My Cards Dashboard ─────────────────────────────────── */
+.my-cards-view{min-height:calc(100vh - 68px);background:#FAF5EE;padding:44px 40px 60px;max-width:1060px;margin:0 auto;}
+.my-cards-greeting{margin-bottom:36px;animation:fadeUp .5s ease;}
+.my-cards-eyebrow{font-family:'Jost',sans-serif;font-weight:300;font-size:11px;color:#d4a843;letter-spacing:4px;text-transform:uppercase;margin-bottom:10px;}
+.my-cards-title{font-family:'Playfair Display',serif;font-size:32px;font-weight:400;color:#2A1508;margin-bottom:6px;}
+.my-cards-sub{font-family:'Jost',sans-serif;font-size:14px;font-weight:300;color:#8B6E4E;line-height:1.7;}
+.my-cards-toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;gap:12px;flex-wrap:wrap;}
+.my-cards-toolbar-title{font-family:'Jost',sans-serif;font-size:10px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:rgba(42,21,8,.38);}
+.my-cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(268px,1fr));gap:20px;}
+.my-card-item{background:white;border-radius:12px;overflow:hidden;box-shadow:0 2px 16px rgba(42,21,8,.07);border:1.5px solid rgba(42,21,8,.06);transition:all .22s;animation:fadeUp .4s ease both;cursor:pointer;}
+.my-card-item:hover{transform:translateY(-4px);box-shadow:0 16px 40px rgba(42,21,8,.14);border-color:rgba(42,21,8,.12);}
+.my-card-cover-wrap{height:148px;position:relative;overflow:hidden;flex-shrink:0;}
+.my-card-cover-inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:16px;}
+.my-card-cover-text{font-family:'Playfair Display',serif;font-size:13px;font-weight:400;text-align:center;line-height:1.4;max-width:90%;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+.my-card-cover-icon{opacity:.22;position:absolute;bottom:10px;right:14px;}
+.my-card-body{padding:16px 18px 14px;}
+.my-card-theme-name{font-family:'Playfair Display',serif;font-size:14.5px;font-weight:400;color:#2A1508;margin-bottom:5px;}
+.my-card-meta-row{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:14px;}
+.my-card-chip{font-family:'Jost',sans-serif;font-size:10.5px;font-weight:300;color:#8B6E4E;display:flex;align-items:center;gap:4px;}
+.my-card-actions{display:flex;gap:7px;}
+.my-card-btn{flex:1;padding:8px 6px;border-radius:5px;border:1px solid rgba(42,21,8,.13);background:transparent;font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.3px;color:#8B6E4E;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:5px;}
+.my-card-btn:hover{background:#FAF5EE;color:#2A1508;border-color:rgba(42,21,8,.25);}
+.my-card-btn.primary{background:#2A1508;color:#FAF5EE;border-color:#2A1508;}
+.my-card-btn.primary:hover{background:#3d2010;}
+.my-cards-empty{text-align:center;padding:72px 20px;animation:fadeUp .5s ease;}
+.my-cards-empty-icon{margin-bottom:22px;opacity:.25;}
+.my-cards-empty-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:400;color:#2A1508;margin-bottom:10px;}
+.my-cards-empty-sub{font-family:'Jost',sans-serif;font-size:14px;font-weight:300;color:#8B6E4E;line-height:1.8;margin-bottom:28px;}
+.my-cards-loading{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px;gap:16px;}
+.delete-confirm-overlay{position:fixed;inset:0;background:rgba(42,21,8,.45);backdrop-filter:blur(8px);z-index:400;display:flex;align-items:center;justify-content:center;padding:20px;}
+.delete-confirm-box{background:white;border-radius:12px;padding:28px 32px;max-width:380px;width:100%;box-shadow:0 24px 70px rgba(42,21,8,.22);animation:cardIn .2s ease;text-align:center;}
+@media(max-width:680px){
+  .my-cards-view{padding:24px 16px 48px;}
+  .my-cards-title{font-size:26px;}
+  .my-cards-grid{grid-template-columns:1fr 1fr;gap:12px;}
+  .my-card-cover-wrap{height:110px;}
+  .my-card-body{padding:12px 14px 11px;}
+  .my-card-theme-name{font-size:13px;}
+  .my-card-actions{gap:5px;}
+  .my-card-btn{font-size:10px;padding:7px 4px;}
+  .my-cards-toolbar{flex-direction:column;align-items:flex-start;}
+}
+@media(max-width:400px){
+  .my-cards-grid{grid-template-columns:1fr;}
+}
 }
 `;
 
@@ -399,6 +445,27 @@ function useCountdown(deadline) {
     return () => clearInterval(id);
   }, [deadline]);
   return timeLeft;
+}
+
+/* ─── useLocalSave hook ─────────────────────────────────────── */
+function useLocalSave(key, theme, pages, coverItems, cardId) {
+  const timerRef = useRef(null);
+  useEffect(() => {
+    if (!theme) return; // nothing to save yet
+    clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => {
+      try {
+        const existing = JSON.parse(localStorage.getItem(key) || "[]");
+        const id = cardId || `draft_${theme.id}`;
+        const entry = { id, theme, pages, coverItems, updatedAt: new Date().toISOString() };
+        const idx = existing.findIndex(c => c.id === id);
+        if (idx >= 0) existing[idx] = entry;
+        else existing.unshift(entry);
+        localStorage.setItem(key, JSON.stringify(existing.slice(0, 50)));
+      } catch(e) {}
+    }, 1200); // debounce 1.2s
+    return () => clearTimeout(timerRef.current);
+  }, [theme, pages, coverItems, cardId]);
 }
 
 /* ─── GiphyPanel ─────────────────────────────────────────────── */
@@ -766,6 +833,12 @@ export default function Steeped() {
   const [viewSigned, setViewSigned] = useState(false);
   const [showViewSignForm, setShowViewSignForm] = useState(false);
 
+  // ── My Cards dashboard ───────────────────────────────────────
+  const [myCards, setMyCards] = useState([]);
+  const [myCardsLoading, setMyCardsLoading] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState(null); // cardId to confirm delete
+  const [cardCopied, setCardCopied] = useState(null);
+
   // ── NEW: Dashboard, Anonymous mode, Deadline ─────────────────
   const [invitees, setInvitees] = useState([]);
   const [newInviteeName, setNewInviteeName] = useState("");
@@ -776,6 +849,8 @@ export default function Steeped() {
   const [nudgeCopied, setNudgeCopied] = useState(null);
 
   const countdown = useCountdown(deadline);
+  const LOCAL_SAVE_KEY = "steeped_local_cards";
+  useLocalSave(LOCAL_SAVE_KEY, theme, pages, coverItems, cardId);
 
   const fileRef = useRef(null);
   const coverRef = useRef(null);
@@ -803,14 +878,28 @@ export default function Steeped() {
 
   const saveCard = async (overrideUser) => {
     const currentUser = overrideUser||user;
-    if (!currentUser) return null;
     setSaving(true);
+    // Generate a local id if we don't have one yet
+    const localId = cardId || `local_${uid()}`;
+    if (!cardId) setCardId(localId);
+    const cardSnapshot = { id:localId, theme, pages, coverItems, updatedAt:new Date().toISOString() };
+    persistCardLocally(cardSnapshot);
+    const url = `${window.location.origin}/?card=${localId}`;
+    setCardUrl(url);
+    if (!currentUser) { setSaving(false); return localId; }
     try {
       const res = await fetch("/api/save-card", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ theme, pages, coverItems, userId:currentUser.id, cardId:cardId||undefined }) });
       const data = await res.json();
-      if (data.cardId) { setCardId(data.cardId); const url=`${window.location.origin}/?card=${data.cardId}`; setCardUrl(url); setSaving(false); return data.cardId; }
-    } catch(e) { console.error("saveCard:", e); }
-    setSaving(false); return null;
+      if (data.cardId) {
+        const remoteId = data.cardId;
+        const remoteUrl = `${window.location.origin}/?card=${remoteId}`;
+        setCardId(remoteId); setCardUrl(remoteUrl);
+        // Update local store with real remote id
+        persistCardLocally({ ...cardSnapshot, id:remoteId });
+        setSaving(false); return remoteId;
+      }
+    } catch(e) { /* API not available, local save succeeded */ }
+    setSaving(false); return localId;
   };
 
   const doSignUp = async () => {
@@ -836,9 +925,83 @@ export default function Steeped() {
   const handleAuthSuccess = async (loggedInUser) => {
     setUser(loggedInUser); setShowAuth(false);
     if (pendingAction==="send") { setPendingAction(null); const cid=await saveCard(loggedInUser); if(cid) setShowSend(true); }
+    else { openMyDashboard(loggedInUser); }
   };
 
-  const doSignOut = async () => { await supabase.auth.signOut(); setUser(null); };
+  const doSignOut = async () => { await supabase.auth.signOut(); setUser(null); setView("home"); };
+
+  // ── Local card store (localStorage) ──────────────────────────
+  const LOCAL_KEY = LOCAL_SAVE_KEY;
+
+  const readLocalCards = () => {
+    try { return JSON.parse(localStorage.getItem(LOCAL_KEY) || "[]"); }
+    catch(e) { return []; }
+  };
+
+  const writeLocalCards = (cards) => {
+    try { localStorage.setItem(LOCAL_KEY, JSON.stringify(cards)); }
+    catch(e) {}
+  };
+
+  const persistCardLocally = (cardData) => {
+    const existing = readLocalCards();
+    const idx = existing.findIndex(c => c.id === cardData.id);
+    const entry = { ...cardData, updatedAt: new Date().toISOString() };
+    if (idx >= 0) existing[idx] = entry;
+    else existing.unshift(entry);
+    writeLocalCards(existing.slice(0, 50)); // keep last 50
+  };
+
+  const loadMyCards = async (currentUser) => {
+    setMyCardsLoading(true);
+    // Always load local cards first (instant)
+    const local = readLocalCards();
+    setMyCards(local);
+    // Then try the API to merge/update if user is logged in
+    const u = currentUser || user;
+    if (u) {
+      try {
+        const res = await fetch(`/api/my-cards?userId=${u.id}`);
+        if (res.ok) {
+          const data = await res.json();
+          const remote = data.cards || [];
+          // Merge: remote wins on conflicts by id, local-only cards appended
+          const remoteIds = new Set(remote.map(c => c.id));
+          const localOnly = local.filter(c => !remoteIds.has(c.id));
+          setMyCards([...remote, ...localOnly]);
+        }
+      } catch(e) { /* API not ready yet — local cards already shown */ }
+    }
+    setMyCardsLoading(false);
+  };
+
+  const openMyDashboard = (u) => {
+    loadMyCards(u);
+    setView("my-cards");
+  };
+
+  const deleteCard = async (cid) => {
+    // Remove from local store
+    const updated = readLocalCards().filter(c => c.id !== cid);
+    writeLocalCards(updated);
+    setMyCards(prev => prev.filter(c => c.id !== cid));
+    // Also attempt remote delete
+    try {
+      if (user) await fetch(`/api/delete-card?id=${cid}&userId=${user.id}`, { method:"DELETE" });
+    } catch(e) {}
+    setDeleteConfirm(null);
+  };
+
+  const loadCardIntoEditor = (card) => {
+    setTheme(card.theme);
+    setPages(card.pages || [makePage(1)]);
+    setCoverItems(card.coverItems || []);
+    setCardId(card.id);
+    setCardUrl(`${window.location.origin}/?card=${card.id}`);
+    setSelectedTemplate("default");
+    setActivePage(0);
+    setView("editor");
+  };
 
   const handleSendClick = async () => {
     if (!user) { setPendingAction("send"); setShowAuth(true); return; }
@@ -934,6 +1097,15 @@ export default function Steeped() {
     setPages([makePage(1)]); setCardId(null); setCardUrl("");
     setCoverItems(TEMPLATES["default"](t));
     setSelectedTemplate("default");
+  };
+
+  // Auto-persist to local store whenever navigating away from editor
+  const navAwayFromEditor = (dest) => {
+    if (view === "editor" && theme) {
+      const snap = { id: cardId || `local_${uid()}`, theme, pages, coverItems, updatedAt: new Date().toISOString() };
+      persistCardLocally(snap);
+    }
+    setView(dest);
   };
 
   const NavLogo = ({ onClick }) => (
@@ -1051,9 +1223,14 @@ export default function Steeped() {
       <nav className="nav">
         <NavLogo onClick={()=>{}}/>
         <div style={{ display:"flex",alignItems:"center",gap:10 }}>
+          {(()=>{ const cnt=readLocalCards().length; return (
+            <button onClick={()=>openMyDashboard()} style={{ display:"inline-flex",alignItems:"center",gap:6,padding:"7px 14px",borderRadius:4,border:cnt?"1px solid rgba(212,168,67,.4)":"1px solid rgba(42,21,8,.14)",background:cnt?"rgba(212,168,67,.1)":"transparent",color:cnt?"#8B6E4E":"#8B6E4E",fontFamily:"'Jost',sans-serif",fontSize:12,cursor:"pointer",transition:"all .15s" }}>
+              {Icon.user(13)} My Cards{cnt?<span style={{ background:"#d4a843",color:"white",borderRadius:"100px",fontSize:9,padding:"1px 7px",marginLeft:2 }}>{cnt}</span>:null}
+            </button>
+          ); })()}
           {user
-            ?<div style={{ display:"flex",alignItems:"center",gap:8 }}><span className="nav-user-name">{user.user_metadata?.full_name||user.email}</span><button className="btn-ghost-sm" onClick={doSignOut}>Sign out</button></div>
-            :<button className="btn-ghost-sm" onClick={()=>{ setAuthMode("login"); setShowAuth(true); }}>{Icon.user(13)} Log in</button>
+            ?<button className="btn-ghost-sm" onClick={doSignOut}>Sign out</button>
+            :<button className="btn-ghost-sm" onClick={()=>{ setAuthMode("login"); setShowAuth(true); }}>Log in</button>
           }
           <button className="btn-dark" onClick={()=>setView("themes")}>Create a card {Icon.arrow(14,"#FAF5EE")}</button>
         </div>
@@ -1068,10 +1245,193 @@ export default function Steeped() {
           <div className="hero-pills">{["Multiple signing pages","Custom cover design","Drag & resize anything","Photos & GIFs","Email, text or print"].map(f=><span key={f} className="pill">{f}</span>)}</div>
         </div>
         <div className="fan-wrap">{THEMES.slice(0,5).map((t,i)=>{ const rots=[-10,-4,0,5,11],ty=[5,2,0,2,5]; return <div key={t.id} className="fan-card" onClick={()=>goEditor(t)} style={{ background:t.cover,transform:`rotate(${rots[i]}deg) translateY(${ty[i]}px)`,zIndex:i===2?5:i }}><div style={{ color:t.accent }}>{Icon[t.icon](26,t.accent)}</div><div className="fan-card-name" style={{ color:t.accent }}>{t.name.split(" ")[0]}</div></div>; })}</div>
+        {/* ── Recent cards shelf on home page ── */}
+        {(()=>{ const recent = readLocalCards().slice(0,3); if(!recent.length) return null; return (
+          <div style={{ width:"100%",maxWidth:700,margin:"32px auto 0",padding:"0 24px",position:"relative",zIndex:2,animation:"fadeUp .7s ease .2s both" }}>
+            <div style={{ display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:14 }}>
+              <div style={{ fontFamily:"'Jost',sans-serif",fontSize:10,fontWeight:500,letterSpacing:"2px",textTransform:"uppercase",color:"rgba(42,21,8,.38)" }}>Recently edited</div>
+              <button onClick={()=>openMyDashboard()} style={{ background:"none",border:"none",cursor:"pointer",fontFamily:"'Jost',sans-serif",fontSize:11,color:"#d4a843",letterSpacing:".3px",display:"flex",alignItems:"center",gap:5 }}>See all {Icon.arrow(11,"#d4a843")}</button>
+            </div>
+            <div style={{ display:"grid",gridTemplateColumns:`repeat(${recent.length},1fr)`,gap:10 }}>
+              {recent.map(card=>{ const th=THEMES.find(t=>t.id===card.theme?.id)||card.theme||THEMES[7]; const cti=(card.coverItems||[]).find(i=>i.type==="text"); return (
+                <div key={card.id} onClick={()=>loadCardIntoEditor(card)} style={{ borderRadius:10,overflow:"hidden",boxShadow:"0 4px 18px rgba(42,21,8,.13)",cursor:"pointer",transition:"transform .2s",background:th.cover }} onMouseEnter={e=>e.currentTarget.style.transform="translateY(-3px)"} onMouseLeave={e=>e.currentTarget.style.transform=""}>
+                  <div style={{ height:72,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:6,padding:"10px 8px" }}>
+                    <div style={{ color:th.accent,opacity:.7 }}>{Icon[th.icon]?.(16,th.accent)}</div>
+                    <div style={{ fontFamily:"'Playfair Display',serif",fontSize:11,color:th.accent,textAlign:"center",lineHeight:1.3,overflow:"hidden",maxWidth:"90%",display:"-webkit-box",WebkitLineClamp:2,WebkitBoxOrient:"vertical" }}>{cti?cti.text:th.name}</div>
+                  </div>
+                  <div style={{ padding:"7px 10px",background:"rgba(255,255,255,.78)",borderTop:"1px solid rgba(42,21,8,.06)",display:"flex",justifyContent:"space-between",alignItems:"center" }}>
+                    <span style={{ fontFamily:"'Jost',sans-serif",fontSize:9,color:"rgba(42,21,8,.38)",letterSpacing:".3px" }}>{(card.pages||[]).flatMap(p=>(p.items||[])).filter(i=>i.type==="text").length} sigs</span>
+                    <span style={{ fontFamily:"'Jost',sans-serif",fontSize:9,color:"#d4a843",letterSpacing:".3px" }}>Edit →</span>
+                  </div>
+                </div>
+              ); })}
+            </div>
+          </div>
+        ); })()}
       </div>
       {showAuth&&<AuthModal {...authProps}/>}
     </div>
   );
+
+
+  if (view==="my-cards") {
+    const firstName = user?.user_metadata?.full_name?.split(" ")[0] || "there";
+    const timeOfDay = () => { const h=new Date().getHours(); return h<12?"morning":h<17?"afternoon":"evening"; };
+    return (
+      <div className="app"><style>{CSS}</style>
+        <nav className="nav">
+          <NavLogo onClick={()=>setView("home")}/>
+          <div style={{ display:"flex",gap:8,alignItems:"center" }}>
+            <span className="nav-user-name">{user?.user_metadata?.full_name||user?.email}</span>
+            <button className="btn-ghost-sm" onClick={doSignOut}>Sign out</button>
+            <button className="btn-dark" onClick={()=>setView("themes")}>New card {Icon.plus(12,"#FAF5EE")}</button>
+          </div>
+        </nav>
+        <div className="my-cards-view">
+          <div className="my-cards-greeting">
+            <div className="my-cards-eyebrow">good {timeOfDay()}</div>
+            <h1 className="my-cards-title">Welcome back, {firstName} ✨</h1>
+            <p className="my-cards-sub">Here are all the cards you've brewed with care.</p>
+          </div>
+          <div className="my-cards-toolbar">
+            <span className="my-cards-toolbar-title">{myCardsLoading?"Loading…":`${myCards.length} card${myCards.length!==1?"s":""}`}</span>
+            <button className="btn-dark" onClick={()=>setView("themes")}>{Icon.plus(13,"#FAF5EE")} Brew a new card</button>
+          </div>
+
+          {/* Login nudge when not authenticated */}
+          {!user && (
+            <div style={{ display:"flex",alignItems:"center",gap:12,padding:"12px 16px",background:"linear-gradient(135deg,#FFF9F2,#FAF5EE)",border:"1px solid rgba(212,168,67,.25)",borderRadius:8,marginBottom:24,flexWrap:"wrap" }}>
+              <div style={{ flex:1,minWidth:180 }}>
+                <div style={{ fontFamily:"'Jost',sans-serif",fontSize:12,fontWeight:500,color:"#5a3a10",marginBottom:2 }}>Sign in to sync your cards across devices</div>
+                <div style={{ fontFamily:"'Jost',sans-serif",fontSize:11,fontWeight:300,color:"#8B6E4E" }}>Cards are saved locally for now — log in to keep them safe.</div>
+              </div>
+              <button className="btn-dark" style={{ fontSize:12,padding:"8px 18px",flexShrink:0 }} onClick={()=>{ setAuthMode("login"); setShowAuth(true); }}>
+                {Icon.user(12,"#FAF5EE")} Log in
+              </button>
+            </div>
+          )}
+
+          {myCardsLoading && (
+            <div className="my-cards-loading">
+              <div className="spinner" style={{ width:26,height:26,borderWidth:3,borderColor:"rgba(42,21,8,.12)",borderTopColor:"#d4a843" }}/>
+              <p className="loading-text">Gathering your cards…</p>
+            </div>
+          )}
+
+          {!myCardsLoading && myCards.length===0 && (
+            <div className="my-cards-empty">
+              <div className="my-cards-empty-icon">{Icon.mail(64,"#2A1508")}</div>
+              <h2 className="my-cards-empty-title">No cards yet</h2>
+              <p className="my-cards-empty-sub">Every card you brew is saved here automatically,<br/>ready to send again or pick up where you left off.</p>
+              <button className="btn-hero" onClick={()=>setView("themes")}>Brew your first card {Icon.arrow(16,"#FAF5EE")}</button>
+            </div>
+          )}
+
+          {!myCardsLoading && myCards.length>0 && (
+            <div className="my-cards-grid">
+              {myCards.map((card,i) => {
+                const th = THEMES.find(t=>t.id===card.theme?.id) || card.theme || THEMES[7];
+                const sigCount = (card.pages||[]).flatMap(p=>p.items||[]).filter(it=>it.type==="text").length;
+                const pageCount = card.pages?.length || 1;
+                const coverTextItem = (card.coverItems||[]).find(it=>it.type==="text");
+                const cardLink = `${window.location.origin}/?card=${card.id}`;
+                const copied = cardCopied===card.id;
+                return (
+                  <div key={card.id} className="my-card-item" style={{ animationDelay:`${i*.055}s` }}>
+                    {/* Cover preview */}
+                    <div className="my-card-cover-wrap" style={{ background:th.cover }}>
+                      <div className="my-card-cover-inner">
+                        <div style={{ color:th.accent,opacity:.7 }}>{Icon[th.icon]?.(28,th.accent)}</div>
+                        {coverTextItem
+                          ? <div className="my-card-cover-text" style={{ color:th.accent,fontFamily:coverTextItem.font||"'Playfair Display',serif" }}>{coverTextItem.text}</div>
+                          : <div className="my-card-cover-text" style={{ color:th.accent }}>{th.name}</div>
+                        }
+                      </div>
+                      <div className="my-card-cover-icon">{Icon[th.icon]?.(32,th.accent)}</div>
+                    </div>
+                    {/* Body */}
+                    <div className="my-card-body">
+                      <div className="my-card-theme-name">{th.name}</div>
+                      <div className="my-card-meta-row">
+                        <span className="my-card-chip">{Icon.pen(11,"#8B6E4E")} {sigCount} sig{sigCount!==1?"s":""}</span>
+                        <span className="my-card-chip">{Icon.copy(11,"#8B6E4E")} {pageCount} page{pageCount!==1?"s":""}</span>
+                        {card.updatedAt && <span className="my-card-chip">{Icon.clock(11,"#8B6E4E")} {new Date(card.updatedAt).toLocaleDateString("en-US",{month:"short",day:"numeric"})}</span>}
+                      </div>
+                      <div className="my-card-actions">
+                        <button className="my-card-btn" onClick={()=>loadCardIntoEditor(card)} title="Edit this card">
+                          {Icon.edit(11,"#8B6E4E")} Edit
+                        </button>
+                        <button className="my-card-btn" onClick={()=>{ window.open(cardLink,"_blank"); }} title="Preview how recipients see it">
+                          {Icon.arrow(11,"#8B6E4E")} View
+                        </button>
+                        <button className="my-card-btn" onClick={async()=>{ await navigator.clipboard.writeText(cardLink); setCardCopied(card.id); setTimeout(()=>setCardCopied(null),2000); }} title="Copy shareable link">
+                          {copied?<>✓ Copied</>:<>{Icon.copy(11,"#8B6E4E")} Share</>}
+                        </button>
+                        <button className="my-card-btn" onClick={()=>{ loadCardIntoEditor(card); setTimeout(()=>setShowSend(true),50); }} title="Send this card" style={{ background:"#2A1508",color:"#FAF5EE",border:"none" }}>
+                          {Icon.send(11,"#FAF5EE")} Send
+                        </button>
+                      </div>
+                      {/* Tiny delete link */}
+                      <div style={{ textAlign:"right",marginTop:8 }}>
+                        <button onClick={()=>setDeleteConfirm(card.id)} style={{ background:"none",border:"none",cursor:"pointer",fontFamily:"'Jost',sans-serif",fontSize:10,color:"rgba(42,21,8,.25)",letterSpacing:".3px",padding:0 }}>
+                          delete
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* Delete confirmation */}
+        {deleteConfirm&&(
+          <div className="delete-confirm-overlay" onClick={()=>setDeleteConfirm(null)}>
+            <div className="delete-confirm-box" onClick={e=>e.stopPropagation()}>
+              <div style={{ fontSize:32,marginBottom:14 }}>🗑</div>
+              <div style={{ fontFamily:"'Playfair Display',serif",fontSize:20,marginBottom:10 }}>Delete this card?</div>
+              <p style={{ fontFamily:"'Jost',sans-serif",fontSize:13,color:"#8B6E4E",fontWeight:300,lineHeight:1.75,marginBottom:24 }}>This can't be undone. Anyone with the link will no longer be able to view it.</p>
+              <div style={{ display:"flex",gap:10 }}>
+                <button className="btn-ghost" style={{ flex:1,justifyContent:"center" }} onClick={()=>setDeleteConfirm(null)}>Keep it</button>
+                <button className="btn-dark" style={{ flex:1,justifyContent:"center",background:"#b84848" }} onClick={()=>deleteCard(deleteConfirm)}>Yes, delete</button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {showSend&&(
+          <div className="modal-overlay" onClick={e=>e.target===e.currentTarget&&setShowSend(false)}>
+            <div className="modal">
+              <div className="modal-header">
+                <h2 className="modal-title">Send your card</h2>
+                <button className="close-btn" onClick={()=>setShowSend(false)}>{Icon.x(14)}</button>
+              </div>
+              <div className="modal-body" style={{ paddingTop:20 }}>
+                {cardUrl&&(
+                  <div className="card-url-box">
+                    <div className="card-url-label">Card link</div>
+                    <div className="card-url-row">
+                      <span className="card-url-text">{cardUrl}</span>
+                      <button className="btn-ghost-sm" onClick={()=>copyUrl()}>{copied?"✓ Copied":Icon.copy(12)}</button>
+                    </div>
+                  </div>
+                )}
+                <label className="field-label">Recipient's name</label>
+                <input className="f-input" placeholder="Who is this for?" value={form.name} onChange={fSet("name")}/>
+                <label className="field-label">Email address</label>
+                <input className="f-input" type="email" placeholder="hello@example.com" value={form.to} onChange={fSet("to")}/>
+                <label className="field-label">Personal note</label>
+                <textarea className="f-textarea" rows={3} placeholder="Add a private note…" value={form.note} onChange={fSet("note")}/>
+                <button className="btn-send" style={{ width:"100%",marginTop:16,justifyContent:"center" }} onClick={doSend}>{Icon.send(14,"#FAF5EE")} Send with love</button>
+                {sent&&<div className="sent-confirm" style={{ paddingTop:16 }}>{Icon.check(44)}<div style={{ fontFamily:"'Playfair Display',serif",fontSize:18,marginTop:10 }}>Sent with love 🌸</div></div>}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
 
   if (view==="themes") return (
     <div className="app"><style>{CSS}</style>
@@ -1093,7 +1453,8 @@ export default function Steeped() {
         <NavLogo onClick={()=>setView("home")}/>
         <div style={{ display:"flex",gap:8,alignItems:"center" }}>
           {user&&<span className="nav-user-name">{user.user_metadata?.full_name||user.email}</span>}
-          <button className="btn-ghost" onClick={()=>setView("themes")}>{Icon.back(13)} Themes</button>
+          <button className="btn-ghost-sm" onClick={()=>openMyDashboard()}>{Icon.user(13)} My Cards</button>
+          <button className="btn-ghost-sm" onClick={()=>setView("themes")}>{Icon.back(13)} Themes</button>
           <button className="btn-send" onClick={handleSendClick} disabled={saving}>
             {saving?<><span className="spinner"/> Saving…</>:<>{Icon.send(14,"#FAF5EE")} Send</>}
           </button>
