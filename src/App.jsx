@@ -41,24 +41,19 @@ const TEMPLATES = {
   // Each array entry is a preset set of coverItems
   default: (theme) => [
     { id:uid(), type:"text", x:40, y:90, text:theme.name, font:"'Playfair Display',serif", size:34, color:theme.accent, bold:false, italic:false },
-    { id:uid(), type:"text", x:40, y:140, text:"A card made with love", font:"'Lora',serif", size:14, color:theme.accent, bold:false, italic:true },
-  ],
+    
   centered: (theme) => [
     { id:uid(), type:"text", x:80, y:150, text:theme.name, font:"'Dancing Script',cursive", size:38, color:theme.accent, bold:false, italic:false },
-    { id:uid(), type:"text", x:100, y:220, text:"with love ♥", font:"'Lora',serif", size:13, color:theme.accent, bold:false, italic:true },
-  ],
+    
   minimal: (theme) => [
     { id:uid(), type:"text", x:32, y:280, text:theme.name.toUpperCase(), font:"'Jost',sans-serif", size:18, color:theme.accent, bold:true, italic:false },
-    { id:uid(), type:"text", x:32, y:308, text:"— a card from us to you", font:"'Lora',serif", size:12, color:theme.accent, bold:false, italic:true },
-  ],
+    
   bold: (theme) => [
     { id:uid(), type:"text", x:30, y:60, text:theme.name, font:"'Playfair Display',serif", size:42, color:theme.accent, bold:true, italic:false },
-    { id:uid(), type:"text", x:30, y:140, text:"Made with kindness", font:"'Crimson Pro',serif", size:16, color:theme.accent, bold:false, italic:false },
-  ],
+    
   script: (theme) => [
     { id:uid(), type:"text", x:50, y:110, text:"With love,", font:"'Dancing Script',cursive", size:20, color:theme.accent, bold:false, italic:false },
-    { id:uid(), type:"text", x:40, y:148, text:theme.name, font:"'Dancing Script',cursive", size:44, color:theme.accent, bold:false, italic:false },
-  ],
+    
 };
 
 const TEMPLATE_LIST = [
