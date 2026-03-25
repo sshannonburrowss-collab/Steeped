@@ -279,11 +279,6 @@ html,body{width:100%;min-height:100%;background:#FAF5EE;}
 .sign-modal-header{display:flex;align-items:center;justify-content:space-between;padding:22px 26px 16px;border-bottom:1px solid rgba(42,21,8,.08);}
 .sign-modal-body{padding:22px 26px;}
 .mobile-signers-btn{display:none;}
-@media(max-width:900px){
-  .editor-layout{grid-template-columns:240px 1fr;}
-  .panel-right{display:none;}
-  .card-wrap,.card-cover,.card-page{width:100%;max-width:480px;}
-  .canvas-footer{width:100%;max-width:480px;}
 }
 @media(max-width:680px){
   .nav{padding:0 16px;height:56px;}
@@ -296,8 +291,7 @@ html,body{width:100%;min-height:100%;background:#FAF5EE;}
   .page-tabs-wrap{flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:2px;margin-bottom:14px;gap:4px;}
   .page-tabs-wrap::-webkit-scrollbar{display:none;}
   .page-tab-btn{flex-shrink:0;padding:6px 12px;font-size:11px;}
-  .card-wrap,.card-cover,.card-page{width:100%;max-width:100%;}
-  .card-cover{min-height:260px;border-radius:10px;}
+    .card-cover{min-height:260px;border-radius:10px;}
   .cover-canvas{min-height:260px;padding:16px;}
   .card-page{min-height:360px;border-radius:10px;}
   .page-canvas{min-height:360px;padding:18px 18px 24px;}
