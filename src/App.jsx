@@ -259,9 +259,19 @@ html,body{width:100%;min-height:100%;background:#FAF5EE;}
 .page-tab-btn.active{background:white;color:#2A1508;border-color:rgba(42,21,8,.25);box-shadow:0 2px 14px rgba(42,21,8,.1);}
 .page-tab-btn:hover:not(.active){background:rgba(255,255,255,.8);}
 .page-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
-.card-wrap{width:clamp(300px,60vw,560px);animation:pageFlip .35s ease;position:relative;}
-.card-cover{width:100%;min-height:clamp(260px,38vw,420px);border-radius:14px;box-shadow:0 40px 90px rgba(42,21,8,.22),0 8px 26px rgba(42,21,8,.1);overflow:hidden;position:relative;}
-.card-page{width:100%;min-height:clamp(320px,44vw,480px);border-radius:14px;box-shadow:0 40px 90px rgba(42,21,8,.18),0 8px 26px rgba(42,21,8,.1);background:white;position:relative;overflow:visible;}
+/* ── Physical card realism ─────────────────────────────── */
+@keyframes liftIn{from{opacity:0;transform:translateY(18px) rotate(-1deg)}to{opacity:1;transform:translateY(0) rotate(-1.5deg)}}
+.card-wrap{width:clamp(300px,58vw,520px);animation:liftIn .4s cubic-bezier(.22,1,.36,1) both;position:relative;filter:drop-shadow(0 28px 48px rgba(42,21,8,.28)) drop-shadow(0 6px 16px rgba(42,21,8,.14));}
+/* Envelope peeking behind */
+.card-wrap::before{content:'';position:absolute;bottom:-18px;left:50%;transform:translateX(-50%) rotate(1.5deg);width:102%;height:60%;border-radius:4px 4px 8px 8px;z-index:-1;background:var(--env-color,#d4a843);opacity:.85;}
+/* Envelope flap */
+.card-wrap::after{content:'';position:absolute;bottom:-18px;left:50%;transform:translateX(-50%) rotate(1.5deg);width:102%;height:30%;clip-path:polygon(0 0,100% 0,50% 100%);z-index:-1;background:var(--env-color,#c89a30);opacity:.7;}
+.card-cover{width:100%;min-height:clamp(260px,36vw,400px);border-radius:6px;overflow:hidden;position:relative;transform:rotate(-1.5deg);background:white;border:1px solid rgba(42,21,8,.07);}
+/* Inner tinted cover layer — the coloured illustration area */
+.card-cover-face{position:absolute;inset:0;border-radius:6px;overflow:hidden;}
+.card-page{width:100%;min-height:clamp(320px,42vw,460px);border-radius:6px;background:white;position:relative;overflow:visible;transform:rotate(-1.5deg);border:1px solid rgba(42,21,8,.08);}
+/* Subtle paper texture overlay */
+.card-cover::after,.card-page::after{content:'';position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;border-radius:6px;z-index:100;}
 .canvas-footer{display:flex;align-items:center;justify-content:space-between;width:clamp(300px,60vw,560px);margin-top:22px;}
 .canvas-meta{font-family:'Jost',sans-serif;font-size:11px;font-weight:300;color:rgba(42,21,8,.38);letter-spacing:.3px;}
 .d-item{position:absolute;cursor:grab;touch-action:none;z-index:10;}
@@ -351,7 +361,7 @@ html,body{width:100%;min-height:100%;background:#FAF5EE;}
 .viewer-btn:hover{background:rgba(212,168,67,.2);border-color:rgba(212,168,67,.65);transform:translateY(-1px);}
 .viewer-stage{flex:1;display:flex;align-items:flex-start;justify-content:center;padding:22px 20px 10px;}
 .viewer-slide{width:100%;max-width:520px;animation:cardIn .3s ease;}
-.viewer-cover-card{border-radius:14px;overflow:hidden;box-shadow:0 28px 70px rgba(0,0,0,.5);}
+.viewer-cover-card{border-radius:5px;overflow:hidden;box-shadow:none;}
 .viewer-msg-slide{padding:36px 28px;min-height:200px;}
 .viewer-msg-text{font-family:'Lora',serif;font-size:1.05rem;line-height:1.8;color:#FAF5EE;margin-bottom:22px;word-break:break-word;}
 .viewer-msg-author{font-family:'Jost',sans-serif;font-size:0.95rem;font-weight:600;color:#FAF5EE;letter-spacing:.2px;}
@@ -392,10 +402,10 @@ html,body{width:100%;min-height:100%;background:#FAF5EE;}
   .page-tabs-wrap{flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:2px;margin-bottom:14px;gap:4px;}
   .page-tabs-wrap::-webkit-scrollbar{display:none;}
   .page-tab-btn{flex-shrink:0;padding:6px 12px;font-size:11px;}
-  .card-cover{min-height:260px;border-radius:10px;}
-  .cover-canvas{min-height:260px;padding:16px;}
-  .card-page{min-height:360px;border-radius:10px;}
-  .page-canvas{min-height:360px;padding:18px 18px 24px;}
+  .card-cover{min-height:220px;border-radius:5px;}
+  .cover-canvas{min-height:220px;padding:14px;}
+  .card-page{min-height:320px;border-radius:5px;}
+  .page-canvas{min-height:320px;padding:16px 16px 22px;}
   .canvas-footer{width:100%;flex-direction:column;gap:10px;align-items:stretch;margin-top:16px;}
   .canvas-footer .btn-send{width:100%;justify-content:center;}
   .canvas-meta{text-align:center;}
@@ -464,16 +474,22 @@ html,body{width:100%;min-height:100%;background:#FAF5EE;}
 .mc-banner-sub{font-family:'Jost',sans-serif;font-size:12px;font-weight:300;color:#8B6E4E;line-height:1.5;}
 .mc-count{font-family:'Jost',sans-serif;font-size:10px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:rgba(42,21,8,.35);margin-bottom:20px;}
 .mc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
-.mc-card{background:white;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(42,21,8,.07);border:1.5px solid rgba(42,21,8,.07);transition:transform .2s,box-shadow .2s,border-color .2s;animation:fadeUp .4s ease both;}
-.mc-card:hover{transform:translateY(-4px);box-shadow:0 16px 40px rgba(42,21,8,.14);border-color:rgba(42,21,8,.14);}
-.mc-cover{height:148px;position:relative;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:16px;}
-.mc-cover-icon{opacity:.7;}
-.mc-cover-text{font-family:'Playfair Display',serif;font-size:14px;font-weight:400;text-align:center;line-height:1.4;max-width:85%;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
-.mc-cover-watermark{opacity:.15;position:absolute;bottom:10px;right:12px;pointer-events:none;}
-.mc-cover-cta{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(42,21,8,.28);opacity:0;transition:opacity .18s;border-radius:0;}
+.mc-card{background:white;border-radius:0;overflow:visible;box-shadow:none;border:none;transition:transform .22s,filter .22s;animation:fadeUp .4s ease both;position:relative;}
+.mc-card:hover{transform:translateY(-5px) rotate(-1deg);}
+/* Envelope behind each dashboard card */
+.mc-card::before{content:'';position:absolute;bottom:-12px;left:50%;transform:translateX(-50%);width:96%;height:55%;border-radius:2px 2px 6px 6px;z-index:-1;background:var(--mc-env,#d4a843);opacity:.8;transition:opacity .2s;}
+.mc-card:hover::before{opacity:1;}
+/* White card face */
+.mc-cover{height:148px;position:relative;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:16px;border-radius:4px 4px 0 0;box-shadow:0 2px 8px rgba(42,21,8,.1);}
+/* Inset border on cover */
+.mc-cover::before{content:'';position:absolute;inset:8px;border:1px solid rgba(255,255,255,.3);border-radius:3px;pointer-events:none;z-index:5;}
+.mc-cover-icon{opacity:.72;position:relative;z-index:2;}
+.mc-cover-text{font-family:'Playfair Display',serif;font-size:13px;font-weight:400;text-align:center;line-height:1.4;max-width:85%;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;position:relative;z-index:2;text-shadow:0 1px 3px rgba(0,0,0,.08);}
+.mc-cover-watermark{opacity:.12;position:absolute;bottom:8px;right:10px;pointer-events:none;z-index:1;}
+.mc-cover-cta{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(42,21,8,.32);opacity:0;transition:opacity .18s;border-radius:4px 4px 0 0;z-index:10;}
 .mc-cover:hover .mc-cover-cta{opacity:1;}
 .mc-cover-cta-label{font-family:'Jost',sans-serif;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:white;font-weight:500;}
-.mc-body{padding:14px 16px 12px;text-align:left;}
+.mc-body{padding:14px 16px 14px;text-align:left;background:white;border-radius:0 0 4px 4px;border-top:1px solid rgba(42,21,8,.05);box-shadow:0 4px 8px rgba(42,21,8,.08);}
 .mc-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:400;color:#2A1508;margin-bottom:6px;}
 .mc-chips{display:flex;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap;}
 .mc-chip{font-family:'Jost',sans-serif;font-size:11px;font-weight:300;color:#8B6E4E;display:inline-flex;align-items:center;gap:3px;}
@@ -770,9 +786,14 @@ function CardViewer({ theme, coverItems, pages, recipientName, onSign }) {
       <div className="viewer-stage">
         <div className="viewer-slide" key={slide}>
           {isFirstSlide&&(
-            <div className="viewer-cover-card">
-              <div style={{ background:theme.cover,minHeight:320,borderRadius:14,position:"relative",padding:24,pointerEvents:"none" }}>
-                <div style={{ position:"absolute",top:20,right:22,opacity:.15 }}>{Icon[theme.icon](38,theme.accent)}</div>
+            <div style={{ position:"relative",filter:"drop-shadow(0 32px 56px rgba(0,0,0,.55)) drop-shadow(0 8px 18px rgba(0,0,0,.28))" }}>
+              {/* Envelope behind */}
+              <div style={{ position:"absolute",bottom:-16,left:"50%",transform:"translateX(-50%) rotate(1deg)",width:"100%",height:"55%",borderRadius:"3px 3px 8px 8px",background:theme.accent,opacity:.75,zIndex:0 }}/>
+              <div className="viewer-cover-card" style={{ position:"relative",zIndex:1,transform:"rotate(-1deg)" }}>
+              <div style={{ background:theme.cover,minHeight:320,borderRadius:5,position:"relative",padding:24,pointerEvents:"none",border:"1px solid rgba(255,255,255,.15)" }}>
+                {/* Inset border */}
+                <div style={{ position:"absolute",inset:12,border:"1px solid rgba(255,255,255,.25)",borderRadius:3,pointerEvents:"none" }}/>
+                <div style={{ position:"absolute",top:20,right:22,opacity:.12 }}>{Icon[theme.icon](44,theme.accent)}</div>
                 {coverItems.length===0
                   ?<div style={{ position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:14 }}>
                     <div style={{ color:theme.accent }}>{Icon[theme.icon](52,theme.accent)}</div>
@@ -786,6 +807,7 @@ function CardViewer({ theme, coverItems, pages, recipientName, onSign }) {
                         :null
                   )
                 }
+              </div>
               </div>
             </div>
           )}
@@ -1400,9 +1422,7 @@ export default function Steeped() {
               <PromptPicker
                 themeId={viewCard?.theme?.id}
                 recipientName={viewCard?.coverItems?.find(i=>i.type==="text")?.text || ""}
-                onSelect={p=>setViewSignMsg(prev=>prev?prev+"
-
-"+p:p)}
+                onSelect={p=>setViewSignMsg(prev=>prev?prev+"\n\n"+p:p)}
                 usedPrompts={(viewCard?.pages||[]).flatMap(pg=>(pg.items||[]).filter(i=>i.type==="text").map(i=>i.text))}
               />
               <label className="field-label" style={{ marginTop:14 }}>Your message</label>
@@ -1586,7 +1606,7 @@ export default function Steeped() {
                   const isCopied = cardCopied===card.id;
                   const dateStr = card.updatedAt ? new Date(card.updatedAt).toLocaleDateString("en-US",{month:"short",day:"numeric"}) : null;
                   return (
-                    <div key={card.id} className="mc-card" style={{ animationDelay:`${i*.05}s` }}>
+                    <div key={card.id} className="mc-card" style={{ animationDelay:`${i*.05}s`,"--mc-env":th.accent }}>
                       {/* Tappable cover */}
                       <div className="mc-cover" style={{ background:th.cover }} onClick={()=>loadCardIntoEditor(card)}>
                         <div className="mc-cover-icon">{Icon[th.icon]?.(22,th.accent)}</div>
@@ -1753,9 +1773,7 @@ export default function Steeped() {
                 <PromptPicker
                   themeId={theme?.id}
                   recipientName={form.name || coverItems.find(i=>i.type==="text")?.text || ""}
-                  onSelect={p=>setMsgText(prev=>prev?prev+"
-
-"+p:p)}
+                  onSelect={p=>setMsgText(prev=>prev?prev+"\n\n"+p:p)}
                   usedPrompts={allSigs.map(s=>s.text)}
                 />
                 <label className="field-label">Your message</label>
@@ -1799,31 +1817,42 @@ export default function Steeped() {
           </div>
 
           {activePage===0&&(
-            <div className="card-wrap" key="cover" onClick={e=>e.stopPropagation()}>
-              <div className="card-cover" style={{ background:theme.cover }}>
-                <div style={{ position:"absolute",top:22,right:24,opacity:.15,pointerEvents:"none" }}>{Icon[theme.icon](40,theme.accent)}</div>
-                <div ref={coverRef} className="cover-canvas" onClick={desel} style={{ minHeight:390 }}>
-                  {coverItems.map(item=>(
-                    <DItem key={item.id} item={item} selected={selCover===item.id}
-                      onSelect={id=>{setSelCover(id);setSelPage(null);}}
-                      onDelete={delCovItem} onMove={moveCovItem} onResize={resCovItem} onTextChange={editCovText}
-                      containerRef={coverRef}/>
-                  ))}
-                  {coverItems.length===0&&<div style={{ position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",pointerEvents:"none" }}><div style={{ color:theme.accent,marginBottom:18 }}>{Icon[theme.icon](50,theme.accent)}</div><div style={{ fontFamily:"'Playfair Display',serif",fontSize:26,color:theme.accent,fontWeight:400 }}>{theme.name}</div></div>}
+            <div className="card-wrap" key="cover" onClick={e=>e.stopPropagation()} style={{"--env-color":theme.accent}}>
+              <div className="card-cover">
+                {/* Coloured face fills the whole cover */}
+                <div className="card-cover-face" style={{ background:theme.cover }}>
+                  {/* Watermark icon */}
+                  <div style={{ position:"absolute",top:16,right:18,opacity:.12,pointerEvents:"none" }}>{Icon[theme.icon](52,theme.accent)}</div>
+                  {/* White paper border inset */}
+                  <div style={{ position:"absolute",inset:10,border:"1px solid rgba(255,255,255,.35)",borderRadius:4,pointerEvents:"none" }}/>
+                  <div ref={coverRef} className="cover-canvas" onClick={desel} style={{ minHeight:390,position:"relative",zIndex:10 }}>
+                    {coverItems.map(item=>(
+                      <DItem key={item.id} item={item} selected={selCover===item.id}
+                        onSelect={id=>{setSelCover(id);setSelPage(null);}}
+                        onDelete={delCovItem} onMove={moveCovItem} onResize={resCovItem} onTextChange={editCovText}
+                        containerRef={coverRef}/>
+                    ))}
+                    {coverItems.length===0&&<div style={{ position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",pointerEvents:"none" }}><div style={{ color:theme.accent,marginBottom:18,filter:"drop-shadow(0 2px 8px rgba(0,0,0,.12))" }}>{Icon[theme.icon](52,theme.accent)}</div><div style={{ fontFamily:"'Playfair Display',serif",fontSize:26,color:theme.accent,fontWeight:400,textShadow:"0 1px 4px rgba(0,0,0,.1)" }}>{theme.name}</div></div>}
+                  </div>
                 </div>
               </div>
-              <div style={{ marginTop:12,padding:"10px 16px",background:"rgba(255,255,255,.68)",borderRadius:8,fontFamily:"'Jost',sans-serif",fontSize:12,fontWeight:300,color:"#8B6E4E",lineHeight:1.85,textAlign:"center" }}>
+              <div style={{ marginTop:28,padding:"9px 14px",background:"rgba(255,255,255,.72)",backdropFilter:"blur(8px)",borderRadius:6,fontFamily:"'Jost',sans-serif",fontSize:11.5,fontWeight:300,color:"#8B6E4E",lineHeight:1.8,textAlign:"center",transform:"rotate(-1.5deg)" }}>
                 Use the <strong style={{ fontWeight:500 }}>Sign tab</strong> to add text · drag to reposition · corner to resize
               </div>
             </div>
           )}
 
           {activePage>0&&curPage&&(
-            <div className="card-wrap" key={curPage.id} onClick={e=>e.stopPropagation()}>
-              <div className="card-page" style={{"--acc":theme.accent}}>
+            <div className="card-wrap" key={curPage.id} onClick={e=>e.stopPropagation()} style={{"--env-color":theme.accent}}>
+              <div className="card-page">
+                {/* Thin coloured top border — like a card with a stripe */}
+                <div style={{ position:"absolute",top:0,left:0,right:0,height:5,background:theme.cover,borderRadius:"6px 6px 0 0",opacity:.9 }}/>
                 <div ref={el=>pageRefs.current[activePage-1]=el} className="page-canvas" onClick={desel}>
                   <div className="page-header">
-                    <div style={{ display:"flex",alignItems:"center",gap:10 }}><div style={{ color:theme.accent,opacity:.7 }}>{Icon[theme.icon](15,theme.accent)}</div><span className="page-num-label">Page {curPage.num} of {pages.length}</span></div>
+                    <div style={{ display:"flex",alignItems:"center",gap:8 }}>
+                      <div style={{ color:theme.accent,opacity:.6 }}>{Icon[theme.icon](14,theme.accent)}</div>
+                      <span className="page-num-label">Page {curPage.num} of {pages.length}</span>
+                    </div>
                     {pages.length>1&&<button className="page-del-btn" onClick={()=>delPage(activePage-1)}>{Icon.trash(14,"rgba(42,21,8,.28)")}</button>}
                   </div>
                   {curPage.items.length===0&&<div className="page-empty">This page is waiting to be filled<br/>with warm words and kind hearts…</div>}
@@ -1839,7 +1868,7 @@ export default function Steeped() {
                   {curPage.items.length>0&&<div className="drop-hint">Tap to select · drag to move · corner to resize · ✎ edit · × remove</div>}
                 </div>
               </div>
-              <button className="btn-page-add" onClick={e=>{e.stopPropagation();addPage();}}>{Icon.plus(13)} Add another signing page</button>
+              <button className="btn-page-add" style={{ transform:"rotate(-1.5deg)",marginTop:10 }} onClick={e=>{e.stopPropagation();addPage();}}>{Icon.plus(13)} Add another signing page</button>
             </div>
           )}
 
