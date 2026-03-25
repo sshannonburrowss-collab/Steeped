@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <style>
+      .it { font-family: 'Playfair Display', 'Book Antiqua', Palatino, Georgia, serif; font-size: 108px; font-style: italic; font-weight: 400; fill: #d4a843; }
+    </style>
+  </defs>
+  <!-- Cream rounded square background -->
+  <rect width="200" height="200" fill="#FAF5EE" rx="36"/>
+  <!-- Subtle inner shadow ring -->
+  <rect width="200" height="200" fill="none" stroke="rgba(212,168,67,0.12)" stroke-width="6" rx="36"/>
+  <!-- italic ee mark, centred -->
+  <text class="it" x="100" y="142" text-anchor="middle">ee</text>
+</svg>
