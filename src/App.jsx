@@ -306,6 +306,7 @@ html,body{width:100%;min-height:100%;background:#FAF5EE;}
 .sign-modal-header{display:flex;align-items:center;justify-content:space-between;padding:22px 26px 16px;border-bottom:1px solid rgba(42,21,8,.08);}
 .sign-modal-body{padding:22px 26px;}
 .mobile-signers-btn{display:none;}
+.mobile-dashboard-btn{display:none;}
 @media(max-width:680px){
   .nav{padding:0 16px;height:56px;}
   .nav-tagline{display:none;}
@@ -324,13 +325,25 @@ html,body{width:100%;min-height:100%;background:#FAF5EE;}
   .canvas-footer{width:100%;flex-direction:column;gap:10px;align-items:stretch;margin-top:16px;}
   .canvas-footer .btn-send{width:100%;justify-content:center;}
   .canvas-meta{text-align:center;}
-  .panel-left{order:2;border-right:none;border-top:2px solid rgba(42,21,8,.08);max-height:340px;flex-shrink:0;}
+  .panel-left{order:2;border-right:none;border-top:2px solid rgba(42,21,8,.08);max-height:360px;flex-shrink:0;}
   .panel-tabs{padding:6px;}
   .panel-tab{padding:8px 3px;}
   .panel-tab .tab-label{font-size:8px;}
   .panel-content{padding:14px;}
   .style-row{gap:6px;}
   .f-select{font-size:11px;padding:7px 6px;}
+  /* Larger touch targets for toggles */
+  .anon-toggle{padding:13px 14px;min-height:52px;}
+  .anon-toggle input{width:18px;height:18px;}
+  .fmt-btn{padding:10px 18px;min-height:42px;}
+  /* Add invitee row stacks on mobile */
+  .add-invitee-row{flex-direction:column;gap:6px;}
+  .add-invitee-row .f-input{font-size:14px;padding:10px 12px;}
+  .add-invitee-row .btn-dark{width:100%;justify-content:center;padding:10px;}
+  /* Countdown bigger on mobile */
+  .countdown-number{font-size:28px;}
+  .countdown-urgency{font-size:12px;}
+  /* Modals */
   .modal-overlay,.auth-overlay{align-items:flex-end;padding:0;}
   .modal,.sign-modal{border-radius:20px 20px 0 0;max-height:88vh;animation:slideUp .3s ease;}
   .auth-modal{border-radius:20px 20px 0 0;max-height:92vh;overflow-y:auto;}
@@ -338,21 +351,30 @@ html,body{width:100%;min-height:100%;background:#FAF5EE;}
   .modal-title{font-size:18px;}
   .modal-body,.sign-modal-body{padding:18px 20px;}
   .date-row{grid-template-columns:1fr;}
+  /* Viewer */
   .viewer-title{font-size:1.5rem;}
   .viewer-btn{padding:8px 16px;font-size:12px;}
   .viewer-msg-slide{padding:24px 18px;}
   .viewer-board-body{padding:14px 12px;}
   .viewer-sig-card{padding:16px;}
+  /* Hero / themes */
   .hero{padding:48px 20px 32px;}
   .fan-wrap{gap:0;}
   .fan-card{width:90px;height:72px;margin:0 -14px;}
   .themes-view{padding:28px 16px;}
   .themes-grid{grid-template-columns:repeat(2,1fr);gap:10px;}
   .theme-card{padding:24px 12px 20px;}
-  .mobile-signers-btn{display:flex;align-items:center;gap:6px;position:fixed;bottom:356px;right:14px;z-index:50;background:white;border:1px solid rgba(42,21,8,.15);border-radius:100px;padding:8px 14px;font-family:'Jost',sans-serif;font-size:11px;font-weight:500;color:#2A1508;cursor:pointer;box-shadow:0 4px 18px rgba(42,21,8,.15);}
+  /* Floating action buttons — stacked column, right edge */
+  .mobile-fab-group{display:flex;flex-direction:column;gap:8px;position:fixed;bottom:372px;right:14px;z-index:50;}
+  .mobile-signers-btn{display:flex;align-items:center;gap:6px;background:white;border:1px solid rgba(42,21,8,.15);border-radius:100px;padding:9px 14px;font-family:'Jost',sans-serif;font-size:11px;font-weight:500;color:#2A1508;cursor:pointer;box-shadow:0 4px 18px rgba(42,21,8,.15);white-space:nowrap;}
+  .mobile-dashboard-btn{display:flex;align-items:center;gap:6px;background:linear-gradient(135deg,#FFF9F2,#fff);border:1px solid rgba(212,168,67,.35);border-radius:100px;padding:9px 14px;font-family:'Jost',sans-serif;font-size:11px;font-weight:500;color:#8B6E4E;cursor:pointer;box-shadow:0 4px 18px rgba(42,21,8,.12);white-space:nowrap;}
+  /* Drawers */
   .sig-drawer-overlay{position:fixed;inset:0;background:rgba(42,21,8,.38);z-index:150;backdrop-filter:blur(6px);}
-  .sig-drawer{position:fixed;bottom:0;left:0;right:0;background:white;border-radius:20px 20px 0 0;z-index:160;padding:20px;max-height:70vh;overflow-y:auto;animation:slideUp .3s ease;}
+  .sig-drawer{position:fixed;bottom:0;left:0;right:0;background:white;border-radius:20px 20px 0 0;z-index:160;padding:20px;max-height:75vh;overflow-y:auto;animation:slideUp .3s ease;}
   .sig-drawer-handle{width:36px;height:4px;background:rgba(42,21,8,.15);border-radius:2px;margin:0 auto 18px;}
+  /* Dashboard drawer specific */
+  .dashboard-drawer .dashboard-section{border-radius:0;border:none;background:transparent;padding:0;margin:0;}
+  .dashboard-drawer .f-input{font-size:14px;padding:10px 12px;}
 }
 `;
 
@@ -721,6 +743,7 @@ export default function Steeped() {
   const [uploads, setUploads] = useState([]);
   const [form, setForm] = useState({ name:"", to:"", note:"", date:"", time:"" });
   const [showSigDrawer, setShowSigDrawer] = useState(false);
+  const [showDashDrawer, setShowDashDrawer] = useState(false);
   const [copied, setCopied] = useState(false);
   const [user, setUser] = useState(null);
   const [showAuth, setShowAuth] = useState(false);
@@ -1331,20 +1354,35 @@ export default function Steeped() {
         </div>
       </div>
 
-      <button className="mobile-signers-btn" onClick={()=>setShowSigDrawer(true)}>
-        {Icon.users(14,"#2A1508")} {allSigs.length} signature{allSigs.length!==1?"s":""}
-      </button>
+      {/* ── Mobile FAB group (hidden on desktop via CSS) ── */}
+      <div className="mobile-fab-group">
+        <button className="mobile-dashboard-btn" onClick={()=>setShowDashDrawer(true)}>
+          {countdown && !countdown.expired
+            ? <>{Icon.clock(12,"#8B6E4E")} {countdown.days>0?`${countdown.days}d `:""}  {countdown.hours}h left</>
+            : <>{Icon.bell(12,"#8B6E4E")} Dashboard</>
+          }
+          {inviteesWithStatus.filter(i=>i.status==="pending").length>0&&
+            <span style={{ background:"#d4a843",color:"white",borderRadius:"100px",fontSize:9,padding:"1px 7px",marginLeft:2 }}>
+              {inviteesWithStatus.filter(i=>i.status==="pending").length}
+            </span>
+          }
+        </button>
+        <button className="mobile-signers-btn" onClick={()=>setShowSigDrawer(true)}>
+          {Icon.users(14,"#2A1508")} {allSigs.length} signature{allSigs.length!==1?"s":""}
+        </button>
+      </div>
 
+      {/* ── Signatures drawer ── */}
       {showSigDrawer&&(
         <>
           <div className="sig-drawer-overlay" onClick={()=>setShowSigDrawer(false)}/>
           <div className="sig-drawer">
             <div className="sig-drawer-handle"/>
             <div style={{ display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:16 }}>
-              <div className="sidebar-title" style={{ margin:0 }}>Signatures</div>
+              <div className="sidebar-title" style={{ margin:0 }}>Signatures ({allSigs.length})</div>
               <button className="close-btn" onClick={()=>setShowSigDrawer(false)}>{Icon.x(13)}</button>
             </div>
-            {allSigs.length===0?<p className="empty-note">No signatures yet.</p>:allSigs.map(s=>(
+            {allSigs.length===0?<p className="empty-note">No signatures yet — be the first!</p>:allSigs.map(s=>(
               <div key={s.id} className="signer-row">
                 <div className="signer-dot" style={{ background:s.anonymous?"#8b3a7a":s.color }}/>
                 <div className="signer-info">
@@ -1356,6 +1394,63 @@ export default function Steeped() {
                 </div>
               </div>
             ))}
+          </div>
+        </>
+      )}
+
+      {/* ── Dashboard drawer (mobile only) ── */}
+      {showDashDrawer&&(
+        <>
+          <div className="sig-drawer-overlay" onClick={()=>setShowDashDrawer(false)}/>
+          <div className="sig-drawer dashboard-drawer">
+            <div className="sig-drawer-handle"/>
+            <div style={{ display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:16 }}>
+              <div className="sidebar-title" style={{ margin:0,display:"flex",alignItems:"center",gap:6 }}>
+                {Icon.users(11,"rgba(42,21,8,.38)")} Organizer Dashboard
+              </div>
+              <button className="close-btn" onClick={()=>setShowDashDrawer(false)}>{Icon.x(13)}</button>
+            </div>
+            <CountdownBanner/>
+            <div style={{ marginBottom:14 }}>
+              <div style={{ fontFamily:"'Jost',sans-serif",fontSize:9.5,fontWeight:500,letterSpacing:"1.2px",textTransform:"uppercase",color:"rgba(42,21,8,.38)",marginBottom:6,display:"flex",alignItems:"center",gap:5 }}>
+                {Icon.clock(11)} Signing deadline
+              </div>
+              <input type="datetime-local" className="f-input" value={deadline} onChange={e=>setDeadline(e.target.value)} style={{ fontSize:14 }}/>
+            </div>
+            <div style={{ fontFamily:"'Jost',sans-serif",fontSize:9.5,fontWeight:500,letterSpacing:"1.2px",textTransform:"uppercase",color:"rgba(42,21,8,.38)",marginBottom:8,display:"flex",alignItems:"center",gap:5 }}>
+              {Icon.bell(11)} Who should sign?
+            </div>
+            {inviteesWithStatus.length===0&&<p className="empty-note" style={{ marginBottom:10 }}>Add names to track who signed.</p>}
+            {inviteesWithStatus.map(inv=>(
+              <div key={inv.id} className="invitee-row">
+                <div className="invitee-status-dot" style={{ background:inv.status==="signed"?"#2a7a50":"rgba(42,21,8,.18)" }}/>
+                <span className="invitee-name">{inv.name}</span>
+                {inv.status==="signed"
+                  ?<span className="invitee-badge" style={{ background:"rgba(42,122,80,.1)",color:"#2a7a50" }}>✓ signed</span>
+                  :<button className="btn-nudge" onClick={()=>nudgeInvitee(inv)}>
+                    {nudgeCopied===inv.id?"Copied! 💌":<>{Icon.bell(9,"#8B6E4E")} nudge</>}
+                  </button>
+                }
+                <button onClick={()=>removeInvitee(inv.id)} style={{ background:"none",border:"none",cursor:"pointer",color:"rgba(42,21,8,.2)",padding:4,display:"flex",alignItems:"center",flexShrink:0 }}>{Icon.x(9)}</button>
+              </div>
+            ))}
+            <div className="add-invitee-row" style={{ marginTop:10 }}>
+              <input className="f-input" placeholder="Name" value={newInviteeName} onChange={e=>setNewInviteeName(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addInvitee()}/>
+              <input className="f-input" placeholder="Email (optional)" value={newInviteeEmail} onChange={e=>setNewInviteeEmail(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addInvitee()}/>
+              <button className="btn-dark" onClick={addInvitee}>{Icon.plus(12,"#FAF5EE")} Add</button>
+            </div>
+            {inviteesWithStatus.length>0&&(
+              <div style={{ marginTop:12,padding:"10px 12px",background:"#FAF5EE",borderRadius:6,border:"1px solid rgba(42,21,8,.07)" }}>
+                <div style={{ display:"flex",justifyContent:"space-between",marginBottom:6 }}>
+                  <span style={{ fontFamily:"'Jost',sans-serif",fontSize:11,color:"#2a7a50" }}>✓ {inviteesWithStatus.filter(i=>i.status==="signed").length} signed</span>
+                  <span style={{ fontFamily:"'Jost',sans-serif",fontSize:11,color:"rgba(42,21,8,.4)" }}>{inviteesWithStatus.filter(i=>i.status==="pending").length} pending</span>
+                </div>
+                <div style={{ height:5,borderRadius:2,background:"rgba(42,21,8,.08)",overflow:"hidden" }}>
+                  <div style={{ height:"100%",borderRadius:2,background:"#2a7a50",transition:"width .4s ease",width:`${inviteesWithStatus.length?Math.round(inviteesWithStatus.filter(i=>i.status==="signed").length/inviteesWithStatus.length*100):0}%` }}/>
+                </div>
+              </div>
+            )}
+            {cardUrl&&<button className="btn-ghost-sm" style={{ width:"100%",marginTop:12,fontSize:12 }} onClick={()=>copyUrl()}>{Icon.copy(11)} {copied?"Copied!":"Copy invite link"}</button>}
           </div>
         </>
       )}
