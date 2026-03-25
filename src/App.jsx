@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useEffect } from "react";
+import React, { useState, useRef, useCallback, useEffect } from "react";
 import { supabase } from "./supabase";
 
 const Icon = {
@@ -94,6 +94,78 @@ const WARM_NUDGE_MESSAGES = [
   "We're collecting kind words for someone special. Would you like to add yours? 🌷",
   "The card is coming together beautifully — add your warmth before the deadline 🍀",
 ];
+
+// Guided prompts keyed by theme id. {name} is replaced with the recipient name.
+const PROMPTS = {
+  birthday: [
+    "Share a favourite memory with {name}",
+    "What makes {name} laugh?",
+    "One word that describes {name}:",
+    "Your birthday wish for {name}:",
+    "Something you love about {name}:",
+    "A piece of advice for the year ahead:",
+    "The funniest thing {name} has ever done:",
+    "What you'd miss most about {name}:",
+  ],
+  holiday: [
+    "Your warmest wish for {name} this season:",
+    "A holiday memory you share with {name}:",
+    "Something you're grateful for about {name}:",
+    "One hope you have for {name} in the new year:",
+    "What {name} brings to every gathering:",
+    "A tradition you love sharing with {name}:",
+  ],
+  thinking: [
+    "Something you want {name} to know:",
+    "A memory that makes you think of {name}:",
+    "One thing that always reminds you of {name}:",
+    "What you admire most about {name}:",
+    "A moment you'll always remember with {name}:",
+    "Words you've always wanted to say to {name}:",
+  ],
+  justbecause: [
+    "Something that made you think of {name} today:",
+    "A reason you're glad {name} is in your life:",
+    "One thing {name} does that brightens your day:",
+    "Your favourite thing about {name}:",
+    "Something you appreciate about {name}:",
+    "A small moment you love sharing with {name}:",
+  ],
+  hugs: [
+    "Something you wish you could do for {name} right now:",
+    "A time {name} was there for you:",
+    "What you'd say if you were there in person:",
+    "One thing that always cheers {name} up:",
+    "A reminder you want {name} to hold onto:",
+    "Something you love about {name}'s strength:",
+  ],
+  congrats: [
+    "What this achievement says about {name}:",
+    "A moment you knew {name} would get here:",
+    "One thing that makes this so well-deserved:",
+    "Your proudest memory of watching {name} grow:",
+    "What you're most excited to see {name} do next:",
+    "How {name} has inspired you:",
+  ],
+  thankyou: [
+    "What {name}'s kindness meant to you:",
+    "How {name} made a difference:",
+    "A specific moment you'll never forget:",
+    "What you'd like to do for {name} someday:",
+    "Something {name} taught you:",
+    "Why {name}'s support mattered so much:",
+  ],
+  blank: [
+    "Something you'd like {name} to know:",
+    "A memory you treasure with {name}:",
+    "One word that describes {name}:",
+    "What makes {name} special to you:",
+    "Something you're grateful for about {name}:",
+    "A wish you have for {name}:",
+  ],
+};
+// Fallback if theme not matched
+const DEFAULT_PROMPTS = PROMPTS.blank;
 
 const CSS = `
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -445,6 +517,15 @@ html,body{width:100%;min-height:100%;background:#FAF5EE;}
 .ship-success-title{font-family:'Playfair Display',serif;font-size:19px;margin:14px 0 8px;}
 .ship-success-sub{font-family:'Jost',sans-serif;font-size:12px;color:#8B6E4E;font-weight:300;line-height:1.75;}
 .prodigi-badge{display:flex;align-items:center;justify-content:center;gap:5px;font-family:'Jost',sans-serif;font-size:9.5px;color:rgba(42,21,8,.32);letter-spacing:.5px;margin-top:12px;}
+/* Guided prompts */
+.prompt-section{margin-bottom:14px;}
+.prompt-label{font-family:'Jost',sans-serif;font-size:9.5px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:rgba(42,21,8,.38);margin-bottom:7px;display:flex;align-items:center;justify-content:space-between;}
+.prompt-shuffle{background:none;border:none;cursor:pointer;font-family:'Jost',sans-serif;font-size:9.5px;color:#d4a843;letter-spacing:.4px;padding:0;display:flex;align-items:center;gap:4px;transition:opacity .15s;}
+.prompt-shuffle:hover{opacity:.7;}
+.prompt-chips{display:flex;flex-wrap:wrap;gap:6px;}
+.prompt-chip{padding:6px 12px;border-radius:100px;border:1px solid rgba(42,21,8,.12);background:white;font-family:'Jost',sans-serif;font-size:11px;font-weight:300;color:#5a3a10;cursor:pointer;transition:all .15s;line-height:1.4;text-align:left;}
+.prompt-chip:hover{border-color:rgba(212,168,67,.5);background:rgba(212,168,67,.07);color:#2A1508;}
+.prompt-chip.used{border-color:rgba(212,168,67,.4);background:rgba(212,168,67,.1);color:#5a3a10;}
 @media(max-width:680px){.ship-addr-grid{grid-template-columns:1fr;}.ship-size-btn{font-size:10px;padding:7px 3px;}}
 }
 `;
@@ -800,6 +881,43 @@ function ColorPicker({ value, onChange }) {
           <input type="color" value={value} onChange={e=>onChange(e.target.value)}
             style={{ position:"absolute",inset:0,opacity:0,width:"100%",height:"100%",cursor:"pointer" }}/>
         </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─── PromptPicker ───────────────────────────────────────────── */
+function PromptPicker({ themeId, recipientName, onSelect, usedPrompts }) {
+  const bank = PROMPTS[themeId] || DEFAULT_PROMPTS;
+  const name = recipientName?.trim() || "them";
+  const fill = (p) => p.replace(/\{name\}/g, name);
+
+  // Show 3 random prompts at a time, reshuffled on demand
+  const [offset, setOffset] = useState(0);
+  const shuffle = () => setOffset(o => (o + 3) % bank.length);
+  const visible = [];
+  for (let i = 0; i < 3; i++) visible.push(bank[(offset + i) % bank.length]);
+
+  return (
+    <div className="prompt-section">
+      <div className="prompt-label">
+        <span>Need inspiration?</span>
+        <button className="prompt-shuffle" onClick={shuffle} type="button">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>
+          Shuffle
+        </button>
+      </div>
+      <div className="prompt-chips">
+        {visible.map((p, i) => (
+          <button
+            key={offset + i}
+            className={"prompt-chip" + (usedPrompts?.includes(fill(p)) ? " used" : "")}
+            onClick={() => onSelect(fill(p))}
+            type="button"
+          >
+            {fill(p)}
+          </button>
+        ))}
       </div>
     </div>
   );
@@ -1278,6 +1396,14 @@ export default function Steeped() {
                 <input className="f-input" placeholder="Your name" value={viewSignName} onChange={e=>setViewSignName(e.target.value)}/>
               </>}
 
+              <PromptPicker
+                themeId={viewCard?.theme?.id}
+                recipientName={viewCard?.coverItems?.find(i=>i.type==="text")?.text || ""}
+                onSelect={p=>setViewSignMsg(prev=>prev?prev+"
+
+"+p:p)}
+                usedPrompts={(viewCard?.pages||[]).flatMap(pg=>(pg.items||[]).filter(i=>i.type==="text").map(i=>i.text))}
+              />
               <label className="field-label" style={{ marginTop:14 }}>Your message</label>
               <textarea className="f-textarea" rows={4} placeholder="Write something wonderful…" value={viewSignMsg} onChange={e=>setViewSignMsg(e.target.value)}/>
               {(viewCard?.pages||[]).length>1&&<>
@@ -1638,6 +1764,14 @@ export default function Steeped() {
                   <input className="f-input" placeholder="How should we sign this?" value={signerName} onChange={e=>setSignerName(e.target.value)}/>
                 </>}
 
+                <PromptPicker
+                  themeId={theme?.id}
+                  recipientName={form.name || coverItems.find(i=>i.type==="text")?.text || ""}
+                  onSelect={p=>setMsgText(prev=>prev?prev+"
+
+"+p:p)}
+                  usedPrompts={allSigs.map(s=>s.text)}
+                />
                 <label className="field-label">Your message</label>
                 <textarea className="f-textarea" rows={3} placeholder="Write something wonderful…" value={msgText} onChange={e=>setMsgText(e.target.value)}/>
                 <label className="field-label">Style</label>
