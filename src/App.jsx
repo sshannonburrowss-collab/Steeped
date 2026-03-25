@@ -38,6 +38,8 @@ const Icon = {
   bell:     (s=14,c="currentColor")=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>,
   lock:     (s=11,c="currentColor")=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>,
   clock:    (s=13,c="currentColor")=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>,
+  truck:    (s=17,c="currentColor")=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 5v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>,
+  pkg:      (s=14,c="currentColor")=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>,
 };
 
 const TEMPLATES = {
@@ -377,47 +379,73 @@ html,body{width:100%;min-height:100%;background:#FAF5EE;}
   .dashboard-drawer .f-input{font-size:14px;padding:10px 12px;}
 
 /* ── My Cards Dashboard ─────────────────────────────────── */
-.my-cards-view{min-height:calc(100vh - 68px);background:#FAF5EE;padding:40px 44px 60px;max-width:1060px;margin:0 auto;box-sizing:border-box;}
-.my-cards-greeting{margin-bottom:0;animation:fadeUp .5s ease;}
-.my-cards-eyebrow{font-family:'Jost',sans-serif;font-weight:300;font-size:11px;color:#d4a843;letter-spacing:4px;text-transform:uppercase;margin-bottom:8px;}
-.my-cards-title{font-family:'Playfair Display',serif;font-size:30px;font-weight:400;color:#2A1508;margin-bottom:4px;line-height:1.2;}
-.my-cards-sub{font-family:'Jost',sans-serif;font-size:13px;font-weight:300;color:#8B6E4E;line-height:1.65;margin:0;}
-.my-cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(268px,1fr));gap:20px;}
-.my-card-item{background:white;border-radius:12px;overflow:hidden;box-shadow:0 2px 16px rgba(42,21,8,.07);border:1.5px solid rgba(42,21,8,.06);transition:all .22s;animation:fadeUp .4s ease both;cursor:pointer;}
-.my-card-item:hover{transform:translateY(-4px);box-shadow:0 16px 40px rgba(42,21,8,.14);border-color:rgba(42,21,8,.12);}
-.my-card-cover-wrap{height:148px;position:relative;overflow:hidden;flex-shrink:0;}
-.my-card-cover-inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:16px;}
-.my-card-cover-text{font-family:'Playfair Display',serif;font-size:13px;font-weight:400;text-align:center;line-height:1.4;max-width:90%;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
-.my-card-cover-icon{opacity:.22;position:absolute;bottom:10px;right:14px;}
-.my-card-body{padding:16px 18px 14px;}
-.my-card-theme-name{font-family:'Playfair Display',serif;font-size:14.5px;font-weight:400;color:#2A1508;margin-bottom:5px;}
-.my-card-meta-row{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:14px;}
-.my-card-chip{font-family:'Jost',sans-serif;font-size:10.5px;font-weight:300;color:#8B6E4E;display:flex;align-items:center;gap:4px;}
-.my-card-actions{display:flex;gap:7px;}
-.my-card-btn{flex:1;padding:8px 6px;border-radius:5px;border:1px solid rgba(42,21,8,.13);background:transparent;font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.3px;color:#8B6E4E;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:5px;}
-.my-card-btn:hover{background:#FAF5EE;color:#2A1508;border-color:rgba(42,21,8,.25);}
-.my-card-btn.primary{background:#2A1508;color:#FAF5EE;border-color:#2A1508;}
-.my-card-btn.primary:hover{background:#3d2010;}
+.my-cards-page{min-height:calc(100vh - 68px);background:#FAF5EE;width:100%;}
+.my-cards-inner{max-width:1020px;margin:0 auto;padding:44px 44px 64px;box-sizing:border-box;}
+.my-cards-header{display:grid;grid-template-columns:1fr auto;align-items:start;gap:20px;margin-bottom:36px;}
+.my-cards-eyebrow{font-family:'Jost',sans-serif;font-weight:300;font-size:11px;color:#d4a843;letter-spacing:4px;text-transform:uppercase;margin-bottom:10px;}
+.my-cards-title{font-family:'Playfair Display',serif;font-size:32px;font-weight:400;color:#2A1508;margin:0 0 6px;line-height:1.15;}
+.my-cards-sub{font-family:'Jost',sans-serif;font-size:13.5px;font-weight:300;color:#8B6E4E;line-height:1.7;margin:0;}
+.my-cards-login-banner{display:grid;grid-template-columns:1fr auto;align-items:center;gap:20px;padding:16px 20px;background:linear-gradient(135deg,#FFF9F2,#FAF5EE);border:1px solid rgba(212,168,67,.28);border-radius:8px;margin-bottom:28px;}
+.my-cards-login-title{font-family:'Jost',sans-serif;font-size:13px;font-weight:500;color:#5a3a10;margin-bottom:3px;}
+.my-cards-login-sub{font-family:'Jost',sans-serif;font-size:12px;font-weight:300;color:#8B6E4E;line-height:1.5;}
+.my-cards-count{font-family:'Jost',sans-serif;font-size:10px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:rgba(42,21,8,.35);margin-bottom:22px;}
+.my-cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px;}
+.my-card-item{background:white;border-radius:12px;overflow:hidden;box-shadow:0 2px 14px rgba(42,21,8,.07);border:1.5px solid rgba(42,21,8,.07);transition:all .2s;animation:fadeUp .4s ease both;}
+.my-card-item:hover{transform:translateY(-3px);box-shadow:0 14px 36px rgba(42,21,8,.13);border-color:rgba(42,21,8,.14);}
+.my-card-cover-wrap{height:140px;position:relative;overflow:hidden;}
+.my-card-cover-inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:16px;}
+.my-card-cover-text{font-family:'Playfair Display',serif;font-size:13px;font-weight:400;text-align:center;line-height:1.4;max-width:85%;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+.my-card-cover-icon{opacity:.18;position:absolute;bottom:10px;right:12px;pointer-events:none;}
+.my-card-body{padding:16px 16px 12px;}
+.my-card-theme-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:400;color:#2A1508;margin-bottom:6px;line-height:1.3;}
+.my-card-meta-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px;align-items:center;}
+.my-card-chip{font-family:'Jost',sans-serif;font-size:11px;font-weight:300;color:#8B6E4E;display:inline-flex;align-items:center;gap:4px;}
+.my-card-divider{height:1px;background:rgba(42,21,8,.06);margin-bottom:12px;}
+.my-card-actions{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;}
+.my-card-btn{padding:8px 4px;border-radius:5px;border:1px solid rgba(42,21,8,.12);background:white;font-family:'Jost',sans-serif;font-size:11px;font-weight:400;letter-spacing:.2px;color:#8B6E4E;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:4px;white-space:nowrap;}
+.my-card-btn:hover{background:#FAF5EE;color:#2A1508;border-color:rgba(42,21,8,.22);}
+.my-card-btn-send{padding:8px 4px;border-radius:5px;border:none;background:#2A1508;font-family:'Jost',sans-serif;font-size:11px;font-weight:400;color:#FAF5EE;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:4px;}
+.my-card-btn-send:hover{background:#3d2010;}
+.my-card-delete{display:block;text-align:center;margin-top:10px;background:none;border:none;cursor:pointer;font-family:'Jost',sans-serif;font-size:10px;color:rgba(42,21,8,.22);letter-spacing:.3px;padding:2px;transition:color .15s;width:100%;}
+.my-card-delete:hover{color:#b84848;}
 .my-cards-empty{text-align:center;padding:72px 20px;animation:fadeUp .5s ease;}
-.my-cards-empty-icon{margin-bottom:22px;opacity:.25;}
-.my-cards-empty-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:400;color:#2A1508;margin-bottom:10px;}
-.my-cards-empty-sub{font-family:'Jost',sans-serif;font-size:14px;font-weight:300;color:#8B6E4E;line-height:1.8;margin-bottom:28px;}
-.my-cards-loading{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px;gap:16px;}
+.my-cards-empty-icon{margin-bottom:22px;opacity:.22;}
+.my-cards-empty-title{font-family:'Playfair Display',serif;font-size:24px;font-weight:400;color:#2A1508;margin-bottom:10px;}
+.my-cards-empty-sub{font-family:'Jost',sans-serif;font-size:14px;font-weight:300;color:#8B6E4E;line-height:1.85;margin-bottom:28px;}
+.my-cards-loading{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px;gap:14px;}
 .delete-confirm-overlay{position:fixed;inset:0;background:rgba(42,21,8,.45);backdrop-filter:blur(8px);z-index:400;display:flex;align-items:center;justify-content:center;padding:20px;}
-.delete-confirm-box{background:white;border-radius:12px;padding:28px 32px;max-width:380px;width:100%;box-shadow:0 24px 70px rgba(42,21,8,.22);animation:cardIn .2s ease;text-align:center;}
+.delete-confirm-box{background:white;border-radius:12px;padding:28px 30px;max-width:380px;width:100%;box-shadow:0 24px 70px rgba(42,21,8,.22);animation:cardIn .2s ease;text-align:center;}
 @media(max-width:680px){
-  .my-cards-view{padding:20px 16px 48px;}
-  .my-cards-title{font-size:24px;}
+  .my-cards-inner{padding:20px 16px 48px;}
+  .my-cards-header{grid-template-columns:1fr;gap:12px;}
+  .my-cards-header .btn-dark{align-self:auto;}
+  .my-cards-title{font-size:26px;}
+  .my-cards-login-banner{grid-template-columns:1fr;gap:10px;}
   .my-cards-grid{grid-template-columns:1fr 1fr;gap:12px;}
-  .my-card-cover-wrap{height:110px;}
-  .my-card-body{padding:12px 14px 11px;}
+  .my-card-cover-wrap{height:100px;}
+  .my-card-body{padding:10px 12px 10px;}
   .my-card-theme-name{font-size:13px;}
-  .my-card-actions{gap:5px;}
-  .my-card-btn{font-size:10px;padding:7px 4px;}
+  .my-card-actions{gap:4px;}
+  .my-card-btn,.my-card-btn-send{font-size:10px;padding:7px 2px;}
 }
 @media(max-width:400px){
   .my-cards-grid{grid-template-columns:1fr;}
 }
+
+/* Ship tab */
+.ship-size-btn{flex:1;min-width:72px;padding:9px 6px;border-radius:6px;border:1.5px solid rgba(42,21,8,.12);background:white;cursor:pointer;font-family:'Jost',sans-serif;font-size:11px;color:#8B6E4E;transition:all .15s;text-align:center;line-height:1.5;}
+.ship-size-btn.active{border-color:#d4a843;background:rgba(212,168,67,.08);color:#5a3a10;}
+.ship-price-bar{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;}
+.ship-total-row{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:#FFF9F2;border-radius:6px;border:1px solid rgba(212,168,67,.2);margin-bottom:18px;}
+.ship-total-label{font-family:'Jost',sans-serif;font-size:12px;font-weight:300;color:#8B6E4E;}
+.ship-total-price{font-family:'Playfair Display',serif;font-size:20px;color:#2A1508;}
+.ship-addr-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px;}
+.ship-error{padding:9px 12px;background:#fff0ed;border-radius:5px;font-family:'Jost',sans-serif;font-size:12px;color:#b84848;margin-bottom:12px;border:1px solid rgba(184,74,48,.15);}
+.ship-success{text-align:center;padding:20px 0;}
+.ship-success-title{font-family:'Playfair Display',serif;font-size:19px;margin:14px 0 8px;}
+.ship-success-sub{font-family:'Jost',sans-serif;font-size:12px;color:#8B6E4E;font-weight:300;line-height:1.75;}
+.prodigi-badge{display:flex;align-items:center;justify-content:center;gap:5px;font-family:'Jost',sans-serif;font-size:9.5px;color:rgba(42,21,8,.32);letter-spacing:.5px;margin-top:12px;}
+@media(max-width:680px){.ship-addr-grid{grid-template-columns:1fr;}.ship-size-btn{font-size:10px;padding:7px 3px;}}
 }
 `;
 
@@ -836,6 +864,27 @@ export default function Steeped() {
   const [deleteConfirm, setDeleteConfirm] = useState(null); // cardId to confirm delete
   const [cardCopied, setCardCopied] = useState(null);
 
+  // ── Print & Ship via Prodigi ─────────────────────────────────
+  // SKUs from Prodigi classic greetings card range (330gsm Fedrigoni gloss, UV varnish)
+  // Prices are approximate base costs — actual charged at fulfillment
+  const PRODIGI_SIZES = [
+    { sku:"GLOBAL-GRE-A6",  label:"A6",   dim:'4.1 × 5.8"', note:"Classic",  cardPrice:2.99, popular:false },
+    { sku:"GLOBAL-GRE-A5",  label:"A5",   dim:'5.8 × 8.3"', note:"Standard", cardPrice:3.99, popular:true  },
+    { sku:"GLOBAL-GRE-SQ",  label:"SQ",   dim:'5.5 × 5.5"', note:"Square",   cardPrice:3.49, popular:false },
+    { sku:"GLOBAL-GRE-A4",  label:"A4",   dim:'8.3 × 11.7"',note:"Large",    cardPrice:5.49, popular:false },
+  ];
+  // Shipping estimates by country (economy, includes envelope & packaging)
+  const SHIP_RATES = { US:4.99, GB:4.49, CA:6.99, AU:7.99, default:8.99 };
+  const [shipSize, setShipSize] = useState("GLOBAL-GRE-A5");
+  const [shipAddr, setShipAddr] = useState({ name:"", email:"", line1:"", line2:"", city:"", state:"", zip:"", country:"US" });
+  const [shipping, setShipping] = useState(false);
+  const [shipResult, setShipResult] = useState(null);
+  const [captureError, setCaptureError] = useState(null);
+  const sAddr = (k) => (e) => setShipAddr(p=>({...p,[k]:e.target.value}));
+  const selectedSize = PRODIGI_SIZES.find(s=>s.sku===shipSize) || PRODIGI_SIZES[1];
+  const shipCost = SHIP_RATES[shipAddr.country] || SHIP_RATES.default;
+  const shipTotal = (selectedSize.cardPrice + shipCost).toFixed(2);
+
   // ── NEW: Dashboard, Anonymous mode, Deadline ─────────────────
   const [invitees, setInvitees] = useState([]);
   const [newInviteeName, setNewInviteeName] = useState("");
@@ -1018,6 +1067,67 @@ export default function Steeped() {
   };
 
   const copyUrl = async (url) => { await navigator.clipboard.writeText(url||cardUrl); setCopied(true); setTimeout(()=>setCopied(false),2000); };
+
+  // Dynamically load html2canvas if not already loaded
+  const ensureHtml2Canvas = () => new Promise((resolve, reject) => {
+    if (window.html2canvas) { resolve(window.html2canvas); return; }
+    const s = document.createElement("script");
+    s.src = "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js";
+    s.onload = () => resolve(window.html2canvas);
+    s.onerror = () => reject(new Error("Could not load html2canvas"));
+    document.head.appendChild(s);
+  });
+
+  const captureElementAsJpeg = async (el, h2c) => {
+    const canvas = await h2c(el, { scale:2, useCORS:true, allowTaint:true, backgroundColor:"#ffffff", logging:false });
+    return canvas.toDataURL("image/jpeg", 0.92);
+  };
+
+  const doShip = async () => {
+    const { name, line1, city, zip, country } = shipAddr;
+    if (!name||!line1||!city||!zip||!country) {
+      setShipResult({ ok:false, error:"Please fill in all required address fields (marked *)." }); return;
+    }
+    setShipping(true); setShipResult(null); setCaptureError(null);
+    try {
+      // Load html2canvas dynamically
+      let h2c;
+      try { h2c = await ensureHtml2Canvas(); }
+      catch(e) { setCaptureError("Could not capture card image — order will use cover gradient."); }
+
+      // Capture cover + page 1 (front/back of printed card)
+      let coverBase64 = null, page1Base64 = null;
+      if (h2c && coverRef.current) {
+        try { coverBase64 = await captureElementAsJpeg(coverRef.current, h2c); } catch(e) {}
+      }
+      if (h2c && pageRefs.current[0]) {
+        try { page1Base64 = await captureElementAsJpeg(pageRefs.current[0], h2c); } catch(e) {}
+      }
+
+      const res = await fetch("/api/print-ship", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({
+          sku: shipSize,
+          recipient: shipAddr,
+          coverBase64,
+          page1Base64,
+          cardId,
+          cardUrl,
+          themeName: theme?.name || "Card",
+        })
+      });
+      const data = await res.json();
+      if (res.ok && data.orderId) {
+        setShipResult({ ok:true, orderId:data.orderId, eta:data.eta||"3-10 business days" });
+      } else {
+        setShipResult({ ok:false, error:data.error||"Something went wrong. Please try again." });
+      }
+    } catch(e) {
+      setShipResult({ ok:false, error:"Could not reach the print server. Check your connection." });
+    }
+    setShipping(false);
+  };
 
   // ── Dashboard helpers ─────────────────────────────────────────
   const addInvitee = () => {
@@ -1273,13 +1383,14 @@ export default function Steeped() {
 
   if (view==="my-cards") {
     const firstName = user?.user_metadata?.full_name?.split(" ")[0] || null;
-    const timeOfDay = () => { const h=new Date().getHours(); return h<12?"morning":h<17?"afternoon":"evening"; };
+    const h = new Date().getHours();
+    const timeOfDay = h < 12 ? "morning" : h < 17 ? "afternoon" : "evening";
     return (
       <div className="app"><style>{CSS}</style>
         <nav className="nav">
           <NavLogo onClick={()=>setView("home")}/>
           <div style={{ display:"flex",gap:8,alignItems:"center" }}>
-            {user && <span className="nav-user-name" style={{ maxWidth:160,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap" }}>{user.user_metadata?.full_name||user.email}</span>}
+            {user && <span className="nav-user-name">{user.user_metadata?.full_name||user.email}</span>}
             {user
               ? <button className="btn-ghost-sm" onClick={doSignOut}>Sign out</button>
               : <button className="btn-ghost-sm" onClick={()=>{ setAuthMode("login"); setShowAuth(true); }}>{Icon.user(13)} Log in</button>
@@ -1287,112 +1398,118 @@ export default function Steeped() {
             <button className="btn-dark" onClick={()=>setView("themes")}>New card {Icon.plus(12,"#FAF5EE")}</button>
           </div>
         </nav>
-        <div className="my-cards-view">
 
-          {/* ── Header: greeting left, CTA right ── */}
-          <div style={{ display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:16,marginBottom:32,flexWrap:"wrap" }}>
-            <div className="my-cards-greeting" style={{ margin:0 }}>
-              <div className="my-cards-eyebrow">good {timeOfDay()}</div>
-              <h1 className="my-cards-title" style={{ marginBottom:4 }}>
-                {firstName ? `Welcome back, ${firstName} ✨` : "My Cards ✨"}
-              </h1>
-              <p className="my-cards-sub">Here are all the cards you've brewed with care.</p>
-            </div>
-            <button className="btn-dark" style={{ flexShrink:0,alignSelf:"flex-start",marginTop:8 }} onClick={()=>setView("themes")}>
-              {Icon.plus(13,"#FAF5EE")} Brew a new card
-            </button>
-          </div>
+        <div className="my-cards-page">
+          <div className="my-cards-inner">
 
-          {/* ── Login nudge ── */}
-          {!user && (
-            <div style={{ display:"grid",gridTemplateColumns:"1fr auto",alignItems:"center",gap:16,padding:"14px 18px",background:"linear-gradient(135deg,#FFF9F2,#FAF5EE)",border:"1px solid rgba(212,168,67,.25)",borderRadius:8,marginBottom:28 }}>
+            {/* ── Header ── */}
+            <div className="my-cards-header">
               <div>
-                <div style={{ fontFamily:"'Jost',sans-serif",fontSize:13,fontWeight:500,color:"#5a3a10",marginBottom:3 }}>Sign in to sync your cards across devices</div>
-                <div style={{ fontFamily:"'Jost',sans-serif",fontSize:12,fontWeight:300,color:"#8B6E4E",lineHeight:1.5 }}>Cards are saved locally for now — log in to keep them safe.</div>
+                <div className="my-cards-eyebrow">good {timeOfDay}</div>
+                <h1 className="my-cards-title">{firstName ? `Welcome back, ${firstName} ✨` : "My Cards ✨"}</h1>
+                <p className="my-cards-sub">Here are all the cards you’ve brewed with care.</p>
               </div>
-              <button className="btn-dark" style={{ fontSize:12,padding:"9px 20px",whiteSpace:"nowrap" }} onClick={()=>{ setAuthMode("login"); setShowAuth(true); }}>
-                {Icon.user(12,"#FAF5EE")} Log in
+              <button className="btn-dark" onClick={()=>setView("themes")} style={{ marginTop:4 }}>
+                {Icon.plus(13,"#FAF5EE")} New card
               </button>
             </div>
-          )}
 
-          {/* ── Card count ── */}
-          <div style={{ fontFamily:"'Jost',sans-serif",fontSize:10,fontWeight:500,letterSpacing:"2px",textTransform:"uppercase",color:"rgba(42,21,8,.38)",marginBottom:20 }}>
-            {myCardsLoading ? "Loading…" : `${myCards.length} card${myCards.length!==1?"s":""}`}
+            {/* ── Login nudge ── */}
+            {!user && (
+              <div className="my-cards-login-banner">
+                <div>
+                  <div className="my-cards-login-title">Sign in to sync your cards across devices</div>
+                  <div className="my-cards-login-sub">Cards are saved locally for now — log in to keep them safe.</div>
+                </div>
+                <button className="btn-dark" style={{ fontSize:12,padding:"9px 20px",whiteSpace:"nowrap" }} onClick={()=>{ setAuthMode("login"); setShowAuth(true); }}>
+                  {Icon.user(12,"#FAF5EE")} Log in
+                </button>
+              </div>
+            )}
+
+            {/* ── Card count ── */}
+            <div className="my-cards-count">
+              {myCardsLoading ? "Loading…" : `${myCards.length} card${myCards.length!==1?"s":""}`}
+            </div>
+
+            {/* ── Loading ── */}
+            {myCardsLoading && (
+              <div className="my-cards-loading">
+                <div className="spinner" style={{ width:26,height:26,borderWidth:3,borderColor:"rgba(42,21,8,.12)",borderTopColor:"#d4a843" }}/>
+                <p className="loading-text">Gathering your cards…</p>
+              </div>
+            )}
+
+            {/* ── Empty state ── */}
+            {!myCardsLoading && myCards.length===0 && (
+              <div className="my-cards-empty">
+                <div className="my-cards-empty-icon">{Icon.mail(60,"#2A1508")}</div>
+                <h2 className="my-cards-empty-title">No cards yet</h2>
+                <p className="my-cards-empty-sub">Every card you brew is saved here automatically,<br/>ready to pick up or send again.</p>
+                <button className="btn-hero" onClick={()=>setView("themes")}>Brew your first card {Icon.arrow(16,"#FAF5EE")}</button>
+              </div>
+            )}
+
+            {/* ── Card grid ── */}
+            {!myCardsLoading && myCards.length>0 && (
+              <div className="my-cards-grid">
+                {myCards.map((card,i) => {
+                  const th = THEMES.find(t=>t.id===card.theme?.id) || card.theme || THEMES[7];
+                  const sigCount = (card.pages||[]).flatMap(p=>p.items||[]).filter(it=>it.type==="text").length;
+                  const pageCount = card.pages?.length || 1;
+                  const coverTextItem = (card.coverItems||[]).find(it=>it.type==="text");
+                  const cardLink = `${window.location.origin}/?card=${card.id}`;
+                  const isCopied = cardCopied===card.id;
+                  const dateStr = card.updatedAt ? new Date(card.updatedAt).toLocaleDateString("en-US",{month:"short",day:"numeric"}) : null;
+                  return (
+                    <div key={card.id} className="my-card-item" style={{ animationDelay:`${i*.05}s` }}>
+
+                      {/* Cover preview — click opens editor */}
+                      <div className="my-card-cover-wrap" style={{ background:th.cover, cursor:"pointer" }} onClick={()=>loadCardIntoEditor(card)}>
+                        <div className="my-card-cover-inner">
+                          <div style={{ color:th.accent,opacity:.75 }}>{Icon[th.icon]?.(24,th.accent)}</div>
+                          <div className="my-card-cover-text" style={{ color:th.accent, fontFamily:coverTextItem?.font||"'Playfair Display',serif" }}>
+                            {coverTextItem?.text || th.name}
+                          </div>
+                        </div>
+                        <div className="my-card-cover-icon">{Icon[th.icon]?.(28,th.accent)}</div>
+                      </div>
+
+                      {/* Card info */}
+                      <div className="my-card-body">
+                        <div className="my-card-theme-name">{th.name}</div>
+                        <div className="my-card-meta-row">
+                          <span className="my-card-chip">{Icon.pen(11,"#8B6E4E")} {sigCount} sig{sigCount!==1?"s":""}</span>
+                          <span className="my-card-chip">{Icon.copy(11,"#8B6E4E")} {pageCount}p</span>
+                          {dateStr && <span className="my-card-chip">{Icon.clock(11,"#8B6E4E")} {dateStr}</span>}
+                        </div>
+
+                        <div className="my-card-divider"/>
+
+                        {/* Actions */}
+                        <div className="my-card-actions">
+                          <button className="my-card-btn" onClick={()=>loadCardIntoEditor(card)}>
+                            {Icon.edit(11,"#8B6E4E")} Edit
+                          </button>
+                          <button className="my-card-btn" onClick={()=>window.open(cardLink,"_blank")}>
+                            {Icon.arrow(11,"#8B6E4E")} View
+                          </button>
+                          <button className="my-card-btn" onClick={async()=>{ await navigator.clipboard.writeText(cardLink); setCardCopied(card.id); setTimeout(()=>setCardCopied(null),2200); }}>
+                            {isCopied ? <>✓</> : <>{Icon.copy(11,"#8B6E4E")} Copy</>}
+                          </button>
+                          <button className="my-card-btn-send" onClick={()=>{ loadCardIntoEditor(card); setTimeout(()=>setShowSend(true),60); }}>
+                            {Icon.send(11,"#FAF5EE")} Send
+                          </button>
+                        </div>
+
+                        <button className="my-card-delete" onClick={()=>setDeleteConfirm(card.id)}>delete</button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
-
-          {myCardsLoading && (
-            <div className="my-cards-loading">
-              <div className="spinner" style={{ width:26,height:26,borderWidth:3,borderColor:"rgba(42,21,8,.12)",borderTopColor:"#d4a843" }}/>
-              <p className="loading-text">Gathering your cards…</p>
-            </div>
-          )}
-
-          {!myCardsLoading && myCards.length===0 && (
-            <div className="my-cards-empty">
-              <div className="my-cards-empty-icon">{Icon.mail(64,"#2A1508")}</div>
-              <h2 className="my-cards-empty-title">No cards yet</h2>
-              <p className="my-cards-empty-sub">Every card you brew is saved here automatically,<br/>ready to send again or pick up where you left off.</p>
-              <button className="btn-hero" onClick={()=>setView("themes")}>Brew your first card {Icon.arrow(16,"#FAF5EE")}</button>
-            </div>
-          )}
-
-          {!myCardsLoading && myCards.length>0 && (
-            <div className="my-cards-grid">
-              {myCards.map((card,i) => {
-                const th = THEMES.find(t=>t.id===card.theme?.id) || card.theme || THEMES[7];
-                const sigCount = (card.pages||[]).flatMap(p=>p.items||[]).filter(it=>it.type==="text").length;
-                const pageCount = card.pages?.length || 1;
-                const coverTextItem = (card.coverItems||[]).find(it=>it.type==="text");
-                const cardLink = `${window.location.origin}/?card=${card.id}`;
-                const copied = cardCopied===card.id;
-                return (
-                  <div key={card.id} className="my-card-item" style={{ animationDelay:`${i*.055}s` }}>
-                    {/* Cover preview */}
-                    <div className="my-card-cover-wrap" style={{ background:th.cover }}>
-                      <div className="my-card-cover-inner">
-                        <div style={{ color:th.accent,opacity:.7 }}>{Icon[th.icon]?.(28,th.accent)}</div>
-                        {coverTextItem
-                          ? <div className="my-card-cover-text" style={{ color:th.accent,fontFamily:coverTextItem.font||"'Playfair Display',serif" }}>{coverTextItem.text}</div>
-                          : <div className="my-card-cover-text" style={{ color:th.accent }}>{th.name}</div>
-                        }
-                      </div>
-                      <div className="my-card-cover-icon">{Icon[th.icon]?.(32,th.accent)}</div>
-                    </div>
-                    {/* Body */}
-                    <div className="my-card-body">
-                      <div className="my-card-theme-name">{th.name}</div>
-                      <div className="my-card-meta-row">
-                        <span className="my-card-chip">{Icon.pen(11,"#8B6E4E")} {sigCount} sig{sigCount!==1?"s":""}</span>
-                        <span className="my-card-chip">{Icon.copy(11,"#8B6E4E")} {pageCount} page{pageCount!==1?"s":""}</span>
-                        {card.updatedAt && <span className="my-card-chip">{Icon.clock(11,"#8B6E4E")} {new Date(card.updatedAt).toLocaleDateString("en-US",{month:"short",day:"numeric"})}</span>}
-                      </div>
-                      <div className="my-card-actions">
-                        <button className="my-card-btn" onClick={()=>loadCardIntoEditor(card)} title="Edit this card">
-                          {Icon.edit(11,"#8B6E4E")} Edit
-                        </button>
-                        <button className="my-card-btn" onClick={()=>{ window.open(cardLink,"_blank"); }} title="Preview how recipients see it">
-                          {Icon.arrow(11,"#8B6E4E")} View
-                        </button>
-                        <button className="my-card-btn" onClick={async()=>{ await navigator.clipboard.writeText(cardLink); setCardCopied(card.id); setTimeout(()=>setCardCopied(null),2000); }} title="Copy shareable link">
-                          {copied?<>✓ Copied</>:<>{Icon.copy(11,"#8B6E4E")} Share</>}
-                        </button>
-                        <button className="my-card-btn" onClick={()=>{ loadCardIntoEditor(card); setTimeout(()=>setShowSend(true),50); }} title="Send this card" style={{ background:"#2A1508",color:"#FAF5EE",border:"none" }}>
-                          {Icon.send(11,"#FAF5EE")} Send
-                        </button>
-                      </div>
-                      {/* Tiny delete link */}
-                      <div style={{ textAlign:"right",marginTop:8 }}>
-                        <button onClick={()=>setDeleteConfirm(card.id)} style={{ background:"none",border:"none",cursor:"pointer",fontFamily:"'Jost',sans-serif",fontSize:10,color:"rgba(42,21,8,.25)",letterSpacing:".3px",padding:0 }}>
-                          delete
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
         </div>
 
         {/* Delete confirmation */}
@@ -1836,8 +1953,8 @@ export default function Steeped() {
               <button className="close-btn" onClick={()=>setShowSend(false)}>{Icon.x(14)}</button>
             </div>
             <div className="modal-tabs">
-              {[{id:"email",ic:Icon.email(16),lbl:"Email"},{id:"text",ic:Icon.message(16),lbl:"Text"},{id:"schedule",ic:Icon.calendar(16),lbl:"Schedule"},{id:"pdf",ic:Icon.download(16),lbl:"PDF"},{id:"print",ic:Icon.printer(16),lbl:"Print"}].map(t=>(
-                <button key={t.id} className={`modal-tab${sendTab===t.id?" active":""}`} onClick={()=>setSendTab(t.id)}>{t.ic}<span className="modal-tab-label">{t.lbl}</span></button>
+              {[{id:"email",ic:Icon.email(16),lbl:"Email"},{id:"text",ic:Icon.message(16),lbl:"Text"},{id:"schedule",ic:Icon.calendar(16),lbl:"Schedule"},{id:"pdf",ic:Icon.download(16),lbl:"PDF"},{id:"ship",ic:Icon.truck(16),lbl:"Ship it"}].map(t=>(
+                <button key={t.id} className={`modal-tab${sendTab===t.id?" active":""}`} onClick={()=>{ setSendTab(t.id); if(t.id==="ship") setShipResult(null); }}>{t.ic}<span className="modal-tab-label">{t.lbl}</span></button>
               ))}
             </div>
             <div className="modal-body">
@@ -1877,7 +1994,97 @@ export default function Steeped() {
                   </div>
                 )}
                 {sendTab==="pdf"&&<div className="modal-center">{Icon.download(52,"#d4a843")}<h3 className="modal-sec-title">Save as PDF</h3><p className="modal-sec-body">Download all {pages.length+1} pages as a beautifully formatted PDF.</p><button className="btn-send" style={{ padding:"13px 40px" }} onClick={()=>window.print()}>Download PDF</button></div>}
-                {sendTab==="print"&&<div className="modal-center">{Icon.printer(52,"#d4a843")}<h3 className="modal-sec-title">Print your card</h3><p className="modal-sec-body">Print all {pages.length+1} pages and hand-deliver with love.</p><button className="btn-send" style={{ padding:"13px 40px" }} onClick={()=>window.print()}>Print Card</button></div>}
+                {sendTab==="ship"&&(
+                  <div>
+                  {shipResult?.ok ? (
+                    <div className="ship-success">
+                      {Icon.check(52)}
+                      <div className="ship-success-title">Order placed! 🎉</div>
+                      <p className="ship-success-sub">
+                        Your card is being printed on premium gloss card stock<br/>and shipped directly to {shipAddr.name}.<br/><br/>
+                        <strong>Order #{shipResult.orderId}</strong><br/>
+                        Estimated arrival: {shipResult.eta}
+                      </p>
+                      <button className="btn-ghost-sm" style={{ marginTop:18 }} onClick={()=>{ setShipResult(null); setShipAddr({name:"",email:"",line1:"",line2:"",city:"",state:"",zip:"",country:"US"}); }}>Send another copy</button>
+                    </div>
+                  ) : (
+                    <div>
+                      {/* Provider badge */}
+                      <div style={{ display:"flex",alignItems:"center",gap:10,padding:"10px 14px",background:"linear-gradient(135deg,#FFF9F2,#FAF5EE)",border:"1px solid rgba(212,168,67,.2)",borderRadius:7,marginBottom:18 }}>
+                        {Icon.truck(15,"#d4a843")}
+                        <div style={{ flex:1 }}>
+                          <div style={{ fontFamily:"'Jost',sans-serif",fontSize:12,fontWeight:500,color:"#5a3a10" }}>Printed &amp; shipped via Prodigi</div>
+                          <div style={{ fontFamily:"'Jost',sans-serif",fontSize:10.5,fontWeight:300,color:"#8B6E4E",marginTop:1 }}>330gsm gloss card · white-label · no minimum order</div>
+                        </div>
+                        <a href="https://www.prodigi.com" target="_blank" rel="noreferrer" style={{ fontFamily:"'Jost',sans-serif",fontSize:9,color:"rgba(42,21,8,.3)",letterSpacing:".5px",textDecoration:"none" }}>prodigi.com</a>
+                      </div>
+
+                      {/* Size picker */}
+                      <label className="field-label">Card size</label>
+                      <div className="ship-price-bar">
+                        {PRODIGI_SIZES.map(sz=>(
+                          <button key={sz.sku} className={"ship-size-btn"+(shipSize===sz.sku?" active":"")} onClick={()=>setShipSize(sz.sku)}>
+                            {sz.popular&&<div style={{ fontSize:8,letterSpacing:".5px",color:"#d4a843",textTransform:"uppercase",marginBottom:1 }}>Popular</div>}
+                            <div style={{ fontWeight:600 }}>{sz.label}</div>
+                            <div style={{ fontSize:9,opacity:.55,marginTop:1 }}>{sz.dim}</div>
+                            <div style={{ color:"#d4a843",fontSize:11,marginTop:3,fontWeight:500 }}>${sz.cardPrice.toFixed(2)}</div>
+                          </button>
+                        ))}
+                      </div>
+
+                      {/* Price breakdown */}
+                      <div className="ship-total-row">
+                        <div style={{ flex:1 }}>
+                          <div style={{ display:"flex",justifyContent:"space-between",marginBottom:4 }}>
+                            <span className="ship-total-label">Card ({selectedSize.label})</span>
+                            <span style={{ fontFamily:"'Jost',sans-serif",fontSize:12,color:"#2A1508" }}>${selectedSize.cardPrice.toFixed(2)}</span>
+                          </div>
+                          <div style={{ display:"flex",justifyContent:"space-between",marginBottom:4 }}>
+                            <span className="ship-total-label">Standard shipping</span>
+                            <span style={{ fontFamily:"'Jost',sans-serif",fontSize:12,color:"#2A1508" }}>${shipCost.toFixed(2)}</span>
+                          </div>
+                          <div style={{ height:1,background:"rgba(42,21,8,.07)",margin:"8px 0" }}/>
+                          <div style={{ display:"flex",justifyContent:"space-between",alignItems:"center" }}>
+                            <span style={{ fontFamily:"'Jost',sans-serif",fontSize:11,color:"rgba(42,21,8,.5)" }}>Estimated total</span>
+                            <span className="ship-total-price">~${shipTotal}</span>
+                          </div>
+                          <div style={{ fontFamily:"'Jost',sans-serif",fontSize:9.5,color:"rgba(42,21,8,.35)",marginTop:5,lineHeight:1.5 }}>
+                            Prices in USD · charged by Prodigi at fulfillment · envelope &amp; packaging included
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Address form */}
+                      <label className="field-label">Deliver to</label>
+                      <input className="f-input" placeholder="Recipient full name *" value={shipAddr.name} onChange={sAddr("name")} style={{ marginBottom:6 }}/>
+                      <input className="f-input" placeholder="Email (for tracking updates)" type="email" value={shipAddr.email} onChange={sAddr("email")} style={{ marginBottom:6 }}/>
+                      <input className="f-input" placeholder="Address line 1 *" value={shipAddr.line1} onChange={sAddr("line1")} style={{ marginBottom:6 }}/>
+                      <input className="f-input" placeholder="Apt, suite, floor (optional)" value={shipAddr.line2} onChange={sAddr("line2")} style={{ marginBottom:6 }}/>
+                      <div className="ship-addr-grid">
+                        <input className="f-input" placeholder="City *" value={shipAddr.city} onChange={sAddr("city")}/>
+                        <input className="f-input" placeholder="State / Province" value={shipAddr.state} onChange={sAddr("state")}/>
+                      </div>
+                      <div className="ship-addr-grid" style={{ marginBottom:16 }}>
+                        <input className="f-input" placeholder="ZIP / Postcode *" value={shipAddr.zip} onChange={sAddr("zip")}/>
+                        <select className="f-select" style={{ width:"100%",height:"100%" }} value={shipAddr.country} onChange={sAddr("country")}>
+                          {[["US","🇺🇸 United States"],["GB","🇬🇧 United Kingdom"],["CA","🇨🇦 Canada"],["AU","🇦🇺 Australia"],["DE","🇩🇪 Germany"],["FR","🇫🇷 France"],["NL","🇳🇱 Netherlands"],["IE","🇮🇪 Ireland"],["NZ","🇳🇿 New Zealand"],["SE","🇸🇪 Sweden"],["IT","🇮🇹 Italy"],["ES","🇪🇸 Spain"],["JP","🇯🇵 Japan"],["SG","🇸🇬 Singapore"],["IN","🇮🇳 India"]].map(([v,l])=><option key={v} value={v}>{l}</option>)}
+                        </select>
+                      </div>
+
+                      {captureError&&<div style={{ fontFamily:"'Jost',sans-serif",fontSize:11,color:"#8B6E4E",padding:"8px 10px",background:"rgba(212,168,67,.07)",borderRadius:5,marginBottom:10,lineHeight:1.5 }}>⚠️ {captureError}</div>}
+                      {shipResult?.error&&<div className="ship-error">{shipResult.error}</div>}
+
+                      <button className="btn-send" style={{ width:"100%",justifyContent:"center",marginBottom:10,padding:"13px" }} onClick={doShip} disabled={shipping}>
+                        {shipping
+                          ? <><span className="spinner"/> Capturing card &amp; placing order…</>
+                          : <>{Icon.truck(15,"#FAF5EE")} Print &amp; Ship for ~${shipTotal}</>
+                        }
+                      </button>
+                      <div className="prodigi-badge">{Icon.pkg(11,"rgba(42,21,8,.28)")} Fulfilled by Prodigi · No Steeped branding on packaging · Delivers in 3–10 days</div>
+                    </div>
+                  )}
+                  </div>
+                )}
               </>}
             </div>
           </div>
