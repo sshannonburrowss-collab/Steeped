@@ -35,25 +35,27 @@ const Icon = {
   star:     (s=32,c="currentColor")=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>,
   leaf:     (s=32,c="currentColor")=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>,
   mail:     (s=32,c="currentColor")=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>,
+  bell:     (s=14,c="currentColor")=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>,
+  lock:     (s=11,c="currentColor")=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>,
+  clock:    (s=13,c="currentColor")=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>,
 };
 
 const TEMPLATES = {
-  // Each array entry is a preset set of coverItems
   default: (theme) => [
     { id:uid(), type:"text", x:40, y:90, text:theme.name, font:"'Playfair Display',serif", size:34, color:theme.accent, bold:false, italic:false },
-    
+  ],
   centered: (theme) => [
     { id:uid(), type:"text", x:80, y:150, text:theme.name, font:"'Dancing Script',cursive", size:38, color:theme.accent, bold:false, italic:false },
-    
+  ],
   minimal: (theme) => [
     { id:uid(), type:"text", x:32, y:280, text:theme.name.toUpperCase(), font:"'Jost',sans-serif", size:18, color:theme.accent, bold:true, italic:false },
-    
+  ],
   bold: (theme) => [
     { id:uid(), type:"text", x:30, y:60, text:theme.name, font:"'Playfair Display',serif", size:42, color:theme.accent, bold:true, italic:false },
-    
+  ],
   script: (theme) => [
     { id:uid(), type:"text", x:50, y:110, text:"With love,", font:"'Dancing Script',cursive", size:20, color:theme.accent, bold:false, italic:false },
-    
+  ],
 };
 
 const TEMPLATE_LIST = [
@@ -83,6 +85,14 @@ const FONTS = [
 
 const EMOJIS = ["❤️","🌹","✨","🌸","💫","🌟","🌺","🌈","🦋","🌻","💝","🌙","⭐","💐","😊","🎶","🌷","☀️","🌿","💞","🪷","🌼","🌊","🐝","🍀","🌴","🦜","🍋","🌮","🎵"];
 
+const WARM_NUDGE_MESSAGES = [
+  "Hey! We're putting together something special — still time to add your words 💌",
+  "The card is almost ready — would love your message before we send it 🌸",
+  "Just a gentle reminder — your note would mean the world to them ✨",
+  "We're collecting kind words for someone special. Would you like to add yours? 🌷",
+  "The card is coming together beautifully — add your warmth before the deadline 🍀",
+];
+
 const CSS = `
 *{box-sizing:border-box;margin:0;padding:0;}
 html,body{width:100%;min-height:100%;background:#FAF5EE;}
@@ -94,6 +104,7 @@ html,body{width:100%;min-height:100%;background:#FAF5EE;}
 @keyframes pageFlip{0%{opacity:.5;transform:perspective(1200px) rotateY(-5deg)}100%{opacity:1;transform:perspective(1200px) rotateY(0)}}
 @keyframes slideUp{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
 @keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulseGlow{0%,100%{box-shadow:0 0 0 0 rgba(212,168,67,.18)}50%{box-shadow:0 0 0 5px rgba(212,168,67,.0)}}
 .app{font-family:'Lora',serif;background:#FAF5EE;color:#2A1508;min-height:100vh;}
 .nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px;height:68px;border-bottom:1px solid rgba(42,21,8,.08);background:rgba(250,245,238,.97);backdrop-filter:blur(16px);position:sticky;top:0;z-index:100;}
 .nav-wordmark{font-family:'Playfair Display',serif;font-size:24px;font-weight:400;letter-spacing:-.4px;color:#2A1508;line-height:1;cursor:pointer;}
@@ -113,6 +124,8 @@ html,body{width:100%;min-height:100%;background:#FAF5EE;}
 .btn-send:disabled{opacity:.55;cursor:default;transform:none;box-shadow:none;}
 .btn-upload{width:100%;padding:12px;border:1px dashed rgba(42,21,8,.2);border-radius:6px;background:transparent;cursor:pointer;font-family:'Jost',sans-serif;font-size:12.5px;letter-spacing:.3px;color:#8B6E4E;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:9px;margin-bottom:12px;}
 .btn-upload:hover{background:rgba(42,21,8,.03);border-color:rgba(42,21,8,.35);}
+.btn-nudge{display:inline-flex;align-items:center;gap:5px;padding:5px 11px;border-radius:100px;border:1px solid rgba(212,168,67,.35);background:rgba(212,168,67,.08);color:#8B6E4E;font-family:'Jost',sans-serif;font-size:10.5px;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.btn-nudge:hover{background:rgba(212,168,67,.2);border-color:rgba(212,168,67,.6);color:#5a3a10;}
 .btn-page-add{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px;border:1px dashed rgba(42,21,8,.16);border-radius:8px;background:rgba(255,255,255,.5);cursor:pointer;font-family:'Jost',sans-serif;font-size:13px;letter-spacing:.3px;color:#8B6E4E;transition:all .2s;margin-top:12px;}
 .btn-page-add:hover{border-color:rgba(42,21,8,.3);background:rgba(255,255,255,.85);color:#2A1508;}
 .home{min-height:calc(100vh - 68px);overflow:hidden;position:relative;background:#FAF5EE;}
@@ -138,7 +151,7 @@ html,body{width:100%;min-height:100%;background:#FAF5EE;}
 .theme-card:hover{transform:translateY(-4px);box-shadow:0 14px 36px rgba(42,21,8,.13);}
 .theme-card-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:400;margin-top:17px;}
 .theme-card-sub{font-family:'Jost',sans-serif;font-size:10.5px;font-weight:300;letter-spacing:.8px;margin-top:7px;opacity:.45;text-transform:uppercase;}
-.editor-layout{display:grid;grid-template-columns:272px 1fr 220px;height:calc(100vh - 68px);overflow:hidden;}
+.editor-layout{display:grid;grid-template-columns:272px 1fr 236px;height:calc(100vh - 68px);overflow:hidden;}
 .panel-left{border-right:1px solid rgba(42,21,8,.08);background:white;display:flex;flex-direction:column;overflow:hidden;}
 .panel-tabs{display:grid;grid-template-columns:repeat(5,1fr);gap:2px;padding:8px;background:#FAF5EE;border-bottom:1px solid rgba(42,21,8,.07);flex-shrink:0;}
 .panel-tab{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 4px;border:none;background:transparent;cursor:pointer;border-radius:5px;color:rgba(42,21,8,.3);transition:all .15s;font-family:'Jost',sans-serif;}
@@ -187,14 +200,14 @@ html,body{width:100%;min-height:100%;background:#FAF5EE;}
 .d-item.sel .d-edit{display:flex;}
 .d-text{white-space:pre-wrap;word-break:break-word;line-height:1.6;min-width:50px;min-height:1em;outline:none;}
 .d-signer-name{font-style:italic;opacity:.65;margin-top:4px;line-height:1.4;}
-.panel-right{border-left:1px solid rgba(42,21,8,.08);background:white;padding:24px;overflow-y:auto;}
-.sidebar-title{font-family:'Jost',sans-serif;font-size:10px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:rgba(42,21,8,.38);margin-bottom:14px;}
+.panel-right{border-left:1px solid rgba(42,21,8,.08);background:white;padding:20px;overflow-y:auto;}
+.sidebar-title{font-family:'Jost',sans-serif;font-size:10px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:rgba(42,21,8,.38);margin-bottom:10px;}
 .signer-row{display:flex;align-items:center;gap:9px;padding:10px 12px;border-radius:6px;background:#FAF5EE;margin-bottom:6px;}
 .signer-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
 .signer-info{flex:1;min-width:0;}
 .signer-name{font-family:'Jost',sans-serif;font-size:12px;font-weight:500;}
 .signer-preview{font-size:11.5px;color:#8B6E4E;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:'Lora',serif;}
-.invite-box{margin-top:20px;padding:16px;background:linear-gradient(135deg,#FFF9F2,#FAF5EE);border-radius:8px;border:1px solid rgba(212,168,67,.18);}
+.invite-box{margin-top:16px;padding:14px;background:linear-gradient(135deg,#FFF9F2,#FAF5EE);border-radius:8px;border:1px solid rgba(212,168,67,.18);}
 .invite-note{font-family:'Jost',sans-serif;font-size:12px;font-weight:300;color:#8B6E4E;line-height:1.8;}
 .pages-list{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;}
 .page-list-item{display:flex;align-items:center;gap:9px;padding:9px 12px;border-radius:6px;background:#FAF5EE;cursor:pointer;border:1.5px solid transparent;transition:all .15s;}
@@ -204,6 +217,25 @@ html,body{width:100%;min-height:100%;background:#FAF5EE;}
 .page-list-name{font-family:'Jost',sans-serif;font-size:12px;letter-spacing:.2px;flex:1;}
 .page-list-count{font-family:'Jost',sans-serif;font-size:10px;color:rgba(42,21,8,.32);}
 .empty-note{font-family:'Jost',sans-serif;font-size:12px;font-weight:300;color:rgba(42,21,8,.38);line-height:1.85;font-style:italic;}
+/* Dashboard styles */
+.dashboard-section{padding:14px;background:linear-gradient(135deg,#FFF9F2,#FAF5EE);border-radius:8px;border:1px solid rgba(212,168,67,.2);margin-bottom:14px;}
+.countdown-display{text-align:center;padding:10px 8px;background:white;border-radius:6px;border:1px solid rgba(212,168,67,.25);margin-bottom:12px;animation:pulseGlow 3s ease-in-out infinite;}
+.countdown-number{font-family:'Playfair Display',serif;font-size:22px;color:#d4a843;font-weight:400;line-height:1;}
+.countdown-label{font-family:'Jost',sans-serif;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(42,21,8,.4);margin-top:3px;}
+.countdown-urgency{font-family:'Jost',sans-serif;font-size:10.5px;color:#8B6E4E;margin-top:6px;font-weight:300;}
+.invitee-row{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:6px;background:white;margin-bottom:5px;border:1px solid rgba(42,21,8,.06);}
+.invitee-status-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.invitee-name{font-family:'Jost',sans-serif;font-size:11.5px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.invitee-badge{font-family:'Jost',sans-serif;font-size:9px;letter-spacing:.8px;text-transform:uppercase;padding:2px 7px;border-radius:100px;font-weight:500;}
+.add-invitee-row{display:flex;gap:5px;margin-top:8px;}
+.add-invitee-row .f-input{font-size:12px;padding:7px 10px;}
+.anon-toggle{display:flex;align-items:center;gap:9px;padding:10px 12px;background:#FAF5EE;border-radius:6px;border:1px solid rgba(42,21,8,.09);cursor:pointer;margin-top:12px;transition:all .15s;}
+.anon-toggle:hover{background:#F5EFE5;}
+.anon-toggle input{accent-color:#d4a843;width:15px;height:15px;cursor:pointer;}
+.anon-toggle-label{font-family:'Jost',sans-serif;font-size:12px;font-weight:300;color:#5a3a10;line-height:1.5;flex:1;}
+.anon-badge{display:inline-flex;align-items:center;gap:4px;font-family:'Jost',sans-serif;font-size:10px;font-weight:500;color:#8b3a7a;background:rgba(139,58,122,.08);border:1px solid rgba(139,58,122,.2);padding:2px 8px;border-radius:100px;letter-spacing:.4px;}
+.sidebar-divider{height:1px;background:rgba(42,21,8,.07);margin:14px 0;}
+/* Modal styles */
 .modal-overlay{position:fixed;inset:0;background:rgba(42,21,8,.46);backdrop-filter:blur(10px);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;}
 .modal{background:white;border-radius:14px;width:100%;max-width:484px;max-height:84vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 44px 110px rgba(42,21,8,.28);animation:cardIn .25s ease;}
 .modal-header{display:flex;align-items:center;justify-content:space-between;padding:24px 28px 18px;border-bottom:1px solid rgba(42,21,8,.08);}
@@ -274,7 +306,6 @@ html,body{width:100%;min-height:100%;background:#FAF5EE;}
 .sign-modal-header{display:flex;align-items:center;justify-content:space-between;padding:22px 26px 16px;border-bottom:1px solid rgba(42,21,8,.08);}
 .sign-modal-body{padding:22px 26px;}
 .mobile-signers-btn{display:none;}
-}
 @media(max-width:680px){
   .nav{padding:0 16px;height:56px;}
   .nav-tagline{display:none;}
@@ -286,7 +317,7 @@ html,body{width:100%;min-height:100%;background:#FAF5EE;}
   .page-tabs-wrap{flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:2px;margin-bottom:14px;gap:4px;}
   .page-tabs-wrap::-webkit-scrollbar{display:none;}
   .page-tab-btn{flex-shrink:0;padding:6px 12px;font-size:11px;}
-    .card-cover{min-height:260px;border-radius:10px;}
+  .card-cover{min-height:260px;border-radius:10px;}
   .cover-canvas{min-height:260px;padding:16px;}
   .card-page{min-height:360px;border-radius:10px;}
   .page-canvas{min-height:360px;padding:18px 18px 24px;}
@@ -327,6 +358,26 @@ html,body{width:100%;min-height:100%;background:#FAF5EE;}
 
 const uid = () => Date.now() + Math.random();
 const makePage = (num) => ({ id: uid(), num, items: [] });
+
+/* ─── Countdown Hook ─────────────────────────────────────────── */
+function useCountdown(deadline) {
+  const [timeLeft, setTimeLeft] = useState(null);
+  useEffect(() => {
+    if (!deadline) { setTimeLeft(null); return; }
+    const calc = () => {
+      const diff = new Date(deadline).getTime() - Date.now();
+      if (diff <= 0) { setTimeLeft({ expired: true }); return; }
+      const days = Math.floor(diff / 86400000);
+      const hours = Math.floor((diff % 86400000) / 3600000);
+      const mins = Math.floor((diff % 3600000) / 60000);
+      setTimeLeft({ days, hours, mins, expired: false });
+    };
+    calc();
+    const id = setInterval(calc, 30000);
+    return () => clearInterval(id);
+  }, [deadline]);
+  return timeLeft;
+}
 
 /* ─── GiphyPanel ─────────────────────────────────────────────── */
 function GiphyPanel({ onAdd }) {
@@ -447,7 +498,9 @@ function DItem({ item, selected, onSelect, onDelete, onMove, onResize, onTextCha
             {item.text}
           </div>
           {item.signerName&&!editing&&(
-            <div className="d-signer-name" style={{ fontFamily:item.font,fontSize:Math.max(10,item.size*0.72),color:item.color }}>— {item.signerName}</div>
+            <div className="d-signer-name" style={{ fontFamily:item.font,fontSize:Math.max(10,item.size*0.72),color:item.color }}>
+              {item.anonymous ? <span className="anon-badge">{Icon.lock(9,"#8b3a7a")} secret admirer</span> : `— ${item.signerName}`}
+            </div>
           )}
         </div>
       )}
@@ -495,7 +548,11 @@ function CardViewer({ theme, coverItems, pages, recipientName, onSign }) {
           :msgSlides.map(s=>(
             <div key={s.id} className="viewer-sig-card">
               <div className="viewer-sig-text" style={{ color:s.color||"#FAF5EE",fontFamily:s.font }}>{s.text}</div>
-              {s.signerName&&<div className="viewer-sig-name">{s.signerName}</div>}
+              <div className="viewer-sig-name">
+                {s.anonymous
+                  ? <span style={{ display:"inline-flex",alignItems:"center",gap:5,fontStyle:"italic",opacity:.7 }}>{Icon.lock(10,"rgba(212,168,67,.6)")} A secret admirer ✨</span>
+                  : s.signerName && `— ${s.signerName}`}
+              </div>
             </div>
           ))
         }
@@ -539,7 +596,11 @@ function CardViewer({ theme, coverItems, pages, recipientName, onSign }) {
           {!isFirstSlide&&currentMsg&&(
             <div className="viewer-msg-slide">
               <p className="viewer-msg-text" style={{ fontFamily:currentMsg.font,color:currentMsg.color||"#FAF5EE",fontWeight:currentMsg.bold?700:400,fontStyle:currentMsg.italic?"italic":"normal" }}>{currentMsg.text}</p>
-              {currentMsg.signerName&&<p className="viewer-msg-author">— {currentMsg.signerName}</p>}
+              <p className="viewer-msg-author">
+                {currentMsg.anonymous
+                  ? <span style={{ display:"inline-flex",alignItems:"center",gap:6,fontStyle:"italic",fontWeight:400,opacity:.7 }}>{Icon.lock(12,"#d4a843")} A secret admirer ✨</span>
+                  : currentMsg.signerName && `— ${currentMsg.signerName}`}
+              </p>
             </div>
           )}
           {!isFirstSlide&&!currentMsg&&(
@@ -562,7 +623,7 @@ function CardViewer({ theme, coverItems, pages, recipientName, onSign }) {
   );
 }
 
-/* ─── AuthModal — defined OUTSIDE Steeped to prevent remount on keystroke ── */
+/* ─── AuthModal ──────────────────────────────────────────────── */
 function AuthModal({ authMode, setAuthMode, authForm, setAuthForm, authError, doSignUp, doSignIn, setShowAuth, authLoading }) {
   return (
     <div className="auth-overlay" onClick={e=>e.target===e.currentTarget&&setShowAuth(false)}>
@@ -573,8 +634,6 @@ function AuthModal({ authMode, setAuthMode, authForm, setAuthForm, authError, do
         </div>
         <p className="auth-sub">{authMode==="signup"?"Create an account so your card can be saved and shared with a link.":"Log in to save and send your card."}</p>
         {authError&&<div className="auth-error">{authError}</div>}
-
-        {/* Google login */}
         <button onClick={()=>supabase.auth.signInWithOAuth({ provider:"google", options:{ redirectTo:window.location.origin } })}
           style={{ width:"100%",padding:"10px 16px",marginBottom:16,border:"1px solid rgba(42,21,8,.18)",borderRadius:4,background:"white",cursor:"pointer",fontFamily:"'Jost',sans-serif",fontSize:13,display:"flex",alignItems:"center",justifyContent:"center",gap:10 }}>
           <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
@@ -585,7 +644,6 @@ function AuthModal({ authMode, setAuthMode, authForm, setAuthForm, authError, do
           <span style={{ fontFamily:"'Jost',sans-serif",fontSize:11,color:"rgba(42,21,8,.35)" }}>or</span>
           <div style={{ flex:1,height:1,background:"rgba(42,21,8,.1)" }}/>
         </div>
-
         {authMode==="signup"&&<><label className="field-label">Your name</label><input className="f-input" placeholder="Jane Smith" value={authForm.name} onChange={e=>setAuthForm(p=>({...p,name:e.target.value}))} style={{ marginBottom:12 }}/></>}
         <label className="field-label">Email</label>
         <input className="f-input" type="email" placeholder="you@example.com" value={authForm.email} onChange={e=>setAuthForm(p=>({...p,email:e.target.value}))} style={{ marginBottom:12 }}/>
@@ -606,6 +664,7 @@ function AuthModal({ authMode, setAuthMode, authForm, setAuthForm, authError, do
     </div>
   );
 }
+
 function ColorPicker({ value, onChange }) {
   const PRESETS = [
     "#2A1508","#8b4820","#b85c38","#d4a843","#a05820",
@@ -641,7 +700,7 @@ export default function Steeped() {
   const [coverItems, setCoverItems] = useState([]);
   const [selCover, setSelCover] = useState(null);
   const [selPage, setSelPage] = useState(null);
-const [selectedTemplate, setSelectedTemplate] = useState("default");
+  const [selectedTemplate, setSelectedTemplate] = useState("default");
   const [signerName, setSignerName] = useState("");
   const [msgText, setMsgText] = useState("");
   const [tColor, setTColor] = useState("#2A1508");
@@ -683,6 +742,17 @@ const [selectedTemplate, setSelectedTemplate] = useState("default");
   const [viewSigning, setViewSigning] = useState(false);
   const [viewSigned, setViewSigned] = useState(false);
   const [showViewSignForm, setShowViewSignForm] = useState(false);
+
+  // ── NEW: Dashboard, Anonymous mode, Deadline ─────────────────
+  const [invitees, setInvitees] = useState([]);
+  const [newInviteeName, setNewInviteeName] = useState("");
+  const [newInviteeEmail, setNewInviteeEmail] = useState("");
+  const [deadline, setDeadline] = useState("");
+  const [editorSignAnonymous, setEditorSignAnonymous] = useState(false);
+  const [viewSignAnonymous, setViewSignAnonymous] = useState(false);
+  const [nudgeCopied, setNudgeCopied] = useState(null);
+
+  const countdown = useCountdown(deadline);
 
   const fileRef = useRef(null);
   const coverRef = useRef(null);
@@ -766,15 +836,46 @@ const [selectedTemplate, setSelectedTemplate] = useState("default");
 
   const copyUrl = async (url) => { await navigator.clipboard.writeText(url||cardUrl); setCopied(true); setTimeout(()=>setCopied(false),2000); };
 
+  // ── Dashboard helpers ─────────────────────────────────────────
+  const addInvitee = () => {
+    if (!newInviteeName.trim()) return;
+    setInvitees(p=>[...p,{ id:uid(), name:newInviteeName.trim(), email:newInviteeEmail.trim(), status:"pending" }]);
+    setNewInviteeName(""); setNewInviteeEmail("");
+  };
+
+  const removeInvitee = (id) => setInvitees(p=>p.filter(i=>i.id!==id));
+
+  // Auto-mark invitees as signed when a matching signature appears
+  const allSigNames = pages.flatMap(pg=>pg.items.filter(it=>it.type==="text"&&!it.anonymous).map(s=>s.signerName?.toLowerCase().trim()));
+  const inviteesWithStatus = invitees.map(inv => ({
+    ...inv,
+    status: allSigNames.includes(inv.name.toLowerCase().trim()) ? "signed" : "pending"
+  }));
+
+  const nudgeInvitee = async (inv) => {
+    const msg = WARM_NUDGE_MESSAGES[Math.floor(Math.random()*WARM_NUDGE_MESSAGES.length)];
+    const full = inv.email
+      ? `mailto:${inv.email}?subject=A card is waiting for your message&body=${encodeURIComponent(msg+(cardUrl?`\n\nSign here: ${cardUrl}`:""))}`
+      : null;
+    if (full) { window.open(full); }
+    else { await navigator.clipboard.writeText(msg+(cardUrl?`\n\nSign here: ${cardUrl}`:"")); setNudgeCopied(inv.id); setTimeout(()=>setNudgeCopied(null),2200); }
+  };
+
   const addViewSignature = async () => {
     if (!viewSignMsg.trim()) return;
     setViewSigning(true);
-    const sig = { id:uid(), type:"text", text:viewSignMsg, signerName:viewSignName||"Anonymous", font:viewSignFont, size:15, color:viewSignColor, bold:false, italic:false, x:22, y:62+((viewCard.pages[viewSignPage]?.items||[]).length*82) };
+    const sig = {
+      id:uid(), type:"text", text:viewSignMsg,
+      signerName: viewSignAnonymous ? "" : (viewSignName||"Anonymous"),
+      anonymous: viewSignAnonymous,
+      font:viewSignFont, size:15, color:viewSignColor, bold:false, italic:false,
+      x:22, y:62+((viewCard.pages[viewSignPage]?.items||[]).length*82)
+    };
     try {
       const res = await fetch("/api/add-signature", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ cardId, pageIndex:viewSignPage, signature:sig }) });
       if (res.ok) {
         setViewCard(prev=>({ ...prev, pages:prev.pages.map((pg,i)=>i===viewSignPage?{...pg,items:[...(pg.items||[]),sig]}:pg) }));
-        setViewSigned(true); setViewSignMsg(""); setViewSignName("");
+        setViewSigned(true); setViewSignMsg(""); setViewSignName(""); setViewSignAnonymous(false);
         setTimeout(()=>{ setShowViewSignForm(false); setViewSigned(false); },2500);
       }
     } catch(e) { console.error(e); }
@@ -794,7 +895,11 @@ const [selectedTemplate, setSelectedTemplate] = useState("default");
   const resPageItem = useCallback((pi,id,w,h)=>setPages(prev=>prev.map((pg,i)=>i===pi?{...pg,items:pg.items.map(it=>it.id===id?{...it,width:w,height:h}:it)}:pg)),[]);
   const delPageItem = (pi,id) => setPages(prev=>prev.map((pg,i)=>i===pi?{...pg,items:pg.items.filter(it=>it.id!==id)}:pg));
   const editPageText = (pi,id,text) => setPages(prev=>prev.map((pg,i)=>i===pi?{...pg,items:pg.items.map(it=>it.id===id?{...it,text}:it)}:pg));
-  const addSig = () => { if(!msgText.trim()||activePage===0)return; spawnPageItem({type:"text",text:msgText,signerName:signerName||"Anonymous",font:tFont,size:tSize,color:tColor,bold:tBold,italic:tItalic}); setMsgText(""); };
+  const addSig = () => {
+    if(!msgText.trim()||activePage===0)return;
+    spawnPageItem({ type:"text", text:msgText, signerName:editorSignAnonymous?"":signerName||"Anonymous", anonymous:editorSignAnonymous, font:tFont, size:tSize, color:tColor, bold:tBold, italic:tItalic });
+    setMsgText("");
+  };
   const addPage = () => { const p=makePage(pages.length+1); setPages(prev=>[...prev,p]); setActivePage(pages.length+1); };
   const delPage = (idx) => { if(pages.length===1)return; const u=pages.filter((_,i)=>i!==idx).map((p,i)=>({...p,num:i+1})); setPages(u); if(activePage>u.length)setActivePage(u.length); };
   const desel = () => { setSelCover(null); setSelPage(null); };
@@ -802,11 +907,11 @@ const [selectedTemplate, setSelectedTemplate] = useState("default");
   const handleUpload = (e) => { Array.from(e.target.files).forEach(f=>{ const r=new FileReader(); r.onload=ev=>setUploads(p=>[...p,{id:uid(),url:ev.target.result,label:f.name}]); r.readAsDataURL(f); }); };
   const allSigs = pages.flatMap(pg=>pg.items.filter(it=>it.type==="text").map(s=>({...s,pageNum:pg.num})));
   const goEditor = (t) => {
-  setTheme(t); setView("editor"); setActivePage(0);
-  setPages([makePage(1)]); setCardId(null); setCardUrl("");
-  setCoverItems(TEMPLATES["default"](t));
-  setSelectedTemplate("default");
-};
+    setTheme(t); setView("editor"); setActivePage(0);
+    setPages([makePage(1)]); setCardId(null); setCardUrl("");
+    setCoverItems(TEMPLATES["default"](t));
+    setSelectedTemplate("default");
+  };
 
   const NavLogo = ({ onClick }) => (
     <div onClick={onClick} style={{ cursor:"pointer" }}>
@@ -814,6 +919,31 @@ const [selectedTemplate, setSelectedTemplate] = useState("default");
       <span className="nav-tagline">Cards brewed with kindness</span>
     </div>
   );
+
+  // ── Countdown display helper ──────────────────────────────────
+  const CountdownBanner = () => {
+    if (!countdown) return null;
+    if (countdown.expired) return (
+      <div className="countdown-display" style={{ borderColor:"rgba(184,74,48,.3)",background:"rgba(184,74,48,.04)" }}>
+        <div className="countdown-number" style={{ color:"#b85c38",fontSize:14 }}>Deadline passed</div>
+        <div className="countdown-urgency">The card is ready to send 🌸</div>
+      </div>
+    );
+    const { days, hours, mins } = countdown;
+    const urgency = days === 0 ? "Today's the last day — gather those warm words! ✨"
+      : days === 1 ? "Just one day left to collect signatures 🌷"
+      : `${days} day${days!==1?"s":""} to gather everyone's warmth`;
+    return (
+      <div className="countdown-display">
+        <div style={{ display:"flex",justifyContent:"center",gap:14 }}>
+          {days>0&&<div style={{ textAlign:"center" }}><div className="countdown-number">{days}</div><div className="countdown-label">days</div></div>}
+          <div style={{ textAlign:"center" }}><div className="countdown-number">{hours}</div><div className="countdown-label">hrs</div></div>
+          <div style={{ textAlign:"center" }}><div className="countdown-number">{mins}</div><div className="countdown-label">min</div></div>
+        </div>
+        <div className="countdown-urgency">{urgency}</div>
+      </div>
+    );
+  };
 
   /* sign modal for recipients */
   const SignModal = () => (
@@ -832,9 +962,21 @@ const [selectedTemplate, setSelectedTemplate] = useState("default");
             </div>
           ):(
             <>
-              <label className="field-label">Your name</label>
-              <input className="f-input" placeholder="Your name" value={viewSignName} onChange={e=>setViewSignName(e.target.value)}/>
-              <label className="field-label">Your message</label>
+              {/* Anonymous toggle */}
+              <label className="anon-toggle" onClick={()=>setViewSignAnonymous(v=>!v)}>
+                <input type="checkbox" checked={viewSignAnonymous} onChange={()=>{}} style={{ accentColor:"#d4a843" }}/>
+                <span className="anon-toggle-label">
+                  <strong style={{ fontWeight:500,display:"block",marginBottom:2 }}>Stay anonymous ✨</strong>
+                  Your name will appear as a secret admirer — revealed by the feeling, not the face.
+                </span>
+              </label>
+
+              {!viewSignAnonymous && <>
+                <label className="field-label" style={{ marginTop:14 }}>Your name</label>
+                <input className="f-input" placeholder="Your name" value={viewSignName} onChange={e=>setViewSignName(e.target.value)}/>
+              </>}
+
+              <label className="field-label" style={{ marginTop:14 }}>Your message</label>
               <textarea className="f-textarea" rows={4} placeholder="Write something wonderful…" value={viewSignMsg} onChange={e=>setViewSignMsg(e.target.value)}/>
               {(viewCard?.pages||[]).length>1&&<>
                 <label className="field-label">Add to page</label>
@@ -845,12 +987,12 @@ const [selectedTemplate, setSelectedTemplate] = useState("default");
               <div style={{ display:"flex",gap:8,alignItems:"flex-end",marginTop:10 }}>
                 <div className="style-col" style={{ flex:1 }}><span className="sub-label">Font</span><select className="f-select" style={{ width:"100%" }} value={viewSignFont} onChange={e=>setViewSignFont(e.target.value)}>{FONTS.map(f=><option key={f.value} value={f.value}>{f.label}</option>)}</select></div>
                 <div className="style-col" style={{flex:1}}>
-  <span className="sub-label">Color</span>
-  <ColorPicker value={viewSignColor} onChange={setViewSignColor}/>
-</div>
+                  <span className="sub-label">Color</span>
+                  <ColorPicker value={viewSignColor} onChange={setViewSignColor}/>
+                </div>
               </div>
               <button className="btn-send" style={{ width:"100%",marginTop:16,justifyContent:"center" }} onClick={addViewSignature} disabled={viewSigning||!viewSignMsg.trim()}>
-                {viewSigning?<><span className="spinner"/> Signing…</>:<>{Icon.pen(14,"#FAF5EE")} Sign this card</>}
+                {viewSigning?<><span className="spinner"/> Signing…</>:<>{Icon.pen(14,"#FAF5EE")} {viewSignAnonymous?"Sign anonymously":"Sign this card"}</>}
               </button>
             </>
           )}
@@ -859,7 +1001,6 @@ const [selectedTemplate, setSelectedTemplate] = useState("default");
     </div>
   );
 
-  /* shared auth props */
   const authProps = { authMode, setAuthMode, authForm, setAuthForm, authError, doSignUp, doSignIn, setShowAuth, authLoading };
 
   if (loadingCard) return (
@@ -922,7 +1063,7 @@ const [selectedTemplate, setSelectedTemplate] = useState("default");
     </div>
   );
 
-  /* EDITOR */
+  /* ── EDITOR ─────────────────────────────────────────────────── */
   return (
     <div className="app"><style>{CSS}</style>
       <nav className="nav">
@@ -937,6 +1078,7 @@ const [selectedTemplate, setSelectedTemplate] = useState("default");
       </nav>
 
       <div className="editor-layout">
+        {/* ── Left Panel ── */}
         <div className="panel-left">
           <div className="panel-tabs">
             {[{id:"text",ic:Icon.pen(16),lbl:"Sign"},{id:"photos",ic:Icon.photo(16),lbl:"Photos"},{id:"gifs",ic:Icon.gif(16),lbl:"GIFs"},{id:"emojis",ic:Icon.smile(16),lbl:"Emoji"},{id:"audio",ic:Icon.music(16),lbl:"Audio"}].map(t=>(
@@ -947,66 +1089,58 @@ const [selectedTemplate, setSelectedTemplate] = useState("default");
             {activePanel==="text" && (activePage===0 ? (
               <div>
                 <div className="info-box">Cover editor — add text, then drag &amp; resize it on the card.</div>
-<label className="field-label">Template style</label>
-<div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:7, marginBottom:16 }}>
-  {TEMPLATE_LIST.map(tmpl => (
-    <button key={tmpl.id}
-      onClick={() => {
-        setSelectedTemplate(tmpl.id);
-        setCoverItems(TEMPLATES[tmpl.id](theme));
-      }}
-      style={{
-        padding:"8px 4px",
-        borderRadius:6,
-        border: selectedTemplate===tmpl.id ? `2px solid ${theme.accent}` : "1.5px solid rgba(42,21,8,.12)",
-        background: selectedTemplate===tmpl.id ? theme.cover : "white",
-        cursor:"pointer",
-        fontFamily:"'Jost',sans-serif",
-        fontSize:11,
-        color: selectedTemplate===tmpl.id ? theme.accent : "#8B6E4E",
-        fontWeight: selectedTemplate===tmpl.id ? 600 : 400,
-        transition:"all .15s",
-      }}>
-      {tmpl.label}
-    </button>
-  ))}
-</div>
-<p style={{ fontFamily:"'Jost',sans-serif",fontSize:11,color:"rgba(42,21,8,.35)",lineHeight:1.6,marginBottom:12,marginTop:-8 }}>
-  Picking a style resets your cover text.
-</p>
+                <label className="field-label">Template style</label>
+                <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:7, marginBottom:16 }}>
+                  {TEMPLATE_LIST.map(tmpl => (
+                    <button key={tmpl.id}
+                      onClick={() => { setSelectedTemplate(tmpl.id); setCoverItems(TEMPLATES[tmpl.id](theme)); }}
+                      style={{ padding:"8px 4px",borderRadius:6,border:selectedTemplate===tmpl.id?`2px solid ${theme.accent}`:"1.5px solid rgba(42,21,8,.12)",background:selectedTemplate===tmpl.id?theme.cover:"white",cursor:"pointer",fontFamily:"'Jost',sans-serif",fontSize:11,color:selectedTemplate===tmpl.id?theme.accent:"#8B6E4E",fontWeight:selectedTemplate===tmpl.id?600:400,transition:"all .15s" }}>
+                      {tmpl.label}
+                    </button>
+                  ))}
+                </div>
+                <p style={{ fontFamily:"'Jost',sans-serif",fontSize:11,color:"rgba(42,21,8,.35)",lineHeight:1.6,marginBottom:12,marginTop:-8 }}>Picking a style resets your cover text.</p>
                 <label className="field-label">Add text</label>
-                <input className="f-input" placeholder="e.g. Happy Birthday, Sarah!" value={covText} onChange={e=>setCovText(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addCovText()}/>
+                <input className="f-input" placeholder="e.g. Happy Birthday, Courtney!" value={covText} onChange={e=>setCovText(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addCovText()}/>
                 <label className="field-label">Style</label>
                 <div className="style-row">
                   <div className="style-col"><span className="sub-label">Font</span><select className="f-select" value={covFont} onChange={e=>setCovFont(e.target.value)}>{FONTS.map(f=><option key={f.value} value={f.value}>{f.label}</option>)}</select></div>
                   <div className="style-col"><span className="sub-label">Size</span><select className="f-select" value={covSize} onChange={e=>setCovSize(Number(e.target.value))}>{[12,14,16,18,20,22,24,28,32,36,42].map(s=><option key={s} value={s}>{s}</option>)}</select></div>
-                  <div className="style-col" style={{flex:1}}>
-  <span className="sub-label">Color</span>
-  <ColorPicker value={covColor} onChange={setCovColor}/>
-</div>
+                  <div className="style-col" style={{flex:1}}><span className="sub-label">Color</span><ColorPicker value={covColor} onChange={setCovColor}/></div>
                 </div>
                 <div style={{display:"flex",gap:8,marginTop:10}}><button className={`fmt-btn${covBold?" on":""}`} onClick={()=>setCovBold(b=>!b)}><strong>B</strong></button><button className={`fmt-btn${covItalic?" on":""}`} onClick={()=>setCovItalic(it=>!it)}><em>I</em></button></div>
                 <button className="btn-dark" style={{width:"100%",marginTop:16,justifyContent:"center"}} onClick={addCovText}>Add to Cover</button>
               </div>
             ) : (
               <div>
-                <label className="field-label">Your name</label>
-                <input className="f-input" placeholder="How should we sign this?" value={signerName} onChange={e=>setSignerName(e.target.value)}/>
+                {/* Anonymous toggle */}
+                <label className="anon-toggle" style={{ marginBottom:14 }} onClick={()=>setEditorSignAnonymous(v=>!v)}>
+                  <input type="checkbox" checked={editorSignAnonymous} onChange={()=>{}} style={{ accentColor:"#d4a843" }}/>
+                  <span className="anon-toggle-label">
+                    <strong style={{ fontWeight:500,display:"block",marginBottom:2 }}>Sign anonymously ✨</strong>
+                    Your name appears as a secret admirer.
+                  </span>
+                </label>
+
+                {!editorSignAnonymous && <>
+                  <label className="field-label">Your name</label>
+                  <input className="f-input" placeholder="How should we sign this?" value={signerName} onChange={e=>setSignerName(e.target.value)}/>
+                </>}
+
                 <label className="field-label">Your message</label>
                 <textarea className="f-textarea" rows={3} placeholder="Write something wonderful…" value={msgText} onChange={e=>setMsgText(e.target.value)}/>
                 <label className="field-label">Style</label>
                 <div className="style-row">
                   <div className="style-col"><span className="sub-label">Font</span><select className="f-select" value={tFont} onChange={e=>setTFont(e.target.value)}>{FONTS.map(f=><option key={f.value} value={f.value}>{f.label}</option>)}</select></div>
                   <div className="style-col"><span className="sub-label">Size</span><select className="f-select" value={tSize} onChange={e=>setTSize(Number(e.target.value))}>{[12,13,14,15,16,18,20,22,24].map(s=><option key={s} value={s}>{s}</option>)}</select></div>
-                  <div className="style-col" style={{flex:1}}>
-  <span className="sub-label">Color</span>
-  <ColorPicker value={tColor} onChange={setTColor}/>
-</div>
+                  <div className="style-col" style={{flex:1}}><span className="sub-label">Color</span><ColorPicker value={tColor} onChange={setTColor}/></div>
                 </div>
                 <div style={{display:"flex",gap:8,marginTop:10}}><button className={`fmt-btn${tBold?" on":""}`} onClick={()=>setTBold(b=>!b)}><strong>B</strong></button><button className={`fmt-btn${tItalic?" on":""}`} onClick={()=>setTItalic(it=>!it)}><em>I</em></button></div>
                 {msgText&&<div className="msg-preview" style={{fontFamily:tFont,fontSize:tSize,color:tColor,fontWeight:tBold?700:400,fontStyle:tItalic?"italic":"normal",marginTop:12}}>
                   <div>{msgText}</div>
-                  {signerName&&<div style={{fontSize:tSize*.72,marginTop:6,opacity:.6,fontStyle:"italic"}}>— {signerName}</div>}
+                  {editorSignAnonymous
+                    ? <div style={{fontSize:tSize*.72,marginTop:6,opacity:.6,fontStyle:"italic"}}>— <span className="anon-badge">{Icon.lock(9,"#8b3a7a")} secret admirer</span></div>
+                    : signerName&&<div style={{fontSize:tSize*.72,marginTop:6,opacity:.6,fontStyle:"italic"}}>— {signerName}</div>}
                 </div>}
                 <button className="btn-dark" style={{width:"100%",marginTop:14,justifyContent:"center"}} onClick={addSig}>Add to Page {activePage}</button>
                 <p style={{fontFamily:"'Jost',sans-serif",fontSize:11,color:"rgba(42,21,8,.35)",lineHeight:1.75,marginTop:8}}>Tap to select · drag to move · corner to resize</p>
@@ -1015,12 +1149,11 @@ const [selectedTemplate, setSelectedTemplate] = useState("default");
             {activePanel==="photos"&&<PhotosPanel onAdd={(url)=>spawnPageItem({type:"photo",url})} uploads={uploads} onUpload={handleUpload} fileRef={fileRef}/>}
             {activePanel==="gifs"&&<GiphyPanel onAdd={(url)=>spawnPageItem({type:"gif",url})}/>}
             {activePanel==="emojis"&&<div><p style={{ fontFamily:"'Jost',sans-serif",fontSize:12,fontWeight:300,color:"#8B6E4E",marginBottom:14,lineHeight:1.7 }}>Tap to place — drag to move, corner to resize.</p><div className="emoji-grid">{EMOJIS.map(e=><button key={e} className="emoji-btn" onClick={()=>spawnPageItem({type:"emoji",content:e})}>{e}</button>)}</div></div>}
-            {activePanel==="audio"&&(
-              <AudioPanel onAdd={(url)=>spawnPageItem({type:"audio",url})}/>
-            )}
+            {activePanel==="audio"&&<AudioPanel onAdd={(url)=>spawnPageItem({type:"audio",url})}/>}
           </div>
         </div>
 
+        {/* ── Canvas ── */}
         <div className="canvas-area" onClick={desel}>
           <div className="page-tabs-wrap" onClick={e=>e.stopPropagation()}>
             <button className={`page-tab-btn${activePage===0?" active":""}`} onClick={()=>setActivePage(0)}>Cover</button>
@@ -1087,7 +1220,79 @@ const [selectedTemplate, setSelectedTemplate] = useState("default");
           </div>
         </div>
 
+        {/* ── Right Panel (Dashboard) ── */}
         <div className="panel-right">
+
+          {/* ── ORGANIZER DASHBOARD ── */}
+          <div className="dashboard-section">
+            <div className="sidebar-title" style={{ marginBottom:8, display:"flex", alignItems:"center", gap:6 }}>
+              {Icon.users(11,"rgba(42,21,8,.38)")} Organizer dashboard
+            </div>
+
+            {/* Deadline countdown */}
+            <CountdownBanner/>
+
+            {/* Deadline setter */}
+            <div style={{ marginBottom:10 }}>
+              <div style={{ fontFamily:"'Jost',sans-serif",fontSize:9.5,fontWeight:500,letterSpacing:"1.2px",textTransform:"uppercase",color:"rgba(42,21,8,.38)",marginBottom:5,display:"flex",alignItems:"center",gap:5 }}>
+                {Icon.clock(11)} Signing deadline
+              </div>
+              <input type="datetime-local" className="f-input" value={deadline} onChange={e=>setDeadline(e.target.value)}
+                style={{ fontSize:11.5,padding:"7px 10px" }}/>
+              {deadline&&<p style={{ fontFamily:"'Jost',sans-serif",fontSize:10,color:"rgba(42,21,8,.38)",marginTop:4,lineHeight:1.5 }}>Signers will see this gentle countdown on the card.</p>}
+            </div>
+
+            {/* Invitee list */}
+            <div style={{ fontFamily:"'Jost',sans-serif",fontSize:9.5,fontWeight:500,letterSpacing:"1.2px",textTransform:"uppercase",color:"rgba(42,21,8,.38)",marginBottom:6,display:"flex",alignItems:"center",gap:5 }}>
+              {Icon.bell(11)} Who should sign?
+            </div>
+
+            {inviteesWithStatus.length===0 && (
+              <p className="empty-note" style={{ marginBottom:8 }}>Add names to track who's signed — and nudge anyone who hasn't yet.</p>
+            )}
+
+            {inviteesWithStatus.map(inv=>(
+              <div key={inv.id} className="invitee-row">
+                <div className="invitee-status-dot" style={{ background: inv.status==="signed" ? "#2a7a50" : "rgba(42,21,8,.18)" }}/>
+                <span className="invitee-name">{inv.name}</span>
+                {inv.status==="signed"
+                  ? <span className="invitee-badge" style={{ background:"rgba(42,122,80,.1)",color:"#2a7a50" }}>✓ signed</span>
+                  : <button className="btn-nudge" onClick={()=>nudgeInvitee(inv)} title={inv.email?"Send a warm email nudge":"Copy a warm nudge message"}>
+                      {nudgeCopied===inv.id ? "Copied! 💌" : <>{Icon.bell(9,"#8B6E4E")} nudge</>}
+                    </button>
+                }
+                <button onClick={()=>removeInvitee(inv.id)} style={{ background:"none",border:"none",cursor:"pointer",color:"rgba(42,21,8,.2)",padding:2,display:"flex",alignItems:"center",flexShrink:0 }} title="Remove">{Icon.x(9)}</button>
+              </div>
+            ))}
+
+            {/* Add invitee */}
+            <div className="add-invitee-row">
+              <input className="f-input" placeholder="Name" value={newInviteeName} onChange={e=>setNewInviteeName(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addInvitee()} style={{ flex:1 }}/>
+              <input className="f-input" placeholder="Email (optional)" value={newInviteeEmail} onChange={e=>setNewInviteeEmail(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addInvitee()} style={{ flex:1.4 }}/>
+              <button className="btn-dark" onClick={addInvitee} style={{ padding:"7px 10px",fontSize:12,flexShrink:0 }}>{Icon.plus(12,"#FAF5EE")}</button>
+            </div>
+
+            {/* Stats bar */}
+            {inviteesWithStatus.length > 0 && (
+              <div style={{ marginTop:10,padding:"8px 10px",background:"white",borderRadius:6,border:"1px solid rgba(42,21,8,.07)" }}>
+                <div style={{ display:"flex",justifyContent:"space-between",marginBottom:5 }}>
+                  <span style={{ fontFamily:"'Jost',sans-serif",fontSize:10,color:"#2a7a50" }}>✓ {inviteesWithStatus.filter(i=>i.status==="signed").length} signed</span>
+                  <span style={{ fontFamily:"'Jost',sans-serif",fontSize:10,color:"rgba(42,21,8,.4)" }}>{inviteesWithStatus.filter(i=>i.status==="pending").length} pending</span>
+                </div>
+                <div style={{ height:4,borderRadius:2,background:"rgba(42,21,8,.08)",overflow:"hidden" }}>
+                  <div style={{ height:"100%",borderRadius:2,background:"#2a7a50",transition:"width .4s ease",width:`${inviteesWithStatus.length?Math.round(inviteesWithStatus.filter(i=>i.status==="signed").length/inviteesWithStatus.length*100):0}%` }}/>
+                </div>
+              </div>
+            )}
+
+            {cardUrl&&(
+              <button className="btn-ghost-sm" style={{ width:"100%",marginTop:8,fontSize:11 }} onClick={()=>copyUrl()}>{Icon.copy(11)} {copied?"Copied invite link!":"Copy invite link"}</button>
+            )}
+          </div>
+
+          <div className="sidebar-divider"/>
+
+          {/* Pages list */}
           <div className="sidebar-title">Pages</div>
           <div className="pages-list">
             <div className={`page-list-item${activePage===0?" active":""}`} onClick={()=>setActivePage(0)}>
@@ -1104,27 +1309,25 @@ const [selectedTemplate, setSelectedTemplate] = useState("default");
             ))}
           </div>
           <button className="btn-ghost-sm" style={{ width:"100%" }} onClick={addPage}>+ Add page</button>
-          <div style={{ marginTop:24 }}>
-            <div className="sidebar-title">Signatures</div>
+
+          <div style={{ marginTop:18 }}>
+            <div className="sidebar-title">Signatures ({allSigs.length})</div>
             {allSigs.length===0
               ?<p className="empty-note">No signatures yet — be the first!</p>
               :allSigs.map(s=>(
                 <div key={s.id} className="signer-row">
-                  <div className="signer-dot" style={{ background:s.color }}/>
+                  <div className="signer-dot" style={{ background: s.anonymous ? "#8b3a7a" : s.color }}/>
                   <div className="signer-info">
-                    <div className="signer-name" style={{ color:s.color }}>{s.signerName||"—"} <span style={{ fontWeight:400,fontSize:10,color:"rgba(42,21,8,.32)" }}>· p.{s.pageNum}</span></div>
+                    {s.anonymous
+                      ? <div className="signer-name"><span className="anon-badge">{Icon.lock(9,"#8b3a7a")} secret admirer</span> <span style={{ fontWeight:400,fontSize:10,color:"rgba(42,21,8,.32)" }}>· p.{s.pageNum}</span></div>
+                      : <div className="signer-name" style={{ color:s.color }}>{s.signerName||"—"} <span style={{ fontWeight:400,fontSize:10,color:"rgba(42,21,8,.32)" }}>· p.{s.pageNum}</span></div>
+                    }
                     <div className="signer-preview">{s.text}</div>
                   </div>
                 </div>
               ))
             }
           </div>
-          {cardUrl&&(
-            <div className="invite-box" style={{ marginTop:20 }}>
-              <p className="invite-note" style={{ display:"flex",alignItems:"flex-start",gap:7 }}>{Icon.link(13,"#8B6E4E")}<span><strong style={{ fontWeight:500 }}>Card saved!</strong> Share this link.</span></p>
-              <button className="btn-ghost" style={{ width:"100%",marginTop:10,fontSize:12 }} onClick={()=>copyUrl()}>{Icon.copy(12)} {copied?"Copied!":"Copy invite link"}</button>
-            </div>
-          )}
         </div>
       </div>
 
@@ -1142,7 +1345,16 @@ const [selectedTemplate, setSelectedTemplate] = useState("default");
               <button className="close-btn" onClick={()=>setShowSigDrawer(false)}>{Icon.x(13)}</button>
             </div>
             {allSigs.length===0?<p className="empty-note">No signatures yet.</p>:allSigs.map(s=>(
-              <div key={s.id} className="signer-row"><div className="signer-dot" style={{ background:s.color }}/><div className="signer-info"><div className="signer-name" style={{ color:s.color }}>{s.signerName||"—"} <span style={{ fontWeight:400,fontSize:10,color:"rgba(42,21,8,.32)" }}>· p.{s.pageNum}</span></div><div className="signer-preview">{s.text}</div></div></div>
+              <div key={s.id} className="signer-row">
+                <div className="signer-dot" style={{ background:s.anonymous?"#8b3a7a":s.color }}/>
+                <div className="signer-info">
+                  {s.anonymous
+                    ? <div className="signer-name"><span className="anon-badge">{Icon.lock(9,"#8b3a7a")} secret admirer</span></div>
+                    : <div className="signer-name" style={{ color:s.color }}>{s.signerName||"—"} <span style={{ fontWeight:400,fontSize:10,color:"rgba(42,21,8,.32)" }}>· p.{s.pageNum}</span></div>
+                  }
+                  <div className="signer-preview">{s.text}</div>
+                </div>
+              </div>
             ))}
           </div>
         </>
@@ -1209,7 +1421,7 @@ const [selectedTemplate, setSelectedTemplate] = useState("default");
   );
 }
 
-/* ─── AudioPanel — defined outside to avoid remount ─────────── */
+/* ─── AudioPanel ─────────────────────────────────────────────── */
 function AudioPanel({ onAdd }) {
   const [recording, setRecording] = useState(false);
   const [recorded, setRecorded] = useState(null);
@@ -1250,15 +1462,11 @@ function AudioPanel({ onAdd }) {
       <p style={{ fontFamily:"'Jost',sans-serif",fontSize:12,fontWeight:300,color:"#8B6E4E",lineHeight:1.85,marginBottom:18 }}>
         Add a voice message or music clip to your card.
       </p>
-
-      {/* Upload file */}
       <button className="btn-upload" onClick={()=>audioFileRef.current?.click()}>
         {Icon.upload(15)} Upload an audio clip
       </button>
       <input ref={audioFileRef} type="file" accept="audio/*" style={{ display:"none" }} onChange={handleFileUpload}/>
       <p style={{ fontFamily:"'Jost',sans-serif",fontSize:11,color:"rgba(42,21,8,.28)",textAlign:"center",marginTop:-6,marginBottom:16,letterSpacing:".3px" }}>MP3, WAV, M4A — max 5 MB</p>
-
-      {/* Record voice */}
       {!recording && !recorded && (
         <button className="btn-upload" onClick={startRecording}>
           {Icon.music(15)} Record a voice message
