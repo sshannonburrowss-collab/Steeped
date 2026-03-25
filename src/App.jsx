@@ -451,35 +451,40 @@ html,body{width:100%;min-height:100%;background:#FAF5EE;}
   .dashboard-drawer .f-input{font-size:14px;padding:10px 12px;}
 
 /* ── My Cards Dashboard ─────────────────────────────────── */
-.my-cards-page{min-height:calc(100vh - 68px);background:#FAF5EE;width:100%;}
-.my-cards-inner{max-width:1020px;margin:0 auto;padding:44px 44px 64px;box-sizing:border-box;}
-.my-cards-header{display:grid;grid-template-columns:1fr auto;align-items:start;gap:20px;margin-bottom:36px;}
-.my-cards-eyebrow{font-family:'Jost',sans-serif;font-weight:300;font-size:11px;color:#d4a843;letter-spacing:4px;text-transform:uppercase;margin-bottom:10px;}
-.my-cards-title{font-family:'Playfair Display',serif;font-size:32px;font-weight:400;color:#2A1508;margin:0 0 6px;line-height:1.15;}
-.my-cards-sub{font-family:'Jost',sans-serif;font-size:13.5px;font-weight:300;color:#8B6E4E;line-height:1.7;margin:0;}
-.my-cards-login-banner{display:grid;grid-template-columns:1fr auto;align-items:center;gap:20px;padding:16px 20px;background:linear-gradient(135deg,#FFF9F2,#FAF5EE);border:1px solid rgba(212,168,67,.28);border-radius:8px;margin-bottom:28px;}
-.my-cards-login-title{font-family:'Jost',sans-serif;font-size:13px;font-weight:500;color:#5a3a10;margin-bottom:3px;}
-.my-cards-login-sub{font-family:'Jost',sans-serif;font-size:12px;font-weight:300;color:#8B6E4E;line-height:1.5;}
-.my-cards-count{font-family:'Jost',sans-serif;font-size:10px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:rgba(42,21,8,.35);margin-bottom:22px;}
-.my-cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px;}
-.my-card-item{background:white;border-radius:12px;overflow:hidden;box-shadow:0 2px 14px rgba(42,21,8,.07);border:1.5px solid rgba(42,21,8,.07);transition:all .2s;animation:fadeUp .4s ease both;}
-.my-card-item:hover{transform:translateY(-3px);box-shadow:0 14px 36px rgba(42,21,8,.13);border-color:rgba(42,21,8,.14);}
-.my-card-cover-wrap{height:140px;position:relative;overflow:hidden;}
-.my-card-cover-inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:16px;}
-.my-card-cover-text{font-family:'Playfair Display',serif;font-size:13px;font-weight:400;text-align:center;line-height:1.4;max-width:85%;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
-.my-card-cover-icon{opacity:.18;position:absolute;bottom:10px;right:12px;pointer-events:none;}
-.my-card-body{padding:16px 16px 12px;}
-.my-card-theme-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:400;color:#2A1508;margin-bottom:6px;line-height:1.3;}
-.my-card-meta-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px;align-items:center;}
-.my-card-chip{font-family:'Jost',sans-serif;font-size:11px;font-weight:300;color:#8B6E4E;display:inline-flex;align-items:center;gap:4px;}
-.my-card-divider{height:1px;background:rgba(42,21,8,.06);margin-bottom:12px;}
-.my-card-actions{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;}
-.my-card-btn{padding:8px 4px;border-radius:5px;border:1px solid rgba(42,21,8,.12);background:white;font-family:'Jost',sans-serif;font-size:11px;font-weight:400;letter-spacing:.2px;color:#8B6E4E;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:4px;white-space:nowrap;}
-.my-card-btn:hover{background:#FAF5EE;color:#2A1508;border-color:rgba(42,21,8,.22);}
-.my-card-btn-send{padding:8px 4px;border-radius:5px;border:none;background:#2A1508;font-family:'Jost',sans-serif;font-size:11px;font-weight:400;color:#FAF5EE;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:4px;}
-.my-card-btn-send:hover{background:#3d2010;}
-.my-card-delete{display:block;text-align:center;margin-top:10px;background:none;border:none;cursor:pointer;font-family:'Jost',sans-serif;font-size:10px;color:rgba(42,21,8,.22);letter-spacing:.3px;padding:2px;transition:color .15s;width:100%;}
-.my-card-delete:hover{color:#b84848;}
+.mc-page{min-height:calc(100vh - 68px);background:#FAF5EE;width:100%;text-align:left;}
+.mc-wrap{max-width:960px;width:100%;margin:0 auto;padding:48px 48px 72px;box-sizing:border-box;}
+.mc-topbar{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;margin-bottom:40px;}
+.mc-greeting{flex:1;min-width:0;}
+.mc-eyebrow{font-family:'Jost',sans-serif;font-weight:300;font-size:11px;color:#d4a843;letter-spacing:4px;text-transform:uppercase;margin-bottom:10px;}
+.mc-title{font-family:'Playfair Display',serif;font-size:34px;font-weight:400;color:#2A1508;margin:0 0 8px;line-height:1.15;}
+.mc-sub{font-family:'Jost',sans-serif;font-size:14px;font-weight:300;color:#8B6E4E;line-height:1.7;margin:0;}
+.mc-banner{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:14px 20px;background:linear-gradient(135deg,#FFF9F2,#FAF5EE);border:1px solid rgba(212,168,67,.28);border-radius:8px;margin-bottom:32px;flex-wrap:nowrap;}
+.mc-banner-text{}
+.mc-banner-title{font-family:'Jost',sans-serif;font-size:13px;font-weight:500;color:#5a3a10;margin-bottom:3px;}
+.mc-banner-sub{font-family:'Jost',sans-serif;font-size:12px;font-weight:300;color:#8B6E4E;line-height:1.5;}
+.mc-count{font-family:'Jost',sans-serif;font-size:10px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:rgba(42,21,8,.35);margin-bottom:20px;}
+.mc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+.mc-card{background:white;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(42,21,8,.07);border:1.5px solid rgba(42,21,8,.07);transition:transform .2s,box-shadow .2s,border-color .2s;animation:fadeUp .4s ease both;}
+.mc-card:hover{transform:translateY(-4px);box-shadow:0 16px 40px rgba(42,21,8,.14);border-color:rgba(42,21,8,.14);}
+.mc-cover{height:148px;position:relative;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:16px;}
+.mc-cover-icon{opacity:.7;}
+.mc-cover-text{font-family:'Playfair Display',serif;font-size:14px;font-weight:400;text-align:center;line-height:1.4;max-width:85%;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+.mc-cover-watermark{opacity:.15;position:absolute;bottom:10px;right:12px;pointer-events:none;}
+.mc-cover-cta{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(42,21,8,.28);opacity:0;transition:opacity .18s;border-radius:0;}
+.mc-cover:hover .mc-cover-cta{opacity:1;}
+.mc-cover-cta-label{font-family:'Jost',sans-serif;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:white;font-weight:500;}
+.mc-body{padding:14px 16px 12px;text-align:left;}
+.mc-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:400;color:#2A1508;margin-bottom:6px;}
+.mc-chips{display:flex;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap;}
+.mc-chip{font-family:'Jost',sans-serif;font-size:11px;font-weight:300;color:#8B6E4E;display:inline-flex;align-items:center;gap:3px;}
+.mc-rule{height:1px;background:rgba(42,21,8,.06);margin-bottom:11px;}
+.mc-actions{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:5px;margin-bottom:8px;}
+.mc-btn{padding:7px 4px;border-radius:5px;border:1px solid rgba(42,21,8,.11);background:white;font-family:'Jost',sans-serif;font-size:11px;color:#8B6E4E;cursor:pointer;transition:all .14s;display:flex;align-items:center;justify-content:center;gap:4px;}
+.mc-btn:hover{background:#FAF5EE;color:#2A1508;border-color:rgba(42,21,8,.2);}
+.mc-btn-send{padding:7px 4px;border-radius:5px;border:none;background:#2A1508;font-family:'Jost',sans-serif;font-size:11px;color:#FAF5EE;cursor:pointer;transition:background .14s;display:flex;align-items:center;justify-content:center;gap:4px;}
+.mc-btn-send:hover{background:#3d2010;}
+.mc-del{width:100%;background:none;border:none;cursor:pointer;font-family:'Jost',sans-serif;font-size:10px;color:rgba(42,21,8,.2);padding:3px;letter-spacing:.3px;transition:color .14s;text-align:center;}
+.mc-del:hover{color:#b84848;}
 .my-cards-empty{text-align:center;padding:72px 20px;animation:fadeUp .5s ease;}
 .my-cards-empty-icon{margin-bottom:22px;opacity:.22;}
 .my-cards-empty-title{font-family:'Playfair Display',serif;font-size:24px;font-weight:400;color:#2A1508;margin-bottom:10px;}
@@ -487,22 +492,18 @@ html,body{width:100%;min-height:100%;background:#FAF5EE;}
 .my-cards-loading{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px;gap:14px;}
 .delete-confirm-overlay{position:fixed;inset:0;background:rgba(42,21,8,.45);backdrop-filter:blur(8px);z-index:400;display:flex;align-items:center;justify-content:center;padding:20px;}
 .delete-confirm-box{background:white;border-radius:12px;padding:28px 30px;max-width:380px;width:100%;box-shadow:0 24px 70px rgba(42,21,8,.22);animation:cardIn .2s ease;text-align:center;}
+@media(max-width:900px){.mc-grid{grid-template-columns:repeat(2,1fr);}}
 @media(max-width:680px){
-  .my-cards-inner{padding:20px 16px 48px;}
-  .my-cards-header{grid-template-columns:1fr;gap:12px;}
-  .my-cards-header .btn-dark{align-self:auto;}
-  .my-cards-title{font-size:26px;}
-  .my-cards-login-banner{grid-template-columns:1fr;gap:10px;}
-  .my-cards-grid{grid-template-columns:1fr 1fr;gap:12px;}
-  .my-card-cover-wrap{height:100px;}
-  .my-card-body{padding:10px 12px 10px;}
-  .my-card-theme-name{font-size:13px;}
-  .my-card-actions{gap:4px;}
-  .my-card-btn,.my-card-btn-send{font-size:10px;padding:7px 2px;}
+  .mc-wrap{padding:20px 16px 48px;}
+  .mc-topbar{flex-wrap:wrap;gap:12px;margin-bottom:28px;}
+  .mc-title{font-size:26px;}
+  .mc-banner{flex-wrap:wrap;gap:10px;}
+  .mc-grid{grid-template-columns:repeat(2,1fr);gap:12px;}
+  .mc-cover{height:108px;}
+  .mc-name{font-size:13px;}
+  .mc-btn,.mc-btn-send{font-size:10px;padding:6px 2px;}
 }
-@media(max-width:400px){
-  .my-cards-grid{grid-template-columns:1fr;}
-}
+@media(max-width:400px){.mc-grid{grid-template-columns:1fr;}}
 
 /* Ship tab */
 .ship-size-btn{flex:1;min-width:72px;padding:9px 6px;border-radius:6px;border:1.5px solid rgba(42,21,8,.12);background:white;cursor:pointer;font-family:'Jost',sans-serif;font-size:11px;color:#8B6E4E;transition:all .15s;text-align:center;line-height:1.5;}
@@ -1525,40 +1526,39 @@ export default function Steeped() {
           </div>
         </nav>
 
-        <div className="my-cards-page">
-          <div className="my-cards-inner">
+        <div className="mc-page">
+          <div className="mc-wrap">
 
-            {/* ── Header ── */}
-            <div className="my-cards-header">
-              <div>
-                <div className="my-cards-eyebrow">good {timeOfDay}</div>
-                <h1 className="my-cards-title">{firstName ? `Welcome back, ${firstName} ✨` : "My Cards ✨"}</h1>
-                <p className="my-cards-sub">Here are all the cards you’ve brewed with care.</p>
+            {/* ── Top bar ── */}
+            <div className="mc-topbar">
+              <div className="mc-greeting">
+                <div className="mc-eyebrow">good {timeOfDay}</div>
+                <h1 className="mc-title">{firstName ? `Welcome back, ${firstName} ✨` : "My Cards ✨"}</h1>
+                <p className="mc-sub">Here are all the cards you’ve brewed with care.</p>
               </div>
-              <button className="btn-dark" onClick={()=>setView("themes")} style={{ marginTop:4 }}>
+              <button className="btn-dark" onClick={()=>setView("themes")} style={{ flexShrink:0,marginTop:6 }}>
                 {Icon.plus(13,"#FAF5EE")} New card
               </button>
             </div>
 
             {/* ── Login nudge ── */}
             {!user && (
-              <div className="my-cards-login-banner">
-                <div>
-                  <div className="my-cards-login-title">Sign in to sync your cards across devices</div>
-                  <div className="my-cards-login-sub">Cards are saved locally for now — log in to keep them safe.</div>
+              <div className="mc-banner">
+                <div className="mc-banner-text">
+                  <div className="mc-banner-title">Sign in to sync your cards across devices</div>
+                  <div className="mc-banner-sub">Cards are saved locally for now — log in to keep them safe.</div>
                 </div>
-                <button className="btn-dark" style={{ fontSize:12,padding:"9px 20px",whiteSpace:"nowrap" }} onClick={()=>{ setAuthMode("login"); setShowAuth(true); }}>
+                <button className="btn-dark" style={{ fontSize:12,padding:"9px 20px",flexShrink:0 }} onClick={()=>{ setAuthMode("login"); setShowAuth(true); }}>
                   {Icon.user(12,"#FAF5EE")} Log in
                 </button>
               </div>
             )}
 
-            {/* ── Card count ── */}
-            <div className="my-cards-count">
+            {/* ── Count ── */}
+            <div className="mc-count">
               {myCardsLoading ? "Loading…" : `${myCards.length} card${myCards.length!==1?"s":""}`}
             </div>
 
-            {/* ── Loading ── */}
             {myCardsLoading && (
               <div className="my-cards-loading">
                 <div className="spinner" style={{ width:26,height:26,borderWidth:3,borderColor:"rgba(42,21,8,.12)",borderTopColor:"#d4a843" }}/>
@@ -1566,7 +1566,6 @@ export default function Steeped() {
               </div>
             )}
 
-            {/* ── Empty state ── */}
             {!myCardsLoading && myCards.length===0 && (
               <div className="my-cards-empty">
                 <div className="my-cards-empty-icon">{Icon.mail(60,"#2A1508")}</div>
@@ -1576,59 +1575,47 @@ export default function Steeped() {
               </div>
             )}
 
-            {/* ── Card grid ── */}
             {!myCardsLoading && myCards.length>0 && (
-              <div className="my-cards-grid">
+              <div className="mc-grid">
                 {myCards.map((card,i) => {
                   const th = THEMES.find(t=>t.id===card.theme?.id) || card.theme || THEMES[7];
                   const sigCount = (card.pages||[]).flatMap(p=>p.items||[]).filter(it=>it.type==="text").length;
                   const pageCount = card.pages?.length || 1;
-                  const coverTextItem = (card.coverItems||[]).find(it=>it.type==="text");
+                  const cti = (card.coverItems||[]).find(it=>it.type==="text");
                   const cardLink = `${window.location.origin}/?card=${card.id}`;
                   const isCopied = cardCopied===card.id;
                   const dateStr = card.updatedAt ? new Date(card.updatedAt).toLocaleDateString("en-US",{month:"short",day:"numeric"}) : null;
                   return (
-                    <div key={card.id} className="my-card-item" style={{ animationDelay:`${i*.05}s` }}>
-
-                      {/* Cover preview — click opens editor */}
-                      <div className="my-card-cover-wrap" style={{ background:th.cover, cursor:"pointer" }} onClick={()=>loadCardIntoEditor(card)}>
-                        <div className="my-card-cover-inner">
-                          <div style={{ color:th.accent,opacity:.75 }}>{Icon[th.icon]?.(24,th.accent)}</div>
-                          <div className="my-card-cover-text" style={{ color:th.accent, fontFamily:coverTextItem?.font||"'Playfair Display',serif" }}>
-                            {coverTextItem?.text || th.name}
-                          </div>
+                    <div key={card.id} className="mc-card" style={{ animationDelay:`${i*.05}s` }}>
+                      {/* Tappable cover */}
+                      <div className="mc-cover" style={{ background:th.cover }} onClick={()=>loadCardIntoEditor(card)}>
+                        <div className="mc-cover-icon">{Icon[th.icon]?.(22,th.accent)}</div>
+                        <div className="mc-cover-text" style={{ color:th.accent,fontFamily:cti?.font||"'Playfair Display',serif" }}>
+                          {cti?.text || th.name}
                         </div>
-                        <div className="my-card-cover-icon">{Icon[th.icon]?.(28,th.accent)}</div>
+                        <div className="mc-cover-watermark">{Icon[th.icon]?.(26,th.accent)}</div>
+                        <div className="mc-cover-cta"><span className="mc-cover-cta-label">Open card</span></div>
                       </div>
-
-                      {/* Card info */}
-                      <div className="my-card-body">
-                        <div className="my-card-theme-name">{th.name}</div>
-                        <div className="my-card-meta-row">
-                          <span className="my-card-chip">{Icon.pen(11,"#8B6E4E")} {sigCount} sig{sigCount!==1?"s":""}</span>
-                          <span className="my-card-chip">{Icon.copy(11,"#8B6E4E")} {pageCount}p</span>
-                          {dateStr && <span className="my-card-chip">{Icon.clock(11,"#8B6E4E")} {dateStr}</span>}
+                      {/* Body */}
+                      <div className="mc-body">
+                        <div className="mc-name">{th.name}</div>
+                        <div className="mc-chips">
+                          <span className="mc-chip">{Icon.pen(10,"#8B6E4E")} {sigCount} sig{sigCount!==1?"s":""}</span>
+                          <span className="mc-chip">{Icon.copy(10,"#8B6E4E")} {pageCount} pg</span>
+                          {dateStr && <span className="mc-chip">{Icon.clock(10,"#8B6E4E")} {dateStr}</span>}
                         </div>
-
-                        <div className="my-card-divider"/>
-
-                        {/* Actions */}
-                        <div className="my-card-actions">
-                          <button className="my-card-btn" onClick={()=>loadCardIntoEditor(card)}>
-                            {Icon.edit(11,"#8B6E4E")} Edit
+                        <div className="mc-rule"/>
+                        <div className="mc-actions">
+                          <button className="mc-btn" onClick={()=>loadCardIntoEditor(card)}>{Icon.edit(10,"#8B6E4E")} Edit</button>
+                          <button className="mc-btn" onClick={()=>window.open(cardLink,"_blank")}>{Icon.arrow(10,"#8B6E4E")} View</button>
+                          <button className="mc-btn" onClick={async()=>{ await navigator.clipboard.writeText(cardLink); setCardCopied(card.id); setTimeout(()=>setCardCopied(null),2200); }}>
+                            {isCopied?<>✓</>:<>{Icon.copy(10,"#8B6E4E")} Copy</>}
                           </button>
-                          <button className="my-card-btn" onClick={()=>window.open(cardLink,"_blank")}>
-                            {Icon.arrow(11,"#8B6E4E")} View
-                          </button>
-                          <button className="my-card-btn" onClick={async()=>{ await navigator.clipboard.writeText(cardLink); setCardCopied(card.id); setTimeout(()=>setCardCopied(null),2200); }}>
-                            {isCopied ? <>✓</> : <>{Icon.copy(11,"#8B6E4E")} Copy</>}
-                          </button>
-                          <button className="my-card-btn-send" onClick={()=>{ loadCardIntoEditor(card); setTimeout(()=>setShowSend(true),60); }}>
-                            {Icon.send(11,"#FAF5EE")} Send
+                          <button className="mc-btn-send" onClick={()=>{ loadCardIntoEditor(card); setTimeout(()=>setShowSend(true),60); }}>
+                            {Icon.send(10,"#FAF5EE")} Send
                           </button>
                         </div>
-
-                        <button className="my-card-delete" onClick={()=>setDeleteConfirm(card.id)}>delete</button>
+                        <button className="mc-del" onClick={()=>setDeleteConfirm(card.id)}>delete</button>
                       </div>
                     </div>
                   );
@@ -1637,7 +1624,6 @@ export default function Steeped() {
             )}
           </div>
         </div>
-
         {/* Delete confirmation */}
         {deleteConfirm&&(
           <div className="delete-confirm-overlay" onClick={()=>setDeleteConfirm(null)}>
