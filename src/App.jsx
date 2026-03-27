@@ -512,7 +512,7 @@ html,body{width:100%;min-height:100%;background:#FAF5EE;}
 /* ── My Cards Dashboard ─────────────────────────────────── */
 .mc-page{min-height:calc(100vh - 68px);background:#FAF5EE;width:100%;}
 .mc-eyebrow{font-family:'Jost',sans-serif;font-weight:300;font-size:11px;color:#d4a843;letter-spacing:4px;text-transform:uppercase;margin-bottom:10px;}
-.mc-title{font-family:'Playfair Display',serif;font-size:34px;font-weight:400;color:#2A1508;margin:0 0 8px;line-height:1.15;}
+.mc-title{font-family:'Jost',sans-serif;font-size:34px;font-weight:400;color:#2A1508;margin:0 0 8px;line-height:1.2;letter-spacing:-.3px;}
 .mc-sub{font-family:'Jost',sans-serif;font-size:14px;font-weight:300;color:#8B6E4E;line-height:1.7;margin:0;}
 .mc-banner-title{font-family:'Jost',sans-serif;font-size:13px;font-weight:500;color:#5a3a10;margin-bottom:3px;}
 .mc-banner-sub{font-family:'Jost',sans-serif;font-size:12px;font-weight:300;color:#8B6E4E;line-height:1.5;}
@@ -528,7 +528,7 @@ html,body{width:100%;min-height:100%;background:#FAF5EE;}
 .mc-cover:hover .mc-cover-cta{opacity:1;}
 .mc-cover-cta-label{font-family:'Jost',sans-serif;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:white;font-weight:500;}
 .mc-body{padding:14px 16px 12px;text-align:left;background:white;}
-.mc-name{font-family:'Playfair Display',serif;font-size:14px;font-weight:400;color:#2A1508;margin-bottom:6px;}
+.mc-name{font-family:'Jost',sans-serif;font-size:14px;font-weight:400;color:#2A1508;margin-bottom:6px;letter-spacing:.1px;}
 .mc-chips{display:flex;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap;}
 .mc-chip{font-family:'Jost',sans-serif;font-size:10.5px;font-weight:300;color:#8B6E4E;display:inline-flex;align-items:center;gap:3px;}
 .mc-rule{height:1px;background:rgba(42,21,8,.06);margin-bottom:10px;}
@@ -541,7 +541,7 @@ html,body{width:100%;min-height:100%;background:#FAF5EE;}
 .mc-del:hover{color:#b84848;background:rgba(184,72,72,.06);}
 .my-cards-empty{text-align:center;padding:72px 20px;animation:fadeUp .5s ease;}
 .my-cards-empty-icon{margin-bottom:22px;opacity:.22;}
-.my-cards-empty-title{font-family:'Playfair Display',serif;font-size:24px;font-weight:400;color:#2A1508;margin-bottom:10px;}
+.my-cards-empty-title{font-family:'Jost',sans-serif;font-size:24px;font-weight:400;color:#2A1508;margin-bottom:10px;letter-spacing:-.2px;}
 .my-cards-empty-sub{font-family:'Jost',sans-serif;font-size:14px;font-weight:300;color:#8B6E4E;line-height:1.85;margin-bottom:28px;}
 .my-cards-loading{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px;gap:14px;}
 .del-modal-overlay{position:fixed;inset:0;background:rgba(42,21,8,.5);backdrop-filter:blur(10px);z-index:500;display:flex;align-items:center;justify-content:center;padding:24px;}
