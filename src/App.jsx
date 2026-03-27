@@ -654,14 +654,14 @@ html,body{width:100%;min-height:100%;background:#FAF5EE;}
 .ship-success-sub{font-family:'Jost',sans-serif;font-size:12px;color:#8B6E4E;font-weight:300;line-height:1.75;}
 .prodigi-badge{display:flex;align-items:center;justify-content:center;gap:5px;font-family:'Jost',sans-serif;font-size:9.5px;color:rgba(42,21,8,.32);letter-spacing:.5px;margin-top:12px;}
 /* Guided prompts */
-.prompt-section{margin-bottom:16px;padding:12px 14px;background:#FAF5EE;border-radius:7px;border:1px solid rgba(212,168,67,.16);}
-.prompt-label{font-family:'Jost',sans-serif;font-size:9px;font-weight:500;letter-spacing:1.8px;text-transform:uppercase;color:rgba(42,21,8,.35);margin-bottom:9px;display:flex;align-items:center;justify-content:space-between;}
+.prompt-section{margin-bottom:16px;padding:11px 12px 12px;background:linear-gradient(135deg,#FFF9F2,#FAF5EE);border-radius:6px;border:1px solid rgba(212,168,67,.2);}
+.prompt-label{font-family:'Jost',sans-serif;font-size:9.5px;font-weight:500;letter-spacing:1.6px;text-transform:uppercase;color:rgba(42,21,8,.4);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;}
 .prompt-shuffle{background:none;border:none;cursor:pointer;font-family:'Jost',sans-serif;font-size:10px;font-weight:400;color:#d4a843;letter-spacing:.3px;padding:2px 0;display:inline-flex;align-items:center;gap:4px;transition:color .15s;}
 .prompt-shuffle:hover{color:#b8862e;}
 .prompt-chips{display:flex;flex-direction:column;gap:5px;}
-.prompt-chip{padding:7px 11px;border-radius:5px;border:none;background:white;font-family:'Lora',serif;font-size:12px;font-weight:400;color:#5a3a10;cursor:pointer;transition:all .14s;line-height:1.5;text-align:left;box-shadow:0 1px 3px rgba(42,21,8,.06);width:100%;}
-.prompt-chip:hover{background:rgba(212,168,67,.1);color:#2A1508;box-shadow:0 2px 8px rgba(42,21,8,.1);}
-.prompt-chip.used{background:rgba(212,168,67,.08);color:#8B6E4E;}
+.prompt-chip{display:block;width:100%;padding:8px 12px;border-radius:5px;border:1px solid rgba(42,21,8,.09);background:#FFFDF9;font-family:'Lora',serif;font-size:12.5px;font-weight:400;color:#5a3a10;cursor:pointer;transition:background .14s,border-color .14s;line-height:1.55;text-align:left;appearance:none;-webkit-appearance:none;}
+.prompt-chip:hover{background:rgba(212,168,67,.12);border-color:rgba(212,168,67,.4);color:#2A1508;}
+.prompt-chip.used{background:rgba(212,168,67,.07);border-color:rgba(212,168,67,.25);color:#8B6E4E;}
 @media(max-width:680px){.ship-addr-grid{grid-template-columns:1fr;}.ship-size-btn{font-size:10px;padding:7px 3px;}}
 }
 `;
@@ -1069,7 +1069,10 @@ function CardEnvelope({ accent }) {
 /* ─── PromptPicker ───────────────────────────────────────────── */
 function PromptPicker({ themeId, recipientName, onSelect, usedPrompts }) {
   const bank = PROMPTS[themeId] || DEFAULT_PROMPTS;
-  const name = recipientName?.trim() || "them";
+  const raw = recipientName?.trim() || "";
+  // Only use as a name if it looks personal (short, no greeting words)
+  const greetingWords = /happy|birthday|holiday|congrats|thank|sending|just|love|hugs/i;
+  const name = (raw && raw.split(" ").length <= 3 && !greetingWords.test(raw)) ? raw : "them";
   const fill = (p) => p.replace(/\{name\}/g, name);
 
   // Show 3 random prompts at a time, reshuffled on demand
@@ -1929,7 +1932,7 @@ export default function Steeped() {
 
                 <PromptPicker
                   themeId={theme?.id}
-                  recipientName={form.name || coverItems.find(i=>i.type==="text")?.text || ""}
+                  recipientName={form.name || signerName || ""}
                   onSelect={p=>setMsgText(prev=>prev?prev+"\n\n"+p:p)}
                   usedPrompts={allSigs.map(s=>s.text)}
                 />
@@ -1993,41 +1996,45 @@ export default function Steeped() {
                   </div>
                 </div>
               </div>
-              <div style={{ marginTop:30,padding:"8px 14px",background:"rgba(255,255,255,.7)",backdropFilter:"blur(8px)",borderRadius:5,fontFamily:"'Jost',sans-serif",fontSize:11.5,fontWeight:300,color:"#8B6E4E",lineHeight:1.8,textAlign:"center",transform:"rotate(-1.5deg)" }}>
-                Use the <strong style={{ fontWeight:500 }}>Sign tab</strong> to add text · drag to reposition · corner to resize
-              </div>
+            </div>
+            {/* Hint text outside the scene so it doesn't sit on the envelope */}
+            <div style={{ width:"clamp(300px,56vw,500px)",textAlign:"center",marginTop:8,fontFamily:"'Jost',sans-serif",fontSize:11,fontWeight:300,color:"rgba(42,21,8,.45)",lineHeight:1.7 }}>
+              Use the <strong style={{ fontWeight:500,color:"rgba(42,21,8,.6)" }}>Sign tab</strong> to add text · drag to reposition · corner to resize
             </div>
           )}
 
           {activePage>0&&curPage&&(
-            <div className="card-scene" key={curPage.id} onClick={e=>e.stopPropagation()}>
-              <CardEnvelope accent={theme.accent}/>
-              <div className="card-wrap">
-                <div className="card-page">
-                  <div style={{ position:"absolute",top:0,left:0,right:0,height:5,background:theme.cover,borderRadius:"5px 5px 0 0",opacity:.9 }}/>
-                  <div ref={el=>pageRefs.current[activePage-1]=el} className="page-canvas" onClick={desel}>
-                    <div className="page-header">
-                      <div style={{ display:"flex",alignItems:"center",gap:8 }}>
-                        <div style={{ color:theme.accent,opacity:.6 }}>{Icon[theme.icon](14,theme.accent)}</div>
-                        <span className="page-num-label">Page {curPage.num} of {pages.length}</span>
+            <div style={{ display:"flex",flexDirection:"column",alignItems:"center",gap:0,width:"clamp(300px,56vw,500px)" }} key={curPage.id}>
+              <div className="card-scene" onClick={e=>e.stopPropagation()}>
+                <CardEnvelope accent={theme.accent}/>
+                <div className="card-wrap">
+                  <div className="card-page">
+                    <div style={{ position:"absolute",top:0,left:0,right:0,height:5,background:theme.cover,borderRadius:"5px 5px 0 0",opacity:.9 }}/>
+                    <div ref={el=>pageRefs.current[activePage-1]=el} className="page-canvas" onClick={desel}>
+                      <div className="page-header">
+                        <div style={{ display:"flex",alignItems:"center",gap:8 }}>
+                          <div style={{ color:theme.accent,opacity:.6 }}>{Icon[theme.icon](14,theme.accent)}</div>
+                          <span className="page-num-label">Page {curPage.num} of {pages.length}</span>
+                        </div>
+                        {pages.length>1&&<button className="page-del-btn" onClick={()=>delPage(activePage-1)}>{Icon.trash(14,"rgba(42,21,8,.28)")}</button>}
                       </div>
-                      {pages.length>1&&<button className="page-del-btn" onClick={()=>delPage(activePage-1)}>{Icon.trash(14,"rgba(42,21,8,.28)")}</button>}
+                      {curPage.items.length===0&&<div className="page-empty">This page is waiting to be filled<br/>with warm words and kind hearts…</div>}
+                      {curPage.items.map(item=>(
+                        <DItem key={item.id} item={item} selected={selPage===item.id}
+                          onSelect={id=>{setSelPage(id);setSelCover(null);}}
+                          onDelete={id=>delPageItem(activePage-1,id)}
+                          onMove={(id,x,y)=>movePageItem(activePage-1,id,x,y)}
+                          onResize={(id,w,h)=>resPageItem(activePage-1,id,w,h)}
+                          onTextChange={(id,text)=>editPageText(activePage-1,id,text)}
+                          containerRef={{current:pageRefs.current[activePage-1]}}/>
+                      ))}
+                      {curPage.items.length>0&&<div className="drop-hint">Tap to select · drag to move · corner to resize · ✎ edit · × remove</div>}
                     </div>
-                    {curPage.items.length===0&&<div className="page-empty">This page is waiting to be filled<br/>with warm words and kind hearts…</div>}
-                    {curPage.items.map(item=>(
-                      <DItem key={item.id} item={item} selected={selPage===item.id}
-                        onSelect={id=>{setSelPage(id);setSelCover(null);}}
-                        onDelete={id=>delPageItem(activePage-1,id)}
-                        onMove={(id,x,y)=>movePageItem(activePage-1,id,x,y)}
-                        onResize={(id,w,h)=>resPageItem(activePage-1,id,w,h)}
-                        onTextChange={(id,text)=>editPageText(activePage-1,id,text)}
-                        containerRef={{current:pageRefs.current[activePage-1]}}/>
-                    ))}
-                    {curPage.items.length>0&&<div className="drop-hint">Tap to select · drag to move · corner to resize · ✎ edit · × remove</div>}
                   </div>
                 </div>
               </div>
-              <button className="btn-page-add" style={{ transform:"rotate(-1.5deg)",marginTop:10 }} onClick={e=>{e.stopPropagation();addPage();}}>{Icon.plus(13)} Add another signing page</button>
+              {/* Add page button sits BELOW the envelope — never overlaps */}
+              <button className="btn-page-add" onClick={e=>{e.stopPropagation();addPage();}} style={{ width:"88%",marginTop:16 }}>{Icon.plus(13)} Add another signing page</button>
             </div>
           )}
 
