@@ -56,7 +56,7 @@ const TEMPLATES = {
     { id:uid(), type:"text", x:30, y:60, text:theme.name, font:"'Playfair Display',serif", size:42, color:theme.accent, bold:true, italic:false },
   ],
   script: (theme) => [
-    { id:uid(), type:"text", x:50, y:110, text:theme.name, font:"'Dancing Script',cursive", size:20, color:theme.accent, bold:false, italic:false },
+    { id:uid(), type:"text", x:50, y:110, text:"With love,", font:"'Dancing Script',cursive", size:20, color:theme.accent, bold:false, italic:false },
   ],
 };
 
@@ -191,130 +191,98 @@ html,body{width:100%;min-height:100%;background:#FAF5EE;}
 .page-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
 /* ── Physical card & envelope ──────────────────────────── */
 /* ══════════════════════════════════════════════════════════
-   Card + Envelope — istock style
-   Full colored envelope body, card rises from open mouth
-   Z layers:  env-body(1) → card(2) → env-front-mask(3)
+   Card + Envelope — matches istock reference
+   Card (z:2) rises between env-back (z:1) and env-front (z:3)
+   No clip-path on card — pure translateY for silky animation
    ══════════════════════════════════════════════════════════ */
 @keyframes riseFromEnv{
-  0%   {transform:translateY(68%); opacity:0;}
-  5%   {opacity:1;}
-  60%  {transform:translateY(4%);}
-  78%  {transform:translateY(-1.5%);}
-  100% {transform:translateY(0%);}
+  0%   {transform:translateY(60%);opacity:0;}
+  7%   {opacity:1;}
+  62%  {transform:translateY(3%);}
+  80%  {transform:translateY(-1%);}
+  100% {transform:translateY(0);}
 }
-/* Scene wrapper — controls overall width & shadow */
+/* Scene: card sits on top, envelope wraps the bottom half */
 .card-scene{
   width:clamp(300px,56vw,500px);
   position:relative;
-  padding-bottom:160px; /* space for envelope body below card */
+  padding-bottom:44px; /* envelope peeks below card */
   filter:
-    drop-shadow(0 32px 56px rgba(42,21,8,.32))
-    drop-shadow(0 6px 18px rgba(42,21,8,.18));
+    drop-shadow(0 28px 52px rgba(42,21,8,.3))
+    drop-shadow(0 5px 16px rgba(42,21,8,.15));
 }
-/* The card — pure vertical rise, no rotate, no clip-path */
+/* Card: full scene width, z:2 */
 .card-wrap{
   position:relative;
   z-index:2;
+  width:100%;
   animation:riseFromEnv 1.4s cubic-bezier(.22,1,.36,1) both;
-  margin:0 6%;  /* narrower than envelope so sides show */
 }
-/* ── Full envelope body (behind card) ── */
-.env-body{
+/* ── Envelope BACK — behind card, z:1 ──
+   Starts at 54% of card height, covers bottom 46% + 44px below */
+.env-back{
   position:absolute;
-  bottom:0; left:0; right:0;
-  height:160px;
-  border-radius:4px;
+  top:54%;           /* start at 54% into the card */
+  left:-3%;right:-3%;/* 3% wider each side so edge shows */
+  bottom:0;
+  z-index:1;
+  border-radius:3px 3px 5px 5px;
+  overflow:hidden;
+}
+/* Interior liner triangle (tinted) — visible through open mouth */
+.env-liner{
+  position:absolute;
+  top:0;left:0;right:0;height:58%;
+  clip-path:polygon(0 0,100% 0,50% 100%);
+  background:rgba(255,255,255,.28);
+}
+/* Classic envelope fold lines on back */
+.env-bl{position:absolute;inset:0;clip-path:polygon(0 0,50% 50%,0 100%);background:rgba(0,0,0,.06);}
+.env-br{position:absolute;inset:0;clip-path:polygon(100% 0,50% 50%,100% 100%);background:rgba(0,0,0,.05);}
+.env-bb{position:absolute;inset:0;clip-path:polygon(0 100%,50% 50%,100% 100%);background:rgba(0,0,0,.05);}
+
+/* ── Open flap — folded back behind card, z:1, shows tinted interior ── */
+.env-flap{
+  position:absolute;
+  top:calc(54% - 56px); /* just above where env-back starts */
+  left:-3%;right:-3%;
+  height:60px;
   z-index:1;
   overflow:hidden;
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.2);
+  pointer-events:none;
 }
-/* Back interior — tinted liner triangle pointing down from top */
-.env-body-liner{
-  position:absolute;
-  top:0; left:0; right:0;
-  height:60%;
+.env-flap-inner{
+  width:100%;height:100%;
+  /* Triangle pointing DOWN = flap folded open */
   clip-path:polygon(0 0,100% 0,50% 100%);
-  background:rgba(255,255,255,.22);
+  opacity:.82;
 }
-/* Left fold triangle */
-.env-body-fl{
+
+/* ── Envelope FRONT — on top of card, z:3, covers card bottom ──
+   Left/right thin strips + full bottom below V convergence point. */
+.env-front{
   position:absolute;
-  inset:0;
-  clip-path:polygon(0 0,50% 52%,0 100%);
-  background:rgba(0,0,0,.05);
-}
-/* Right fold triangle */
-.env-body-fr{
-  position:absolute;
-  inset:0;
-  clip-path:polygon(100% 0,50% 52%,100% 100%);
-  background:rgba(0,0,0,.04);
-}
-/* Bottom fold triangle */
-.env-body-fb{
-  position:absolute;
-  inset:0;
-  clip-path:polygon(0 100%,50% 48%,100% 100%);
-  background:rgba(0,0,0,.04);
-}
-/* ── Envelope front mask (on top of card) ──
-   Covers the card bottom so it looks truly inside.
-   Same color as the envelope body.               ── */
-.env-front-mask{
-  position:absolute;
-  bottom:0; left:0; right:0;
-  height:160px;
+  top:54%;
+  left:-3%;right:-3%;
+  bottom:0;
   z-index:3;
   pointer-events:none;
   overflow:hidden;
 }
-/* Front face: side triangles + bottom — leave a gap at top (mouth) */
+/* The front face — cutout at top lets card through full width.
+   Only the left/right edge strips cover the card sides. */
 .env-front-face{
-  position:absolute;
-  inset:0;
-  /* Solid shape = entire rect MINUS the open mouth at top center
-     Mouth width ~70% of envelope, centered.
-     The card pokes through this gap. */
+  position:absolute;inset:0;
+  /* Full rect minus wide opening at top:
+     18% strips on each side, V dips to 44% height in center */
   clip-path:polygon(
-    0 0,          /* top-left */
-    0 100%,       /* bottom-left */
-    100% 100%,    /* bottom-right */
-    100% 0,       /* top-right */
-    65% 0,        /* mouth right edge */
-    50% 38%,      /* mouth bottom point (V) */
-    35% 0         /* mouth left edge */
+    0 0,0 100%,100% 100%,100% 0,  /* full rect */
+    80% 0,50% 44%,20% 0           /* cut wide mouth opening */
   );
 }
-/* Subtle crease lines on front */
-.env-front-fl{
-  position:absolute; inset:0;
-  clip-path:polygon(0 0,50% 52%,0 52%);
-  background:rgba(0,0,0,.03);
-}
-.env-front-fr{
-  position:absolute; inset:0;
-  clip-path:polygon(100% 0,50% 52%,100% 52%);
-  background:rgba(0,0,0,.025);
-}
-/* ── Open flap — behind card, visible above mouth ── */
-.env-flap{
-  position:absolute;
-  /* sits at bottom of where card emerges */
-  bottom:160px;
-  left:6%; right:6%; /* same width as card-wrap */
-  z-index:1;
-  pointer-events:none;
-  overflow:hidden;
-  height:52px;
-}
-.env-flap-inner{
-  position:absolute;
-  bottom:0; left:0; right:0;
-  height:100%;
-  /* Downward pointing triangle = open flap folded back */
-  clip-path:polygon(0 0,100% 0,50% 100%);
-  opacity:.75;
-}
+/* Diagonal shadow lines on front face (fold crease) */
+.env-fl{position:absolute;inset:0;clip-path:polygon(0 0,50% 50%,0 50%);background:rgba(0,0,0,.04);}
+.env-fr{position:absolute;inset:0;clip-path:polygon(100% 0,50% 50%,100% 50%);background:rgba(0,0,0,.03);}
 /* Card face styles */
 .card-cover{width:100%;min-height:clamp(260px,36vw,400px);border-radius:5px;overflow:hidden;position:relative;background:white;border:1px solid rgba(42,21,8,.07);}
 .card-cover-face{position:absolute;inset:0;border-radius:5px;overflow:hidden;}
@@ -932,38 +900,32 @@ function ColorPicker({ value, onChange }) {
 }
 
 /* ─── CardEnvelope ──────────────────────────────────────────── */
-// Full colored envelope — matches istock reference photo.
-// Card (z:2) rises from between env-body (z:1) and env-front-mask (z:3).
+// Matches istock reference: full colored envelope, card rises from open mouth.
+// env-back (z:1) → card-wrap (z:2) → env-front (z:3)
 function CardEnvelope({ accent }) {
-  // Derive a slightly darker shade for depth
-  const hex = accent.replace("#","");
-  const r = parseInt(hex.slice(0,2),16);
-  const g = parseInt(hex.slice(2,4),16);
-  const b = parseInt(hex.slice(4,6),16);
-  const darken = (v, amt) => Math.max(0, Math.min(255, v - amt));
-  const bodyColor = accent;
-  const darkColor = `rgb(${darken(r,20)},${darken(g,20)},${darken(b,20)})`;
-  const lightColor = `rgba(${Math.min(255,r+40)},${Math.min(255,g+40)},${Math.min(255,b+40)},0.9)`;
+  const hex = (accent||"#d4a843").replace("#","");
+  const r = parseInt(hex.slice(0,2)||"d4",16);
+  const g = parseInt(hex.slice(2,4)||"a8",16);
+  const b = parseInt(hex.slice(4,6)||"43",16);
+  const lighter = `rgba(${Math.min(255,r+55)},${Math.min(255,g+55)},${Math.min(255,b+55)},0.9)`;
   return (
     <>
-      {/* ── BODY — full colored envelope background ── */}
-      <div className="env-body" style={{ background:bodyColor }}>
-        <div className="env-body-liner"/>
-        <div className="env-body-fl"/>
-        <div className="env-body-fr"/>
-        <div className="env-body-fb"/>
+      {/* BACK — full colored body, behind card */}
+      <div className="env-back" style={{ background:accent }}>
+        <div className="env-liner"/>
+        <div className="env-bl"/>
+        <div className="env-br"/>
+        <div className="env-bb"/>
       </div>
-
-      {/* ── FLAP — open flap folded back, behind the card ── */}
+      {/* FLAP — open, folded back, lighter interior tint */}
       <div className="env-flap">
-        <div className="env-flap-inner" style={{ background:lightColor }}/>
+        <div className="env-flap-inner" style={{ background:lighter }}/>
       </div>
-
-      {/* ── FRONT MASK — same color as body, sits over card bottom ── */}
-      <div className="env-front-mask">
-        <div className="env-front-face" style={{ background:bodyColor }}/>
-        <div className="env-front-fl"/>
-        <div className="env-front-fr"/>
+      {/* FRONT — on top of card, masks bottom portion */}
+      <div className="env-front">
+        <div className="env-front-face" style={{ background:accent }}/>
+        <div className="env-fl"/>
+        <div className="env-fr"/>
       </div>
     </>
   );
@@ -1854,10 +1816,6 @@ export default function Steeped() {
                   </div>
                 </div>
               </div>
-            </div>
-            {/* Hint text outside the scene so it doesn't sit on the envelope */}
-            <div style={{ width:"clamp(300px,56vw,500px)",textAlign:"center",marginTop:8,fontFamily:"'Jost',sans-serif",fontSize:11,fontWeight:300,color:"rgba(42,21,8,.45)",lineHeight:1.7 }}>
-              Use the <strong style={{ fontWeight:500,color:"rgba(42,21,8,.6)" }}>Sign tab</strong> to add text · drag to reposition · corner to resize
             </div>
           )}
 
