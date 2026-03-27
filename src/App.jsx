@@ -260,34 +260,117 @@ html,body{width:100%;min-height:100%;background:#FAF5EE;}
 .page-tab-btn:hover:not(.active){background:rgba(255,255,255,.8);}
 .page-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
 /* ── Physical card & envelope ──────────────────────────── */
-@keyframes popFromEnvelope{
-  0%  {transform:translateY(56%) rotate(-1.5deg);clip-path:inset(0 0 56% 0 round 5px);opacity:0;}
-  8%  {opacity:1;}
-  38% {transform:translateY(30%) rotate(-1.5deg);clip-path:inset(0 0 30% 0 round 5px);}
-  72% {transform:translateY(9%)  rotate(-1.5deg);clip-path:inset(0 0 9%  0 round 5px);}
-  100%{transform:translateY(0)   rotate(-1.5deg);clip-path:inset(0 0 0   0 round 5px);}
+/* ── Card + envelope: z-index sandwich gives smooth pop ─────
+   Layer order:  env-back(1) | card(2) | env-front(3)
+   Card only uses translateY — no clip-path — stays smooth ── */
+@keyframes riseFromEnv{
+  0%  {transform:translateY(58%) rotate(-1.5deg);opacity:0;}
+  6%  {opacity:1;}
+  55% {transform:translateY(6%) rotate(-1.5deg);}
+  75% {transform:translateY(-2%) rotate(-1.5deg);}
+  100%{transform:translateY(0%)  rotate(-1.5deg);}
 }
-/* Card scene: outer wrapper carrying drop-shadow and envelope */
-.card-scene{width:clamp(300px,58vw,520px);position:relative;padding-bottom:28px;filter:drop-shadow(0 30px 50px rgba(42,21,8,.30)) drop-shadow(0 6px 18px rgba(42,21,8,.16));}
-/* The animated card inside the scene */
-.card-wrap{position:relative;z-index:2;animation:popFromEnvelope 1.15s cubic-bezier(.16,1,.3,1) both;}
-/* Envelope shell — sits behind card, rotated opposite way for a stacked look */
-.env-shell{position:absolute;bottom:0;left:50%;transform:translateX(-50%) rotate(1.6deg);width:107%;z-index:1;pointer-events:none;}
-/* Main envelope body */
-.env-body{position:relative;height:190px;background:white;border-radius:3px;border:1px solid rgba(42,21,8,.11);overflow:hidden;box-shadow:0 5px 18px rgba(42,21,8,.16),0 1px 4px rgba(42,21,8,.08);}
-/* Colored interior liner — V shape at top, simulates open envelope showing inside */
-.env-liner{position:absolute;top:0;left:0;right:0;height:58%;clip-path:polygon(0 0,100% 0,50% 100%);border-bottom:1px solid rgba(42,21,8,.06);}
-/* Left and right diagonal fold lines */
-.env-fold-l{position:absolute;inset:0;clip-path:polygon(0 0,50% 52%,0 100%);background:rgba(42,21,8,.025);}
-.env-fold-r{position:absolute;inset:0;clip-path:polygon(100% 0,50% 52%,100% 100%);background:rgba(42,21,8,.02);}
-/* Bottom V fold */
-.env-fold-b{position:absolute;bottom:0;left:0;right:0;height:54%;clip-path:polygon(0 100%,50% 0,100% 100%);background:rgba(42,21,8,.028);}
-/* Fold crease lines */
-.env-body::before{content:'';position:absolute;inset:0;background:linear-gradient(to bottom right,transparent 49.6%,rgba(42,21,8,.05) 49.8%,transparent 50%),linear-gradient(to bottom left,transparent 49.6%,rgba(42,21,8,.04) 49.8%,transparent 50%);pointer-events:none;}
-/* Open flap — folded back, sits above the body, showing colored interior */
-.env-flap{position:absolute;top:-58px;left:-1px;right:-1px;height:76px;clip-path:polygon(0 100%,50% 0%,100% 100%);border:1px solid rgba(42,21,8,.07);}
-/* Soft shadow under flap where it meets body */
-.env-flap::after{content:'';position:absolute;bottom:0;left:0;right:0;height:4px;background:linear-gradient(to bottom,rgba(42,21,8,.06),transparent);}
+/* Outer scene — sets width, tilt context, drop-shadow */
+.card-scene{
+  width:clamp(300px,58vw,520px);
+  position:relative;
+  /* Extra bottom space for envelope */
+  padding-bottom:0;
+  filter:drop-shadow(0 28px 52px rgba(42,21,8,.28)) drop-shadow(0 5px 16px rgba(42,21,8,.14));
+}
+/* Card animates purely with translateY — silky smooth */
+.card-wrap{
+  position:relative;
+  z-index:2;
+  animation:riseFromEnv 1.3s cubic-bezier(.22,1,.36,1) both;
+}
+/* ── Envelope back — sits BEHIND card ── */
+.env-back{
+  position:absolute;
+  bottom:-14px;
+  left:50%;
+  transform:translateX(-50%) rotate(1.4deg);
+  width:105%;
+  height:145px;
+  background:white;
+  border-radius:3px;
+  border:1px solid rgba(42,21,8,.13);
+  box-shadow:0 6px 20px rgba(42,21,8,.14),0 1px 4px rgba(42,21,8,.07);
+  z-index:1;
+  overflow:hidden;
+}
+/* Colored interior visible inside the open back */
+.env-back-liner{
+  position:absolute;
+  inset:0;
+  clip-path:polygon(0 0,100% 0,50% 90%);
+}
+/* Fold shadow lines on back */
+.env-back::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(to bottom right,transparent 49.4%,rgba(42,21,8,.06) 49.8%,transparent 50.2%),
+    linear-gradient(to bottom left, transparent 49.4%,rgba(42,21,8,.05) 49.8%,transparent 50.2%);
+  pointer-events:none;
+}
+/* ── Envelope front — sits ON TOP of card, masks card bottom ── */
+.env-front{
+  position:absolute;
+  bottom:-14px;
+  left:50%;
+  transform:translateX(-50%) rotate(1.4deg);
+  width:105%;
+  height:145px;
+  z-index:3;
+  pointer-events:none;
+  overflow:hidden;
+}
+/* Front: just the bottom triangle (V flap) over the card */
+.env-front-v{
+  position:absolute;
+  bottom:0;
+  left:-1px;right:-1px;
+  height:100%;
+  /* White bottom-V that covers card bottom as it rises */
+  clip-path:polygon(0 55%,50% 0,100% 55%,100% 100%,0 100%);
+  background:white;
+  border-left:1px solid rgba(42,21,8,.1);
+  border-right:1px solid rgba(42,21,8,.1);
+  border-bottom:1px solid rgba(42,21,8,.1);
+}
+/* Subtle fold shadow on left side */
+.env-front-l{
+  position:absolute;
+  inset:0;
+  clip-path:polygon(0 55%,50% 0,0 0);
+  background:rgba(42,21,8,.018);
+}
+/* Subtle fold shadow on right side */
+.env-front-r{
+  position:absolute;
+  inset:0;
+  clip-path:polygon(100% 55%,50% 0,100% 0);
+  background:rgba(42,21,8,.014);
+}
+/* Open flap — folded-back top, tinted with accent interior */
+.env-flap{
+  position:absolute;
+  /* Sits just above the env-back, behind the card */
+  bottom:-14px;
+  left:50%;
+  transform:translateX(-50%) rotate(1.4deg);
+  width:105%;
+  z-index:1;
+  pointer-events:none;
+}
+.env-flap-inner{
+  height:80px;
+  /* Downward triangle = open flap pointing down */
+  clip-path:polygon(0 0,100% 0,50% 100%);
+  border-bottom:1px solid rgba(42,21,8,.05);
+}
 /* Card face styles */
 .card-cover{width:100%;min-height:clamp(260px,36vw,400px);border-radius:5px;overflow:hidden;position:relative;background:white;border:1px solid rgba(42,21,8,.07);}
 .card-cover-face{position:absolute;inset:0;border-radius:5px;overflow:hidden;}
@@ -932,19 +1015,34 @@ function ColorPicker({ value, onChange }) {
 }
 
 /* ─── CardEnvelope ──────────────────────────────────────────── */
+// Renders three positioned layers: back, flap, and front-mask.
+// The card (z:2) slides between back (z:1) and front (z:3),
+// so it looks like it's genuinely rising out of the envelope.
 function CardEnvelope({ accent }) {
-  const liner = accent + "28"; // ~16% tinted liner
-  const flap  = accent + "1e"; // ~12% flap interior
+  // Parse hex to rgba for a subtle tinted liner
+  const hex = accent.replace("#","");
+  const r = parseInt(hex.slice(0,2),16);
+  const g = parseInt(hex.slice(2,4),16);
+  const b = parseInt(hex.slice(4,6),16);
+  const linerBg = `linear-gradient(170deg,rgba(${r},${g},${b},.13) 0%,rgba(${r},${g},${b},.07) 100%)`;
+  const flapBg  = `linear-gradient(180deg,rgba(${r},${g},${b},.18) 0%,rgba(${r},${g},${b},.10) 100%)`;
   return (
-    <div className="env-shell">
-      <div className="env-flap" style={{ background:`linear-gradient(to bottom,${accent}22,${accent}38)` }}/>
-      <div className="env-body">
-        <div className="env-liner" style={{ background:`linear-gradient(160deg,${accent}1a 0%,${accent}10 100%)` }}/>
-        <div className="env-fold-l"/>
-        <div className="env-fold-r"/>
-        <div className="env-fold-b"/>
+    <>
+      {/* BACK — behind card, shows tinted interior */}
+      <div className="env-back">
+        <div className="env-back-liner" style={{ background:linerBg }}/>
       </div>
-    </div>
+      {/* FLAP — open flap folded back, visible above the mouth */}
+      <div className="env-flap">
+        <div className="env-flap-inner" style={{ background:flapBg }}/>
+      </div>
+      {/* FRONT — white V panels sit over the card bottom, masking it naturally */}
+      <div className="env-front">
+        <div className="env-front-v"/>
+        <div className="env-front-l"/>
+        <div className="env-front-r"/>
+      </div>
+    </>
   );
 }
 
