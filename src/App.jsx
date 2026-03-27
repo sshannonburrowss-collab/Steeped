@@ -260,116 +260,130 @@ html,body{width:100%;min-height:100%;background:#FAF5EE;}
 .page-tab-btn:hover:not(.active){background:rgba(255,255,255,.8);}
 .page-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
 /* ── Physical card & envelope ──────────────────────────── */
-/* ── Card + envelope: z-index sandwich gives smooth pop ─────
-   Layer order:  env-back(1) | card(2) | env-front(3)
-   Card only uses translateY — no clip-path — stays smooth ── */
+/* ══════════════════════════════════════════════════════════
+   Card + Envelope — istock style
+   Full colored envelope body, card rises from open mouth
+   Z layers:  env-body(1) → card(2) → env-front-mask(3)
+   ══════════════════════════════════════════════════════════ */
 @keyframes riseFromEnv{
-  0%  {transform:translateY(58%) rotate(-1.5deg);opacity:0;}
-  6%  {opacity:1;}
-  55% {transform:translateY(6%) rotate(-1.5deg);}
-  75% {transform:translateY(-2%) rotate(-1.5deg);}
-  100%{transform:translateY(0%)  rotate(-1.5deg);}
+  0%   {transform:translateY(68%); opacity:0;}
+  5%   {opacity:1;}
+  60%  {transform:translateY(4%);}
+  78%  {transform:translateY(-1.5%);}
+  100% {transform:translateY(0%);}
 }
-/* Outer scene — sets width, tilt context, drop-shadow */
+/* Scene wrapper — controls overall width & shadow */
 .card-scene{
-  width:clamp(300px,58vw,520px);
+  width:clamp(300px,56vw,500px);
   position:relative;
-  /* Extra bottom space for envelope */
-  padding-bottom:0;
-  filter:drop-shadow(0 28px 52px rgba(42,21,8,.28)) drop-shadow(0 5px 16px rgba(42,21,8,.14));
+  padding-bottom:160px; /* space for envelope body below card */
+  filter:
+    drop-shadow(0 32px 56px rgba(42,21,8,.32))
+    drop-shadow(0 6px 18px rgba(42,21,8,.18));
 }
-/* Card animates purely with translateY — silky smooth */
+/* The card — pure vertical rise, no rotate, no clip-path */
 .card-wrap{
   position:relative;
   z-index:2;
-  animation:riseFromEnv 1.3s cubic-bezier(.22,1,.36,1) both;
+  animation:riseFromEnv 1.4s cubic-bezier(.22,1,.36,1) both;
+  margin:0 6%;  /* narrower than envelope so sides show */
 }
-/* ── Envelope back — sits BEHIND card ── */
-.env-back{
+/* ── Full envelope body (behind card) ── */
+.env-body{
   position:absolute;
-  bottom:-14px;
-  left:50%;
-  transform:translateX(-50%) rotate(1.4deg);
-  width:105%;
-  height:145px;
-  background:white;
-  border-radius:3px;
-  border:1px solid rgba(42,21,8,.13);
-  box-shadow:0 6px 20px rgba(42,21,8,.14),0 1px 4px rgba(42,21,8,.07);
+  bottom:0; left:0; right:0;
+  height:160px;
+  border-radius:4px;
   z-index:1;
   overflow:hidden;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.2);
 }
-/* Colored interior visible inside the open back */
-.env-back-liner{
+/* Back interior — tinted liner triangle pointing down from top */
+.env-body-liner{
+  position:absolute;
+  top:0; left:0; right:0;
+  height:60%;
+  clip-path:polygon(0 0,100% 0,50% 100%);
+  background:rgba(255,255,255,.22);
+}
+/* Left fold triangle */
+.env-body-fl{
   position:absolute;
   inset:0;
-  clip-path:polygon(0 0,100% 0,50% 90%);
+  clip-path:polygon(0 0,50% 52%,0 100%);
+  background:rgba(0,0,0,.05);
 }
-/* Fold shadow lines on back */
-.env-back::before{
-  content:'';
+/* Right fold triangle */
+.env-body-fr{
   position:absolute;
   inset:0;
-  background:
-    linear-gradient(to bottom right,transparent 49.4%,rgba(42,21,8,.06) 49.8%,transparent 50.2%),
-    linear-gradient(to bottom left, transparent 49.4%,rgba(42,21,8,.05) 49.8%,transparent 50.2%);
-  pointer-events:none;
+  clip-path:polygon(100% 0,50% 52%,100% 100%);
+  background:rgba(0,0,0,.04);
 }
-/* ── Envelope front — sits ON TOP of card, masks card bottom ── */
-.env-front{
+/* Bottom fold triangle */
+.env-body-fb{
   position:absolute;
-  bottom:-14px;
-  left:50%;
-  transform:translateX(-50%) rotate(1.4deg);
-  width:105%;
-  height:145px;
+  inset:0;
+  clip-path:polygon(0 100%,50% 48%,100% 100%);
+  background:rgba(0,0,0,.04);
+}
+/* ── Envelope front mask (on top of card) ──
+   Covers the card bottom so it looks truly inside.
+   Same color as the envelope body.               ── */
+.env-front-mask{
+  position:absolute;
+  bottom:0; left:0; right:0;
+  height:160px;
   z-index:3;
   pointer-events:none;
   overflow:hidden;
 }
-/* Front: just the bottom triangle (V flap) over the card */
-.env-front-v{
-  position:absolute;
-  bottom:0;
-  left:-1px;right:-1px;
-  height:100%;
-  /* White bottom-V that covers card bottom as it rises */
-  clip-path:polygon(0 55%,50% 0,100% 55%,100% 100%,0 100%);
-  background:white;
-  border-left:1px solid rgba(42,21,8,.1);
-  border-right:1px solid rgba(42,21,8,.1);
-  border-bottom:1px solid rgba(42,21,8,.1);
-}
-/* Subtle fold shadow on left side */
-.env-front-l{
+/* Front face: side triangles + bottom — leave a gap at top (mouth) */
+.env-front-face{
   position:absolute;
   inset:0;
-  clip-path:polygon(0 55%,50% 0,0 0);
-  background:rgba(42,21,8,.018);
+  /* Solid shape = entire rect MINUS the open mouth at top center
+     Mouth width ~70% of envelope, centered.
+     The card pokes through this gap. */
+  clip-path:polygon(
+    0 0,          /* top-left */
+    0 100%,       /* bottom-left */
+    100% 100%,    /* bottom-right */
+    100% 0,       /* top-right */
+    65% 0,        /* mouth right edge */
+    50% 38%,      /* mouth bottom point (V) */
+    35% 0         /* mouth left edge */
+  );
 }
-/* Subtle fold shadow on right side */
-.env-front-r{
-  position:absolute;
-  inset:0;
-  clip-path:polygon(100% 55%,50% 0,100% 0);
-  background:rgba(42,21,8,.014);
+/* Subtle crease lines on front */
+.env-front-fl{
+  position:absolute; inset:0;
+  clip-path:polygon(0 0,50% 52%,0 52%);
+  background:rgba(0,0,0,.03);
 }
-/* Open flap — folded-back top, tinted with accent interior */
+.env-front-fr{
+  position:absolute; inset:0;
+  clip-path:polygon(100% 0,50% 52%,100% 52%);
+  background:rgba(0,0,0,.025);
+}
+/* ── Open flap — behind card, visible above mouth ── */
 .env-flap{
   position:absolute;
-  /* Sits just above the env-back, behind the card */
-  bottom:-14px;
-  left:50%;
-  transform:translateX(-50%) rotate(1.4deg);
-  width:105%;
+  /* sits at bottom of where card emerges */
+  bottom:160px;
+  left:6%; right:6%; /* same width as card-wrap */
   z-index:1;
   pointer-events:none;
+  overflow:hidden;
+  height:52px;
 }
 .env-flap-inner{
-  height:80px;
-  /* Downward triangle = open flap pointing down */
+  position:absolute;
+  bottom:0; left:0; right:0;
+  height:100%;
+  /* Downward pointing triangle = open flap folded back */
   clip-path:polygon(0 0,100% 0,50% 100%);
-  border-bottom:1px solid rgba(42,21,8,.05);
+  opacity:.75;
 }
 /* Card face styles */
 .card-cover{width:100%;min-height:clamp(260px,36vw,400px);border-radius:5px;overflow:hidden;position:relative;background:white;border:1px solid rgba(42,21,8,.07);}
@@ -640,14 +654,14 @@ html,body{width:100%;min-height:100%;background:#FAF5EE;}
 .ship-success-sub{font-family:'Jost',sans-serif;font-size:12px;color:#8B6E4E;font-weight:300;line-height:1.75;}
 .prodigi-badge{display:flex;align-items:center;justify-content:center;gap:5px;font-family:'Jost',sans-serif;font-size:9.5px;color:rgba(42,21,8,.32);letter-spacing:.5px;margin-top:12px;}
 /* Guided prompts */
-.prompt-section{margin-bottom:14px;}
-.prompt-label{font-family:'Jost',sans-serif;font-size:9.5px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:rgba(42,21,8,.38);margin-bottom:7px;display:flex;align-items:center;justify-content:space-between;}
-.prompt-shuffle{background:none;border:none;cursor:pointer;font-family:'Jost',sans-serif;font-size:9.5px;color:#d4a843;letter-spacing:.4px;padding:0;display:flex;align-items:center;gap:4px;transition:opacity .15s;}
-.prompt-shuffle:hover{opacity:.7;}
-.prompt-chips{display:flex;flex-wrap:wrap;gap:6px;}
-.prompt-chip{padding:6px 12px;border-radius:100px;border:1px solid rgba(42,21,8,.12);background:white;font-family:'Jost',sans-serif;font-size:11px;font-weight:300;color:#5a3a10;cursor:pointer;transition:all .15s;line-height:1.4;text-align:left;}
-.prompt-chip:hover{border-color:rgba(212,168,67,.5);background:rgba(212,168,67,.07);color:#2A1508;}
-.prompt-chip.used{border-color:rgba(212,168,67,.4);background:rgba(212,168,67,.1);color:#5a3a10;}
+.prompt-section{margin-bottom:16px;padding:12px 14px;background:#FAF5EE;border-radius:7px;border:1px solid rgba(212,168,67,.16);}
+.prompt-label{font-family:'Jost',sans-serif;font-size:9px;font-weight:500;letter-spacing:1.8px;text-transform:uppercase;color:rgba(42,21,8,.35);margin-bottom:9px;display:flex;align-items:center;justify-content:space-between;}
+.prompt-shuffle{background:none;border:none;cursor:pointer;font-family:'Jost',sans-serif;font-size:10px;font-weight:400;color:#d4a843;letter-spacing:.3px;padding:2px 0;display:inline-flex;align-items:center;gap:4px;transition:color .15s;}
+.prompt-shuffle:hover{color:#b8862e;}
+.prompt-chips{display:flex;flex-direction:column;gap:5px;}
+.prompt-chip{padding:7px 11px;border-radius:5px;border:none;background:white;font-family:'Lora',serif;font-size:12px;font-weight:400;color:#5a3a10;cursor:pointer;transition:all .14s;line-height:1.5;text-align:left;box-shadow:0 1px 3px rgba(42,21,8,.06);width:100%;}
+.prompt-chip:hover{background:rgba(212,168,67,.1);color:#2A1508;box-shadow:0 2px 8px rgba(42,21,8,.1);}
+.prompt-chip.used{background:rgba(212,168,67,.08);color:#8B6E4E;}
 @media(max-width:680px){.ship-addr-grid{grid-template-columns:1fr;}.ship-size-btn{font-size:10px;padding:7px 3px;}}
 }
 `;
@@ -1015,32 +1029,38 @@ function ColorPicker({ value, onChange }) {
 }
 
 /* ─── CardEnvelope ──────────────────────────────────────────── */
-// Renders three positioned layers: back, flap, and front-mask.
-// The card (z:2) slides between back (z:1) and front (z:3),
-// so it looks like it's genuinely rising out of the envelope.
+// Full colored envelope — matches istock reference photo.
+// Card (z:2) rises from between env-body (z:1) and env-front-mask (z:3).
 function CardEnvelope({ accent }) {
-  // Parse hex to rgba for a subtle tinted liner
+  // Derive a slightly darker shade for depth
   const hex = accent.replace("#","");
   const r = parseInt(hex.slice(0,2),16);
   const g = parseInt(hex.slice(2,4),16);
   const b = parseInt(hex.slice(4,6),16);
-  const linerBg = `linear-gradient(170deg,rgba(${r},${g},${b},.13) 0%,rgba(${r},${g},${b},.07) 100%)`;
-  const flapBg  = `linear-gradient(180deg,rgba(${r},${g},${b},.18) 0%,rgba(${r},${g},${b},.10) 100%)`;
+  const darken = (v, amt) => Math.max(0, Math.min(255, v - amt));
+  const bodyColor = accent;
+  const darkColor = `rgb(${darken(r,20)},${darken(g,20)},${darken(b,20)})`;
+  const lightColor = `rgba(${Math.min(255,r+40)},${Math.min(255,g+40)},${Math.min(255,b+40)},0.9)`;
   return (
     <>
-      {/* BACK — behind card, shows tinted interior */}
-      <div className="env-back">
-        <div className="env-back-liner" style={{ background:linerBg }}/>
+      {/* ── BODY — full colored envelope background ── */}
+      <div className="env-body" style={{ background:bodyColor }}>
+        <div className="env-body-liner"/>
+        <div className="env-body-fl"/>
+        <div className="env-body-fr"/>
+        <div className="env-body-fb"/>
       </div>
-      {/* FLAP — open flap folded back, visible above the mouth */}
+
+      {/* ── FLAP — open flap folded back, behind the card ── */}
       <div className="env-flap">
-        <div className="env-flap-inner" style={{ background:flapBg }}/>
+        <div className="env-flap-inner" style={{ background:lightColor }}/>
       </div>
-      {/* FRONT — white V panels sit over the card bottom, masking it naturally */}
-      <div className="env-front">
-        <div className="env-front-v"/>
-        <div className="env-front-l"/>
-        <div className="env-front-r"/>
+
+      {/* ── FRONT MASK — same color as body, sits over card bottom ── */}
+      <div className="env-front-mask">
+        <div className="env-front-face" style={{ background:bodyColor }}/>
+        <div className="env-front-fl"/>
+        <div className="env-front-fr"/>
       </div>
     </>
   );
