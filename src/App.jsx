@@ -190,106 +190,13 @@ html,body{width:100%;min-height:100%;background:#FAF5EE;}
 .page-tab-btn:hover:not(.active){background:rgba(255,255,255,.8);}
 .page-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
 /* ── Physical card & envelope ──────────────────────────── */
-/* ══════════════════════════════════════════════════════════
-   Card + Envelope — matches istock reference
-   Card (z:2) rises between env-back (z:1) and env-front (z:3)
-   No clip-path on card — pure translateY for silky animation
-   ══════════════════════════════════════════════════════════ */
-@keyframes riseFromEnv{
-  0%   {transform:translateY(60%);opacity:0;}
-  7%   {opacity:1;}
-  62%  {transform:translateY(3%);}
-  80%  {transform:translateY(-1%);}
-  100% {transform:translateY(0);}
-}
-/* Scene: card sits on top, envelope wraps the bottom half */
-.card-scene{
-  width:clamp(300px,56vw,500px);
-  position:relative;
-  padding-bottom:44px; /* envelope peeks below card */
-  filter:
-    drop-shadow(0 28px 52px rgba(42,21,8,.3))
-    drop-shadow(0 5px 16px rgba(42,21,8,.15));
-}
-/* Card: full scene width, z:2 */
-.card-wrap{
-  position:relative;
-  z-index:2;
-  width:100%;
-  animation:riseFromEnv 1.4s cubic-bezier(.22,1,.36,1) both;
-}
-/* ── Envelope BACK — behind card, z:1 ──
-   Starts at 54% of card height, covers bottom 46% + 44px below */
-.env-back{
-  position:absolute;
-  top:54%;           /* start at 54% into the card */
-  left:-3%;right:-3%;/* 3% wider each side so edge shows */
-  bottom:0;
-  z-index:1;
-  border-radius:3px 3px 5px 5px;
-  overflow:hidden;
-}
-/* Interior liner triangle (tinted) — visible through open mouth */
-.env-liner{
-  position:absolute;
-  top:0;left:0;right:0;height:58%;
-  clip-path:polygon(0 0,100% 0,50% 100%);
-  background:rgba(255,255,255,.28);
-}
-/* Classic envelope fold lines on back */
-.env-bl{position:absolute;inset:0;clip-path:polygon(0 0,50% 50%,0 100%);background:rgba(0,0,0,.06);}
-.env-br{position:absolute;inset:0;clip-path:polygon(100% 0,50% 50%,100% 100%);background:rgba(0,0,0,.05);}
-.env-bb{position:absolute;inset:0;clip-path:polygon(0 100%,50% 50%,100% 100%);background:rgba(0,0,0,.05);}
-
-/* ── Open flap — folded back behind card, z:1, shows tinted interior ── */
-.env-flap{
-  position:absolute;
-  top:calc(54% - 56px); /* just above where env-back starts */
-  left:-3%;right:-3%;
-  height:60px;
-  z-index:1;
-  overflow:hidden;
-  pointer-events:none;
-}
-.env-flap-inner{
-  width:100%;height:100%;
-  /* Triangle pointing DOWN = flap folded open */
-  clip-path:polygon(0 0,100% 0,50% 100%);
-  opacity:.82;
-}
-
-/* ── Envelope FRONT — on top of card, z:3, covers card bottom ──
-   Left/right thin strips + full bottom below V convergence point. */
-.env-front{
-  position:absolute;
-  top:54%;
-  left:-3%;right:-3%;
-  bottom:0;
-  z-index:3;
-  pointer-events:none;
-  overflow:hidden;
-}
-/* The front face — cutout at top lets card through full width.
-   Only the left/right edge strips cover the card sides. */
-.env-front-face{
-  position:absolute;inset:0;
-  /* Full rect minus wide opening at top:
-     18% strips on each side, V dips to 44% height in center */
-  clip-path:polygon(
-    0 0,0 100%,100% 100%,100% 0,  /* full rect */
-    80% 0,50% 44%,20% 0           /* cut wide mouth opening */
-  );
-}
-/* Diagonal shadow lines on front face (fold crease) */
-.env-fl{position:absolute;inset:0;clip-path:polygon(0 0,50% 50%,0 50%);background:rgba(0,0,0,.04);}
-.env-fr{position:absolute;inset:0;clip-path:polygon(100% 0,50% 50%,100% 50%);background:rgba(0,0,0,.03);}
 /* Card face styles */
 .card-cover{width:100%;min-height:clamp(260px,36vw,400px);border-radius:5px;overflow:hidden;position:relative;background:white;border:1px solid rgba(42,21,8,.07);}
 .card-cover-face{position:absolute;inset:0;border-radius:5px;overflow:hidden;}
 .card-page{width:100%;min-height:clamp(320px,42vw,460px);border-radius:5px;background:white;position:relative;overflow:visible;border:1px solid rgba(42,21,8,.07);}
 /* Paper texture on both */
 .card-cover::after,.card-page::after{content:'';position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");pointer-events:none;border-radius:5px;z-index:100;}
-.canvas-footer{display:flex;align-items:center;justify-content:space-between;width:clamp(300px,58vw,520px);margin-top:22px;}
+.canvas-footer{display:flex;align-items:center;justify-content:space-between;width:clamp(300px,60vw,540px);margin-top:22px;}
 .canvas-meta{font-family:'Jost',sans-serif;font-size:11px;font-weight:300;color:rgba(42,21,8,.38);letter-spacing:.3px;}
 .d-item{position:absolute;cursor:grab;touch-action:none;z-index:10;}
 .d-item:active{cursor:grabbing;}
@@ -899,37 +806,6 @@ function ColorPicker({ value, onChange }) {
   );
 }
 
-/* ─── CardEnvelope ──────────────────────────────────────────── */
-// Matches istock reference: full colored envelope, card rises from open mouth.
-// env-back (z:1) → card-wrap (z:2) → env-front (z:3)
-function CardEnvelope({ accent }) {
-  const hex = (accent||"#d4a843").replace("#","");
-  const r = parseInt(hex.slice(0,2)||"d4",16);
-  const g = parseInt(hex.slice(2,4)||"a8",16);
-  const b = parseInt(hex.slice(4,6)||"43",16);
-  const lighter = `rgba(${Math.min(255,r+55)},${Math.min(255,g+55)},${Math.min(255,b+55)},0.9)`;
-  return (
-    <>
-      {/* BACK — full colored body, behind card */}
-      <div className="env-back" style={{ background:accent }}>
-        <div className="env-liner"/>
-        <div className="env-bl"/>
-        <div className="env-br"/>
-        <div className="env-bb"/>
-      </div>
-      {/* FLAP — open, folded back, lighter interior tint */}
-      <div className="env-flap">
-        <div className="env-flap-inner" style={{ background:lighter }}/>
-      </div>
-      {/* FRONT — on top of card, masks bottom portion */}
-      <div className="env-front">
-        <div className="env-front-face" style={{ background:accent }}/>
-        <div className="env-fl"/>
-        <div className="env-fr"/>
-      </div>
-    </>
-  );
-}
 
 
 /* ─── Main Component ─────────────────────────────────────────── */
@@ -1798,7 +1674,6 @@ export default function Steeped() {
 
           {activePage===0&&(
             <div className="card-scene" key="cover" onClick={e=>e.stopPropagation()}>
-              <CardEnvelope accent={theme.accent}/>
               <div className="card-wrap">
                 <div className="card-cover">
                   <div className="card-cover-face" style={{ background:theme.cover }}>
@@ -1822,7 +1697,6 @@ export default function Steeped() {
           {activePage>0&&curPage&&(
             <div style={{ display:"flex",flexDirection:"column",alignItems:"center",gap:0,width:"clamp(300px,56vw,500px)" }} key={curPage.id}>
               <div className="card-scene" onClick={e=>e.stopPropagation()}>
-                <CardEnvelope accent={theme.accent}/>
                 <div className="card-wrap">
                   <div className="card-page">
                     <div style={{ position:"absolute",top:0,left:0,right:0,height:5,background:theme.cover,borderRadius:"5px 5px 0 0",opacity:.9 }}/>
