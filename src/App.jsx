@@ -580,65 +580,46 @@ html,body{width:100%;min-height:100%;background:#FAF5EE;}
   .dashboard-drawer .f-input{font-size:14px;padding:10px 12px;}
 
 /* ── My Cards Dashboard ─────────────────────────────────── */
-.mc-page{min-height:calc(100vh - 68px);background:#FAF5EE;width:100%;text-align:left;}
-.mc-wrap{max-width:960px;width:100%;margin:0 auto;padding:48px 48px 72px;box-sizing:border-box;}
-.mc-topbar{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;margin-bottom:40px;}
-.mc-greeting{flex:1;min-width:0;}
+.mc-page{min-height:calc(100vh - 68px);background:#FAF5EE;width:100%;}
 .mc-eyebrow{font-family:'Jost',sans-serif;font-weight:300;font-size:11px;color:#d4a843;letter-spacing:4px;text-transform:uppercase;margin-bottom:10px;}
 .mc-title{font-family:'Playfair Display',serif;font-size:34px;font-weight:400;color:#2A1508;margin:0 0 8px;line-height:1.15;}
 .mc-sub{font-family:'Jost',sans-serif;font-size:14px;font-weight:300;color:#8B6E4E;line-height:1.7;margin:0;}
-.mc-banner{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:14px 20px;background:linear-gradient(135deg,#FFF9F2,#FAF5EE);border:1px solid rgba(212,168,67,.28);border-radius:8px;margin-bottom:32px;flex-wrap:nowrap;}
-.mc-banner-text{}
 .mc-banner-title{font-family:'Jost',sans-serif;font-size:13px;font-weight:500;color:#5a3a10;margin-bottom:3px;}
 .mc-banner-sub{font-family:'Jost',sans-serif;font-size:12px;font-weight:300;color:#8B6E4E;line-height:1.5;}
-.mc-count{font-family:'Jost',sans-serif;font-size:10px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:rgba(42,21,8,.35);margin-bottom:20px;}
-.mc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
-.mc-card{background:white;border-radius:0;overflow:visible;box-shadow:none;border:none;transition:transform .22s,filter .22s;animation:fadeUp .4s ease both;position:relative;}
-.mc-card:hover{transform:translateY(-5px) rotate(-1deg);}
-/* Envelope behind each dashboard card */
-.mc-card::before{content:'';position:absolute;bottom:-12px;left:50%;transform:translateX(-50%);width:96%;height:55%;border-radius:2px 2px 6px 6px;z-index:-1;background:var(--mc-env,#d4a843);opacity:.8;transition:opacity .2s;}
-.mc-card:hover::before{opacity:1;}
-/* White card face */
-.mc-cover{height:148px;position:relative;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:16px;border-radius:4px 4px 0 0;box-shadow:0 2px 8px rgba(42,21,8,.1);}
-/* Inset border on cover */
-.mc-cover::before{content:'';position:absolute;inset:8px;border:1px solid rgba(255,255,255,.3);border-radius:3px;pointer-events:none;z-index:5;}
+/* Card tile */
+.mc-card{background:white;border-radius:10px;overflow:hidden;box-shadow:0 2px 14px rgba(42,21,8,.08);border:1.5px solid rgba(42,21,8,.07);transition:transform .2s,box-shadow .2s;animation:fadeUp .4s ease both;min-width:0;}
+.mc-card:hover{transform:translateY(-4px);box-shadow:0 14px 36px rgba(42,21,8,.14);}
+.mc-cover{height:148px;position:relative;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:16px;}
+.mc-cover::after{content:'';position:absolute;inset:10px;border:1px solid rgba(255,255,255,.28);border-radius:3px;pointer-events:none;}
 .mc-cover-icon{opacity:.72;position:relative;z-index:2;}
 .mc-cover-text{font-family:'Playfair Display',serif;font-size:13px;font-weight:400;text-align:center;line-height:1.4;max-width:85%;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;position:relative;z-index:2;text-shadow:0 1px 3px rgba(0,0,0,.08);}
-.mc-cover-watermark{opacity:.12;position:absolute;bottom:8px;right:10px;pointer-events:none;z-index:1;}
-.mc-cover-cta{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(42,21,8,.32);opacity:0;transition:opacity .18s;border-radius:4px 4px 0 0;z-index:10;}
+.mc-cover-watermark{opacity:.11;position:absolute;bottom:8px;right:10px;pointer-events:none;}
+.mc-cover-cta{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(42,21,8,.3);opacity:0;transition:opacity .18s;}
 .mc-cover:hover .mc-cover-cta{opacity:1;}
 .mc-cover-cta-label{font-family:'Jost',sans-serif;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:white;font-weight:500;}
-.mc-body{padding:14px 16px 14px;text-align:left;background:white;border-radius:0 0 4px 4px;border-top:1px solid rgba(42,21,8,.05);box-shadow:0 4px 8px rgba(42,21,8,.08);}
-.mc-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:400;color:#2A1508;margin-bottom:6px;}
+.mc-body{padding:14px 16px 12px;text-align:left;background:white;}
+.mc-name{font-family:'Playfair Display',serif;font-size:14px;font-weight:400;color:#2A1508;margin-bottom:6px;}
 .mc-chips{display:flex;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap;}
-.mc-chip{font-family:'Jost',sans-serif;font-size:11px;font-weight:300;color:#8B6E4E;display:inline-flex;align-items:center;gap:3px;}
-.mc-rule{height:1px;background:rgba(42,21,8,.06);margin-bottom:11px;}
-.mc-actions{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:5px;margin-bottom:8px;}
-.mc-btn{padding:7px 4px;border-radius:5px;border:1px solid rgba(42,21,8,.11);background:white;font-family:'Jost',sans-serif;font-size:11px;color:#8B6E4E;cursor:pointer;transition:all .14s;display:flex;align-items:center;justify-content:center;gap:4px;}
+.mc-chip{font-family:'Jost',sans-serif;font-size:10.5px;font-weight:300;color:#8B6E4E;display:inline-flex;align-items:center;gap:3px;}
+.mc-rule{height:1px;background:rgba(42,21,8,.06);margin-bottom:10px;}
+.mc-actions{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:4px;margin-bottom:6px;}
+.mc-btn{padding:7px 3px;border-radius:4px;border:1px solid rgba(42,21,8,.11);background:white;font-family:'Jost',sans-serif;font-size:10.5px;color:#8B6E4E;cursor:pointer;transition:all .13s;display:flex;align-items:center;justify-content:center;gap:3px;}
 .mc-btn:hover{background:#FAF5EE;color:#2A1508;border-color:rgba(42,21,8,.2);}
-.mc-btn-send{padding:7px 4px;border-radius:5px;border:none;background:#2A1508;font-family:'Jost',sans-serif;font-size:11px;color:#FAF5EE;cursor:pointer;transition:background .14s;display:flex;align-items:center;justify-content:center;gap:4px;}
+.mc-btn-send{padding:7px 3px;border-radius:4px;border:none;background:#2A1508;font-family:'Jost',sans-serif;font-size:10.5px;color:#FAF5EE;cursor:pointer;transition:background .13s;display:flex;align-items:center;justify-content:center;gap:3px;}
 .mc-btn-send:hover{background:#3d2010;}
-.mc-del{width:100%;background:none;border:none;cursor:pointer;font-family:'Jost',sans-serif;font-size:10px;color:rgba(42,21,8,.2);padding:3px;letter-spacing:.3px;transition:color .14s;text-align:center;}
-.mc-del:hover{color:#b84848;}
+.mc-del{background:none;border:none;cursor:pointer;font-family:'Jost',sans-serif;font-size:9.5px;color:rgba(42,21,8,.22);padding:2px 6px;letter-spacing:.3px;transition:color .13s;display:flex;align-items:center;gap:3px;border-radius:3px;}
+.mc-del:hover{color:#b84848;background:rgba(184,72,72,.06);}
 .my-cards-empty{text-align:center;padding:72px 20px;animation:fadeUp .5s ease;}
 .my-cards-empty-icon{margin-bottom:22px;opacity:.22;}
 .my-cards-empty-title{font-family:'Playfair Display',serif;font-size:24px;font-weight:400;color:#2A1508;margin-bottom:10px;}
 .my-cards-empty-sub{font-family:'Jost',sans-serif;font-size:14px;font-weight:300;color:#8B6E4E;line-height:1.85;margin-bottom:28px;}
 .my-cards-loading{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px;gap:14px;}
-.delete-confirm-overlay{position:fixed;inset:0;background:rgba(42,21,8,.45);backdrop-filter:blur(8px);z-index:400;display:flex;align-items:center;justify-content:center;padding:20px;}
-.delete-confirm-box{background:white;border-radius:12px;padding:28px 30px;max-width:380px;width:100%;box-shadow:0 24px 70px rgba(42,21,8,.22);animation:cardIn .2s ease;text-align:center;}
-@media(max-width:900px){.mc-grid{grid-template-columns:repeat(2,1fr);}}
-@media(max-width:680px){
-  .mc-wrap{padding:20px 16px 48px;}
-  .mc-topbar{flex-wrap:wrap;gap:12px;margin-bottom:28px;}
-  .mc-title{font-size:26px;}
-  .mc-banner{flex-wrap:wrap;gap:10px;}
-  .mc-grid{grid-template-columns:repeat(2,1fr);gap:12px;}
-  .mc-cover{height:108px;}
-  .mc-name{font-size:13px;}
-  .mc-btn,.mc-btn-send{font-size:10px;padding:6px 2px;}
-}
-@media(max-width:400px){.mc-grid{grid-template-columns:1fr;}}
+.del-modal-overlay{position:fixed;inset:0;background:rgba(42,21,8,.5);backdrop-filter:blur(10px);z-index:500;display:flex;align-items:center;justify-content:center;padding:24px;}
+.del-modal-box{background:white;border-radius:14px;padding:32px 28px 24px;max-width:340px;width:100%;box-shadow:0 28px 72px rgba(42,21,8,.26);animation:cardIn .22s cubic-bezier(.16,1,.3,1);text-align:center;}
+.del-modal-icon{font-size:36px;margin-bottom:14px;display:block;}
+.del-modal-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:400;color:#2A1508;margin-bottom:8px;}
+.del-modal-sub{font-family:'Jost',sans-serif;font-size:12.5px;font-weight:300;color:#8B6E4E;line-height:1.75;margin-bottom:22px;}
+.del-modal-btns{display:flex;gap:8px;}
 
 /* Ship tab */
 .ship-size-btn{flex:1;min-width:72px;padding:9px 6px;border-radius:6px;border:1.5px solid rgba(42,21,8,.12);background:white;cursor:pointer;font-family:'Jost',sans-serif;font-size:11px;color:#8B6E4E;transition:all .15s;text-align:center;line-height:1.5;}
@@ -1707,24 +1688,24 @@ export default function Steeped() {
         </nav>
 
         <div className="mc-page">
-          <div className="mc-wrap">
+          <div style={{ maxWidth:960,width:"100%",margin:"0 auto",padding:"44px 44px 64px",boxSizing:"border-box" }}>
 
             {/* ── Top bar ── */}
-            <div className="mc-topbar">
-              <div className="mc-greeting">
+            <div style={{ display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:24,marginBottom:36,flexWrap:"wrap" }}>
+              <div style={{ flex:1,minWidth:0 }}>
                 <div className="mc-eyebrow">good {timeOfDay}</div>
                 <h1 className="mc-title">{firstName ? `Welcome back, ${firstName} ✨` : "My Cards ✨"}</h1>
                 <p className="mc-sub">Here are all the cards you’ve brewed with care.</p>
               </div>
-              <button className="btn-dark" onClick={()=>setView("themes")} style={{ flexShrink:0,marginTop:6 }}>
+              <button className="btn-dark" onClick={()=>setView("themes")} style={{ flexShrink:0,marginTop:4 }}>
                 {Icon.plus(13,"#FAF5EE")} New card
               </button>
             </div>
 
             {/* ── Login nudge ── */}
             {!user && (
-              <div className="mc-banner">
-                <div className="mc-banner-text">
+              <div style={{ display:"flex",alignItems:"center",justifyContent:"space-between",gap:20,padding:"14px 18px",background:"linear-gradient(135deg,#FFF9F2,#FAF5EE)",border:"1px solid rgba(212,168,67,.28)",borderRadius:8,marginBottom:28,flexWrap:"wrap" }}>
+                <div>
                   <div className="mc-banner-title">Sign in to sync your cards across devices</div>
                   <div className="mc-banner-sub">Cards are saved locally for now — log in to keep them safe.</div>
                 </div>
@@ -1735,7 +1716,7 @@ export default function Steeped() {
             )}
 
             {/* ── Count ── */}
-            <div className="mc-count">
+            <div style={{ fontFamily:"'Jost',sans-serif",fontSize:10,fontWeight:500,letterSpacing:2,textTransform:"uppercase",color:"rgba(42,21,8,.35)",marginBottom:20 }}>
               {myCardsLoading ? "Loading…" : `${myCards.length} card${myCards.length!==1?"s":""}`}
             </div>
 
@@ -1756,7 +1737,8 @@ export default function Steeped() {
             )}
 
             {!myCardsLoading && myCards.length>0 && (
-              <div className="mc-grid">
+              /* Inline styles guarantee the grid regardless of CSS cascade */
+              <div style={{ display:"grid", gridTemplateColumns:"repeat(3,minmax(0,1fr))", gap:20, width:"100%" }}>
                 {myCards.map((card,i) => {
                   const th = THEMES.find(t=>t.id===card.theme?.id) || card.theme || THEMES[7];
                   const sigCount = (card.pages||[]).flatMap(p=>p.items||[]).filter(it=>it.type==="text").length;
@@ -1766,8 +1748,8 @@ export default function Steeped() {
                   const isCopied = cardCopied===card.id;
                   const dateStr = card.updatedAt ? new Date(card.updatedAt).toLocaleDateString("en-US",{month:"short",day:"numeric"}) : null;
                   return (
-                    <div key={card.id} className="mc-card" style={{ animationDelay:`${i*.05}s`,"--mc-env":th.accent }}>
-                      {/* Tappable cover */}
+                    <div key={card.id} className="mc-card" style={{ animationDelay:`${i*.05}s` }}>
+                      {/* Cover — click opens editor */}
                       <div className="mc-cover" style={{ background:th.cover }} onClick={()=>loadCardIntoEditor(card)}>
                         <div className="mc-cover-icon">{Icon[th.icon]?.(22,th.accent)}</div>
                         <div className="mc-cover-text" style={{ color:th.accent,fontFamily:cti?.font||"'Playfair Display',serif" }}>
@@ -1778,7 +1760,13 @@ export default function Steeped() {
                       </div>
                       {/* Body */}
                       <div className="mc-body">
-                        <div className="mc-name">{th.name}</div>
+                        <div style={{ display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:6,marginBottom:6 }}>
+                          <div className="mc-name" style={{ margin:0 }}>{th.name}</div>
+                          {/* Delete button inline with title */}
+                          <button className="mc-del" onClick={()=>setDeleteConfirm(card.id)} title="Delete this card">
+                            {Icon.trash(11,"rgba(42,21,8,.28)")}
+                          </button>
+                        </div>
                         <div className="mc-chips">
                           <span className="mc-chip">{Icon.pen(10,"#8B6E4E")} {sigCount} sig{sigCount!==1?"s":""}</span>
                           <span className="mc-chip">{Icon.copy(10,"#8B6E4E")} {pageCount} pg</span>
@@ -1789,13 +1777,12 @@ export default function Steeped() {
                           <button className="mc-btn" onClick={()=>loadCardIntoEditor(card)}>{Icon.edit(10,"#8B6E4E")} Edit</button>
                           <button className="mc-btn" onClick={()=>window.open(cardLink,"_blank")}>{Icon.arrow(10,"#8B6E4E")} View</button>
                           <button className="mc-btn" onClick={async()=>{ await navigator.clipboard.writeText(cardLink); setCardCopied(card.id); setTimeout(()=>setCardCopied(null),2200); }}>
-                            {isCopied?<>✓</>:<>{Icon.copy(10,"#8B6E4E")} Copy</>}
+                            {isCopied?<>✓ Done</>:<>{Icon.copy(10,"#8B6E4E")} Copy</>}
                           </button>
                           <button className="mc-btn-send" onClick={()=>{ loadCardIntoEditor(card); setTimeout(()=>setShowSend(true),60); }}>
                             {Icon.send(10,"#FAF5EE")} Send
                           </button>
                         </div>
-                        <button className="mc-del" onClick={()=>setDeleteConfirm(card.id)}>delete</button>
                       </div>
                     </div>
                   );
@@ -1804,14 +1791,14 @@ export default function Steeped() {
             )}
           </div>
         </div>
-        {/* Delete confirmation */}
+        {/* Delete confirmation modal */}
         {deleteConfirm&&(
-          <div className="delete-confirm-overlay" onClick={()=>setDeleteConfirm(null)}>
-            <div className="delete-confirm-box" onClick={e=>e.stopPropagation()}>
-              <div style={{ fontSize:32,marginBottom:14 }}>🗑</div>
-              <div style={{ fontFamily:"'Playfair Display',serif",fontSize:20,marginBottom:10 }}>Delete this card?</div>
-              <p style={{ fontFamily:"'Jost',sans-serif",fontSize:13,color:"#8B6E4E",fontWeight:300,lineHeight:1.75,marginBottom:24 }}>This can't be undone. Anyone with the link will no longer be able to view it.</p>
-              <div style={{ display:"flex",gap:10 }}>
+          <div className="del-modal-overlay" onClick={()=>setDeleteConfirm(null)}>
+            <div className="del-modal-box" onClick={e=>e.stopPropagation()}>
+              <span className="del-modal-icon">🗑</span>
+              <div className="del-modal-title">Delete this card?</div>
+              <p className="del-modal-sub">This can’t be undone. Anyone with the link will no longer be able to view it.</p>
+              <div className="del-modal-btns">
                 <button className="btn-ghost" style={{ flex:1,justifyContent:"center" }} onClick={()=>setDeleteConfirm(null)}>Keep it</button>
                 <button className="btn-dark" style={{ flex:1,justifyContent:"center",background:"#b84848" }} onClick={()=>deleteCard(deleteConfirm)}>Yes, delete</button>
               </div>
