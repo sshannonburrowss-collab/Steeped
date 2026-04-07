@@ -913,7 +913,8 @@ export default function Steeped() {
   const [inviteType, setInviteType] = useState(null);
   const [inviteId, setInviteId] = useState(null);
   const [inviteForm, setInviteForm] = useState({
-    title:"", host:"", subtext:"", date:"", time:"", location:"", dress:"", note:"", rsvpDeadline:"", photo:"", musicUrl:"", musicLabel:""
+    title:"", host:"", subtext:"", date:"", time:"", location:"", dress:"", note:"", rsvpDeadline:"",
+    photo:"", photoPosition:"center", overlayOpacity:0.5, musicUrl:"", musicLabel:"", musicFile:""
   });
   const [myInvites, setMyInvites] = useState([]);
   const [guestInvite, setGuestInvite] = useState(null);
@@ -926,7 +927,8 @@ export default function Steeped() {
   const [inviteUrl, setInviteUrl] = useState("");
   const [showInvitePreview, setShowInvitePreview] = useState(false);
   const [invitePhotoUploading, setInvitePhotoUploading] = useState(false);
-  const inviteFileRef = React.useRef(null); // theme waiting for recipient name
+  const inviteFileRef = React.useRef(null);
+  const inviteAudioRef = React.useRef(null); // theme waiting for recipient name
   const [pendingRecipient, setPendingRecipient] = useState("");
   const [activePage, setActivePage] = useState(0);
   const [pages, setPages] = useState([makePage(1)]);
@@ -1500,6 +1502,15 @@ export default function Steeped() {
     reader.onload = ev => { setInviteForm(f=>({...f, photo:ev.target.result})); setInvitePhotoUploading(false); };
     reader.readAsDataURL(file);
   };
+  const handleInviteAudio = (e) => {
+    const file = e.target.files?.[0]; if(!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const label = file.name.replace(/\.[^/.]+$/,"").replace(/[-_]/g," ");
+      setInviteForm(f=>({...f, musicFile:ev.target.result, musicUrl:"", musicLabel:f.musicLabel||label}));
+    };
+    reader.readAsDataURL(file);
+  };
   const navAwayFromEditor = (dest) => {
     if (view === "editor" && theme) {
       const snap = { id: cardId || `local_${uid()}`, theme, pages, coverItems, updatedAt: new Date().toISOString() };
@@ -1910,8 +1921,8 @@ export default function Steeped() {
           <div className="invite-guest-card" style={{ animation:"fadeUp .5s ease" }}>
             {f.photo ? (
               <div style={{ position:"relative" }}>
-                <img src={f.photo} alt="" style={{ width:"100%",height:240,objectFit:"cover",display:"block" }}/>
-                <div style={{ position:"absolute",inset:0,background:"linear-gradient(to bottom,transparent 35%,rgba(0,0,0,.6) 100%)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"flex-end",padding:"24px 28px" }}>
+                <img src={f.photo} alt="" style={{ width:"100%",height:240,objectFit:"cover",objectPosition:f.photoPosition||"center",display:"block" }}/>
+                <div style={{ position:"absolute",inset:0,background:"linear-gradient(to bottom,transparent 20%,rgba(0,0,0,"+(f.overlayOpacity??0.5)+") 100%)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"flex-end",padding:"24px 28px" }}>
                   {f.host&&<div style={{ fontFamily:"'Jost',sans-serif",fontSize:11,letterSpacing:3,textTransform:"uppercase",color:"rgba(255,255,255,.75)",marginBottom:6 }}>{f.host} invites you to</div>}
                   <div style={{ fontFamily:"'Playfair Display',serif",fontSize:32,fontWeight:400,color:"white",textAlign:"center",lineHeight:1.2,textShadow:"0 2px 8px rgba(0,0,0,.4)" }}>{f.title||it.label}</div>
                   {f.subtext&&<div style={{ fontFamily:"'Lora',serif",fontSize:13,fontStyle:"italic",color:"rgba(255,255,255,.8)",marginTop:6,textAlign:"center" }}>{f.subtext}</div>}
@@ -1960,7 +1971,7 @@ export default function Steeped() {
             {f.musicUrl&&(
               <div style={{ padding:"16px 28px",borderTop:"1px solid rgba(42,21,8,.06)",background:"#FDFAF6" }}>
                 {f.musicLabel&&<div style={{ fontFamily:"'Jost',sans-serif",fontSize:11,color:"rgba(42,21,8,.45)",marginBottom:8 }}>{"🎵"} {f.musicLabel}</div>}
-                <audio controls src={f.musicUrl} style={{ width:"100%",height:36,borderRadius:6 }}/>
+                <audio controls src={f.musicFile||f.musicUrl} style={{ width:"100%",height:36,borderRadius:6 }}/>
               </div>
             )}
           </div>
@@ -2100,10 +2111,42 @@ export default function Steeped() {
             <div style={{ fontFamily:"'Jost',sans-serif",fontSize:10,fontWeight:500,letterSpacing:2,textTransform:"uppercase",color:"rgba(42,21,8,.38)",marginBottom:16 }}>Cover photo</div>
             <input type="file" accept="image/*" ref={inviteFileRef} style={{ display:"none" }} onChange={handleInvitePhoto}/>
             {f.photo ? (
-              <div style={{ position:"relative",borderRadius:8,overflow:"hidden" }}>
-                <img src={f.photo} alt="" style={{ width:"100%",height:160,objectFit:"cover",display:"block" }}/>
-                <button onClick={()=>setInviteForm(fm=>({...fm,photo:""}))} style={{ position:"absolute",top:8,right:8,background:"rgba(42,21,8,.6)",border:"none",borderRadius:50,width:26,height:26,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center" }}>{Icon.x(10,"white")}</button>
-              </div>
+              <>
+                {/* Preview with live overlay */}
+                <div style={{ position:"relative",borderRadius:8,overflow:"hidden",marginBottom:14,height:200 }}>
+                  <img src={f.photo} alt="" style={{ width:"100%",height:"100%",objectFit:"cover",objectPosition:f.photoPosition||"center",display:"block" }}/>
+                  <div style={{ position:"absolute",inset:0,background:"rgba(0,0,0,"+(f.overlayOpacity??0.5)+")",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"flex-end",padding:"16px 20px" }}>
+                    <div style={{ fontFamily:"'Playfair Display',serif",fontSize:22,color:"white",textShadow:"0 1px 4px rgba(0,0,0,.5)",textAlign:"center" }}>{f.title||"Your event title"}</div>
+                    {f.subtext&&<div style={{ fontFamily:"'Lora',serif",fontSize:13,fontStyle:"italic",color:"rgba(255,255,255,.8)",marginTop:4,textAlign:"center" }}>{f.subtext}</div>}
+                  </div>
+                  <button onClick={()=>setInviteForm(fm=>({...fm,photo:""}))} style={{ position:"absolute",top:8,right:8,background:"rgba(42,21,8,.7)",border:"none",borderRadius:50,width:26,height:26,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center" }}>{Icon.x(10,"white")}</button>
+                  <button onClick={()=>inviteFileRef.current?.click()} style={{ position:"absolute",top:8,left:8,background:"rgba(42,21,8,.7)",border:"none",borderRadius:6,padding:"4px 10px",cursor:"pointer",fontFamily:"'Jost',sans-serif",fontSize:10,color:"white" }}>Change photo</button>
+                </div>
+                {/* Photo controls */}
+                <div style={{ display:"grid",gridTemplateColumns:"1fr 1fr",gap:14 }}>
+                  <div>
+                    <label className="field-label">Photo focus</label>
+                    <select className="f-select" value={f.photoPosition||"center"} onChange={e=>setInviteForm(fm=>({...fm,photoPosition:e.target.value}))} style={{ width:"100%" }}>
+                      <option value="top">Top</option>
+                      <option value="center">Center</option>
+                      <option value="bottom">Bottom</option>
+                      <option value="left">Left</option>
+                      <option value="right">Right</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="field-label">Text overlay darkness</label>
+                    <div style={{ display:"flex",alignItems:"center",gap:10,marginTop:4 }}>
+                      <span style={{ fontFamily:"'Jost',sans-serif",fontSize:10,color:"rgba(42,21,8,.4)" }}>Light</span>
+                      <input type="range" min={0} max={0.85} step={0.05}
+                        value={f.overlayOpacity??0.5}
+                        onChange={e=>setInviteForm(fm=>({...fm,overlayOpacity:parseFloat(e.target.value)}))}
+                        style={{ flex:1,accentColor:"#2A1508" }}/>
+                      <span style={{ fontFamily:"'Jost',sans-serif",fontSize:10,color:"rgba(42,21,8,.4)" }}>Dark</span>
+                    </div>
+                  </div>
+                </div>
+              </>
             ) : (
               <div onClick={()=>inviteFileRef.current?.click()} style={{ border:"2px dashed rgba(42,21,8,.15)",borderRadius:8,padding:"28px 20px",textAlign:"center",cursor:"pointer" }} onMouseEnter={e=>e.currentTarget.style.borderColor="rgba(42,21,8,.3)"} onMouseLeave={e=>e.currentTarget.style.borderColor="rgba(42,21,8,.15)"}>
                 <div style={{ fontSize:28,marginBottom:8 }}>{"📷"}</div>
@@ -2115,16 +2158,40 @@ export default function Steeped() {
 
           {/* Section 4: Background music */}
           <div style={{ background:"white",borderRadius:12,padding:"24px 28px",boxShadow:"0 2px 14px rgba(42,21,8,.07)",marginBottom:14 }}>
-            <div style={{ display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:8 }}>
+            <div style={{ display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:12 }}>
               <div style={{ fontFamily:"'Jost',sans-serif",fontSize:10,fontWeight:500,letterSpacing:2,textTransform:"uppercase",color:"rgba(42,21,8,.38)" }}>Background music</div>
-              <a href="https://pixabay.com/music/" target="_blank" rel="noopener noreferrer" style={{ fontFamily:"'Jost',sans-serif",fontSize:10,color:"#d4a843",textDecoration:"none" }}>Browse free music</a>
+              <a href="https://pixabay.com/music/" target="_blank" rel="noopener noreferrer" style={{ fontFamily:"'Jost',sans-serif",fontSize:10,color:"#d4a843",textDecoration:"none" }}>Browse Pixabay Music</a>
             </div>
-            <p style={{ fontFamily:"'Jost',sans-serif",fontSize:12,fontWeight:300,color:"#8B6E4E",marginBottom:12,lineHeight:1.6 }}>Paste a direct link to a royalty-free .mp3. We recommend <strong style={{ fontWeight:500 }}>Pixabay Music</strong> — free, no credit needed.</p>
-            <label className="field-label">Song label (shown to guests)</label>
-            <input className="f-input" placeholder="e.g. Happy by Pharrell Williams" value={f.musicLabel||""} onChange={iSet("musicLabel")} style={{ marginBottom:10 }}/>
-            <label className="field-label">Audio URL (.mp3 link)</label>
-            <input className="f-input" placeholder="https://cdn.pixabay.com/audio/..." value={f.musicUrl||""} onChange={iSet("musicUrl")}/>
-            {f.musicUrl&&<audio controls src={f.musicUrl} style={{ width:"100%",marginTop:10,borderRadius:6,height:36 }}/>}
+            <label className="field-label">Song name (shown to guests)</label>
+            <input className="f-input" placeholder="e.g. Happy Birthday Song" value={f.musicLabel||""} onChange={iSet("musicLabel")} style={{ marginBottom:14 }}/>
+            {/* Tab: upload vs URL */}
+            <input type="file" accept="audio/*" ref={inviteAudioRef} style={{ display:"none" }} onChange={handleInviteAudio}/>
+            {(f.musicFile||f.musicUrl) ? (
+              <div>
+                <audio controls src={f.musicFile||f.musicUrl} style={{ width:"100%",height:36,borderRadius:6 }}
+                  onError={()=>setInviteForm(fm=>({...fm,musicUrl:"",musicFile:""}))}/>
+                <button onClick={()=>setInviteForm(fm=>({...fm,musicFile:"",musicUrl:""}))}
+                  style={{ marginTop:8,background:"none",border:"none",cursor:"pointer",fontFamily:"'Jost',sans-serif",fontSize:11,color:"#b84848" }}>
+                  Remove music
+                </button>
+              </div>
+            ) : (
+              <div style={{ display:"grid",gridTemplateColumns:"1fr 1fr",gap:10 }}>
+                <div onClick={()=>inviteAudioRef.current?.click()}
+                  style={{ border:"2px dashed rgba(42,21,8,.15)",borderRadius:8,padding:"20px 12px",textAlign:"center",cursor:"pointer" }}
+                  onMouseEnter={e=>e.currentTarget.style.borderColor="rgba(42,21,8,.3)"}
+                  onMouseLeave={e=>e.currentTarget.style.borderColor="rgba(42,21,8,.15)"}>
+                  <div style={{ fontSize:22,marginBottom:6 }}>{"🎵"}</div>
+                  <div style={{ fontFamily:"'Jost',sans-serif",fontSize:12,color:"#8B6E4E",fontWeight:500,marginBottom:3 }}>Upload MP3</div>
+                  <div style={{ fontFamily:"'Jost',sans-serif",fontSize:10,fontWeight:300,color:"rgba(42,21,8,.38)" }}>Guaranteed to play</div>
+                </div>
+                <div style={{ border:"1.5px solid rgba(42,21,8,.1)",borderRadius:8,padding:"14px 12px" }}>
+                  <div style={{ fontFamily:"'Jost',sans-serif",fontSize:11,fontWeight:500,color:"#8B6E4E",marginBottom:6 }}>Or paste a URL</div>
+                  <input className="f-input" placeholder="https://cdn.pixabay.com/..." value={f.musicUrl||""} onChange={iSet("musicUrl")} style={{ fontSize:11,padding:"7px 10px",marginBottom:0 }}/>
+                  <div style={{ fontFamily:"'Jost',sans-serif",fontSize:9,fontWeight:300,color:"rgba(42,21,8,.38)",marginTop:5,lineHeight:1.5 }}>On Pixabay: click a track, then right-click "Download" and copy the .mp3 link</div>
+                </div>
+              </div>
+            )}
           </div>
           {/* Share */}
           {inviteUrl ? (
@@ -2157,8 +2224,8 @@ export default function Steeped() {
                   <div style={{ borderRadius:20,overflow:"hidden",boxShadow:"0 32px 80px rgba(42,21,8,.3)" }}>
                     {pf.photo ? (
                       <div style={{ position:"relative" }}>
-                        <img src={pf.photo} alt="" style={{ width:"100%",height:240,objectFit:"cover",display:"block" }}/>
-                        <div style={{ position:"absolute",inset:0,background:"linear-gradient(to bottom,transparent 35%,rgba(0,0,0,.6) 100%)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"flex-end",padding:"24px 28px" }}>
+                        <img src={pf.photo} alt="" style={{ width:"100%",height:240,objectFit:"cover",objectPosition:pf.photoPosition||"center",display:"block" }}/>
+                        <div style={{ position:"absolute",inset:0,background:"linear-gradient(to bottom,transparent 20%,rgba(0,0,0,"+(pf.overlayOpacity??0.5)+") 100%)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"flex-end",padding:"24px 28px" }}>
                           {pf.host&&<div style={{ fontFamily:"'Jost',sans-serif",fontSize:11,letterSpacing:3,textTransform:"uppercase",color:"rgba(255,255,255,.75)",marginBottom:6 }}>{pf.host} invites you to</div>}
                           <div style={{ fontFamily:"'Playfair Display',serif",fontSize:32,fontWeight:400,color:"white",textAlign:"center",lineHeight:1.2,textShadow:"0 2px 8px rgba(0,0,0,.4)" }}>{pf.title||pit.label}</div>
                           {pf.subtext&&<div style={{ fontFamily:"'Lora',serif",fontSize:13,fontStyle:"italic",color:"rgba(255,255,255,.8)",marginTop:6,textAlign:"center" }}>{pf.subtext}</div>}
@@ -2963,4 +3030,3 @@ function AudioPanel({ onAdd }) {
     </div>
   );
 }
-
