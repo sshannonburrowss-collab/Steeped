@@ -388,7 +388,7 @@ html,body{width:100%;min-height:100%;background:#FAF5EE;}
 
 /* ── My Cards Dashboard ─────────────────────────────────── */
 .mc-page{min-height:calc(100vh - 68px);background:#FAF5EE;width:100%;}
-.mc-eyebrow{font-family:'Jost',sans-serif;font-weight:300;font-size:11px;color:#d4a843;letter-spacing:4px;text-transform:uppercase;margin-bottom:10px;}
+.mc-eyebrow{font-family:'Jost',sans-serif;font-weight:300;font-size:11px;color:rgba(42,21,8,.45);letter-spacing:3px;text-transform:uppercase;margin-bottom:10px;}
 .mc-title{font-family:'Jost',sans-serif;font-size:34px;font-weight:400;color:#2A1508;margin:0 0 8px;line-height:1.2;letter-spacing:-.3px;}
 .mc-sub{font-family:'Jost',sans-serif;font-size:14px;font-weight:300;color:#8B6E4E;line-height:1.7;margin:0;}
 .mc-banner-title{font-family:'Jost',sans-serif;font-size:13px;font-weight:500;color:#5a3a10;margin-bottom:3px;}
@@ -399,7 +399,7 @@ html,body{width:100%;min-height:100%;background:#FAF5EE;}
 .mc-cover{height:148px;position:relative;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:16px;}
 .mc-cover::after{content:'';position:absolute;inset:10px;border:1px solid rgba(255,255,255,.28);border-radius:3px;pointer-events:none;}
 .mc-cover-icon{opacity:.72;position:relative;z-index:2;}
-.mc-cover-text{font-family:'Playfair Display',serif;font-size:13px;font-weight:400;text-align:center;line-height:1.4;max-width:85%;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;position:relative;z-index:2;text-shadow:0 1px 3px rgba(0,0,0,.08);}
+.mc-cover-text{font-family:'Jost',sans-serif;font-weight:300;font-size:13px;font-weight:400;text-align:center;line-height:1.4;max-width:85%;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;position:relative;z-index:2;text-shadow:0 1px 3px rgba(0,0,0,.08);}
 .mc-cover-watermark{opacity:.11;position:absolute;bottom:8px;right:10px;pointer-events:none;}
 .mc-cover-cta{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(42,21,8,.3);opacity:0;transition:opacity .18s;}
 .mc-cover:hover .mc-cover-cta{opacity:1;}
@@ -424,7 +424,7 @@ html,body{width:100%;min-height:100%;background:#FAF5EE;}
 .del-modal-overlay{position:fixed;inset:0;background:rgba(42,21,8,.5);backdrop-filter:blur(10px);z-index:500;display:flex;align-items:center;justify-content:center;padding:24px;}
 .del-modal-box{background:white;border-radius:14px;padding:32px 28px 24px;max-width:340px;width:100%;box-shadow:0 28px 72px rgba(42,21,8,.26);animation:cardIn .22s cubic-bezier(.16,1,.3,1);text-align:center;}
 .del-modal-icon{font-size:36px;margin-bottom:14px;display:block;}
-.del-modal-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:400;color:#2A1508;margin-bottom:8px;}
+.del-modal-title{font-family:'Jost',sans-serif;font-size:20px;font-weight:400;letter-spacing:-.1px;color:#2A1508;margin-bottom:8px;}
 .del-modal-sub{font-family:'Jost',sans-serif;font-size:12.5px;font-weight:300;color:#8B6E4E;line-height:1.75;margin-bottom:22px;}
 .del-modal-btns{display:flex;gap:8px;}
 
@@ -1510,12 +1510,12 @@ export default function Steeped() {
         </div>
         {/* Delete confirmation modal */}
         {deleteConfirm&&(
-          <div className="del-modal-overlay" onClick={()=>setDeleteConfirm(null)}>
-            <div className="del-modal-box" onClick={e=>e.stopPropagation()}>
-              <span className="del-modal-icon">🗑</span>
-              <div className="del-modal-title">Delete this card?</div>
-              <p className="del-modal-sub">This can’t be undone. Anyone with the link will no longer be able to view it.</p>
-              <div className="del-modal-btns">
+          <div style={{ position:"fixed",inset:0,background:"rgba(42,21,8,.55)",zIndex:9999,display:"flex",alignItems:"center",justifyContent:"center",padding:24 }} onClick={()=>setDeleteConfirm(null)}>
+            <div style={{ background:"white",borderRadius:14,padding:"32px 28px 24px",maxWidth:340,width:"100%",boxShadow:"0 28px 72px rgba(42,21,8,.3)",textAlign:"center" }} onClick={e=>e.stopPropagation()}>
+              <div style={{ fontSize:36,marginBottom:14 }}>🗑</div>
+              <div style={{ fontFamily:"'Jost',sans-serif",fontSize:19,fontWeight:500,color:"#2A1508",marginBottom:10 }}>Delete this card?</div>
+              <p style={{ fontFamily:"'Jost',sans-serif",fontSize:13,fontWeight:300,color:"#8B6E4E",lineHeight:1.8,marginBottom:24 }}>This can’t be undone. Anyone with the link will no longer be able to view it.</p>
+              <div style={{ display:"flex",gap:8 }}>
                 <button className="btn-ghost" style={{ flex:1,justifyContent:"center" }} onClick={()=>setDeleteConfirm(null)}>Keep it</button>
                 <button className="btn-dark" style={{ flex:1,justifyContent:"center",background:"#b84848" }} onClick={()=>deleteCard(deleteConfirm)}>Yes, delete</button>
               </div>
