@@ -1728,19 +1728,22 @@ export default function Steeped() {
           )}
 
           {activePage>0&&curPage&&(
-            <div style={{ display:"flex",flexDirection:"column",alignItems:"center",gap:0,width:"clamp(300px,56vw,500px)" }} key={curPage.id}>
+            <div style={{ display:"flex",flexDirection:"column",alignItems:"center",gap:0,width:"clamp(300px,60vw,540px)" }} key={curPage.id}>
+
+              {/* ── Page label + delete — ABOVE the card ── */}
+              <div style={{ display:"flex",alignItems:"center",justifyContent:"space-between",width:"100%",paddingBottom:10,paddingLeft:2 }}>
+                <div style={{ display:"flex",alignItems:"center",gap:7 }}>
+                  <div style={{ color:theme.accent,opacity:.55 }}>{Icon[theme.icon](13,theme.accent)}</div>
+                  <span style={{ fontFamily:"'Jost',sans-serif",fontSize:11,fontWeight:300,color:"rgba(42,21,8,.45)",letterSpacing:.3 }}>Page {curPage.num} of {pages.length}</span>
+                </div>
+                {pages.length>1&&<button className="page-del-btn" onClick={()=>delPage(activePage-1)}>{Icon.trash(13,"rgba(42,21,8,.28)")}</button>}
+              </div>
+
               <div className="card-scene" onClick={e=>e.stopPropagation()}>
                 <div className="card-wrap">
                   <div className="card-page">
                     <div style={{ position:"absolute",top:0,left:0,right:0,height:5,background:theme.cover,borderRadius:"5px 5px 0 0",opacity:.9 }}/>
                     <div ref={el=>pageRefs.current[activePage-1]=el} className="page-canvas" onClick={desel}>
-                      <div className="page-header">
-                        <div style={{ display:"flex",alignItems:"center",gap:8 }}>
-                          <div style={{ color:theme.accent,opacity:.6 }}>{Icon[theme.icon](14,theme.accent)}</div>
-                          <span className="page-num-label">Page {curPage.num} of {pages.length}</span>
-                        </div>
-                        {pages.length>1&&<button className="page-del-btn" onClick={()=>delPage(activePage-1)}>{Icon.trash(14,"rgba(42,21,8,.28)")}</button>}
-                      </div>
                       {curPage.items.length===0&&<div className="page-empty">This page is waiting to be filled<br/>with warm words and kind hearts…</div>}
                       {curPage.items.map(item=>(
                         <DItem key={item.id} item={item} selected={selPage===item.id}
@@ -1751,13 +1754,18 @@ export default function Steeped() {
                           onTextChange={(id,text)=>editPageText(activePage-1,id,text)}
                           containerRef={{current:pageRefs.current[activePage-1]}}/>
                       ))}
-                      {curPage.items.length>0&&<div className="drop-hint">Tap to select · drag to move · corner to resize · ✎ edit · × remove</div>}
                     </div>
                   </div>
                 </div>
               </div>
-              {/* Add page button sits BELOW the envelope — never overlaps */}
-              <button className="btn-page-add" onClick={e=>{e.stopPropagation();addPage();}} style={{ width:"88%",marginTop:16 }}>{Icon.plus(13)} Add another signing page</button>
+
+              {/* ── Hint + add page — BELOW the card ── */}
+              {curPage.items.length>0&&(
+                <p style={{ fontFamily:"'Jost',sans-serif",fontSize:10.5,fontWeight:300,color:"rgba(42,21,8,.35)",marginTop:10,textAlign:"center",letterSpacing:.2 }}>
+                  Tap to select · drag to move · corner to resize
+                </p>
+              )}
+              <button className="btn-page-add" onClick={e=>{e.stopPropagation();addPage();}} style={{ width:"100%",marginTop:10 }}>{Icon.plus(13)} Add another signing page</button>
             </div>
           )}
 
@@ -1834,9 +1842,27 @@ export default function Steeped() {
               </div>
             )}
 
-            {cardUrl&&(
-              <button className="btn-ghost-sm" style={{ width:"100%",marginTop:8,fontSize:11 }} onClick={()=>copyUrl()}>{Icon.copy(11)} {copied?"Copied invite link!":"Copy invite link"}</button>
-            )}
+            {/* Invite link — always visible. Saves card first if not yet saved. */}
+            <div style={{ marginTop:10 }}>
+              <div style={{ fontFamily:"'Jost',sans-serif",fontSize:9.5,fontWeight:500,letterSpacing:"1.2px",textTransform:"uppercase",color:"rgba(42,21,8,.38)",marginBottom:6,display:"flex",alignItems:"center",gap:5 }}>
+                {Icon.copy(10)} Invite link
+              </div>
+              {cardUrl ? (
+                <div style={{ display:"flex",gap:5,alignItems:"center" }}>
+                  <div style={{ flex:1,fontFamily:"'Jost',sans-serif",fontSize:10,color:"#8B6E4E",background:"#FAF5EE",padding:"6px 9px",borderRadius:5,border:"1px solid rgba(42,21,8,.1)",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap" }}>{cardUrl}</div>
+                  <button className="btn-dark" style={{ padding:"6px 12px",fontSize:11,whiteSpace:"nowrap",flexShrink:0 }} onClick={()=>copyUrl()}>
+                    {copied ? "✓ Copied!" : "Copy"}
+                  </button>
+                </div>
+              ) : (
+                <button className="btn-ghost-sm" style={{ width:"100%",fontSize:11 }} onClick={async()=>{ await saveCard(); }}>
+                  {saving ? "Saving…" : `${Icon.copy(11)} Generate invite link`}
+                </button>
+              )}
+              <p style={{ fontFamily:"'Jost',sans-serif",fontSize:10,fontWeight:300,color:"rgba(42,21,8,.38)",lineHeight:1.6,marginTop:5 }}>
+                Share this link so others can open and sign the card.
+              </p>
+            </div>
           </div>
 
           <div className="sidebar-divider"/>
