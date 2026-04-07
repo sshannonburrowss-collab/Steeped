@@ -924,6 +924,7 @@ export default function Steeped() {
   const [inviteSaving, setInviteSaving] = useState(false);
   const [inviteCopied, setInviteCopied] = useState(false);
   const [inviteUrl, setInviteUrl] = useState("");
+  const [showInvitePreview, setShowInvitePreview] = useState(false);
   const [invitePhotoUploading, setInvitePhotoUploading] = useState(false);
   const inviteFileRef = React.useRef(null); // theme waiting for recipient name
   const [pendingRecipient, setPendingRecipient] = useState("");
@@ -1430,18 +1431,41 @@ export default function Steeped() {
     writeLocalInvites(existing);
   };
   const saveInvite = async () => {
-    setInviteSaving(true);
-    const id = inviteId || `inv_${uid()}`;
-    if(!inviteId) setInviteId(id);
-    const inv = { id, type:inviteType, form:inviteForm, rsvps:[], createdAt:new Date().toISOString(), updatedAt:new Date().toISOString() };
-    persistInviteLocally(inv);
-    const url = `${window.location.origin}/?invite=${id}`;
-    setInviteUrl(url);
     try {
-      const res = await fetch("/api/save-invite",{ method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({inviteId:id, type:inviteType, form:inviteForm, userId:user?.id}) });
-      if(res.ok){ const data=await res.json(); if(data.inviteId){ setInviteId(data.inviteId); setInviteUrl(`${window.location.origin}/?invite=${data.inviteId}`); persistInviteLocally({...inv,id:data.inviteId}); } }
-    } catch(e){ console.warn("save-invite API unavailable"); }
-    setInviteSaving(false);
+      setInviteSaving(true);
+      const id = inviteId || ("inv_" + uid());
+      if (!inviteId) setInviteId(id);
+      const now = new Date().toISOString();
+      const inv = { id, type:inviteType, form:inviteForm, rsvps:[], createdAt:now, updatedAt:now };
+      // Save to localStorage first — always works, no API needed
+      persistInviteLocally(inv);
+      const url = window.location.origin + "/?invite=" + id;
+      setInviteUrl(url);
+      // Try API in background (strips photo from payload to avoid size limits)
+      try {
+        const formForApi = { ...inviteForm, photo:"" }; // don't send base64 to API
+        const res = await fetch("/api/save-invite", {
+          method:"POST",
+          headers:{"Content-Type":"application/json"},
+          body:JSON.stringify({ inviteId:id, type:inviteType, form:formForApi, userId:user?.id })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.inviteId && data.inviteId !== id) {
+            const remoteUrl = window.location.origin + "/?invite=" + data.inviteId;
+            setInviteId(data.inviteId);
+            setInviteUrl(remoteUrl);
+            persistInviteLocally({ ...inv, id:data.inviteId });
+          }
+        }
+      } catch(apiErr) {
+        console.warn("save-invite API unavailable, saved locally:", apiErr.message);
+      }
+    } catch(err) {
+      console.error("saveInvite failed:", err);
+    } finally {
+      setInviteSaving(false);
+    }
   };
   const loadGuestInvite = async (iid) => {
     const local = readLocalInvites().find(i=>i.id===iid);
@@ -2007,6 +2031,7 @@ export default function Steeped() {
           <div style={{ display:"flex",gap:8,alignItems:"center" }}>
             {user&&<span className="nav-user-name">{user.user_metadata?.full_name||user.email}</span>}
             <button className="btn-ghost-sm" onClick={()=>setView("invite-types")}>{Icon.back(13)} Back</button>
+            <button className="btn-ghost-sm" onClick={()=>setShowInvitePreview(true)}>Preview</button>
             <button className="btn-send" onClick={saveInvite} disabled={inviteSaving}>
               {inviteSaving?<><span className="spinner"/> Saving…</>:<>{Icon.send(14,"#FAF5EE")} Save & Share</>}
             </button>
@@ -2115,6 +2140,78 @@ export default function Steeped() {
             </div>
           )}
         </div>
+
+        {/* ── Preview modal ── */}
+        {showInvitePreview&&(
+          <div style={{ position:"fixed",inset:0,background:"rgba(42,21,8,.6)",zIndex:9000,overflowY:"auto",padding:"32px 16px" }} onClick={e=>e.target===e.currentTarget&&setShowInvitePreview(false)}>
+            <div style={{ maxWidth:560,margin:"0 auto" }}>
+              <div style={{ display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:16 }}>
+                <div style={{ fontFamily:"'Jost',sans-serif",fontSize:12,fontWeight:500,letterSpacing:2,textTransform:"uppercase",color:"white",opacity:.8 }}>Preview — as guests will see it</div>
+                <button onClick={()=>setShowInvitePreview(false)} style={{ background:"rgba(255,255,255,.15)",border:"none",borderRadius:6,padding:"6px 14px",fontFamily:"'Jost',sans-serif",fontSize:12,color:"white",cursor:"pointer" }}>Close</button>
+              </div>
+              {(()=>{
+                const pit = INVITE_TYPES.find(x=>x.id===inviteType)||INVITE_TYPES[0];
+                const pf = inviteForm;
+                const yc = 0;
+                return (
+                  <div style={{ borderRadius:20,overflow:"hidden",boxShadow:"0 32px 80px rgba(42,21,8,.3)" }}>
+                    {pf.photo ? (
+                      <div style={{ position:"relative" }}>
+                        <img src={pf.photo} alt="" style={{ width:"100%",height:240,objectFit:"cover",display:"block" }}/>
+                        <div style={{ position:"absolute",inset:0,background:"linear-gradient(to bottom,transparent 35%,rgba(0,0,0,.6) 100%)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"flex-end",padding:"24px 28px" }}>
+                          {pf.host&&<div style={{ fontFamily:"'Jost',sans-serif",fontSize:11,letterSpacing:3,textTransform:"uppercase",color:"rgba(255,255,255,.75)",marginBottom:6 }}>{pf.host} invites you to</div>}
+                          <div style={{ fontFamily:"'Playfair Display',serif",fontSize:32,fontWeight:400,color:"white",textAlign:"center",lineHeight:1.2,textShadow:"0 2px 8px rgba(0,0,0,.4)" }}>{pf.title||pit.label}</div>
+                          {pf.subtext&&<div style={{ fontFamily:"'Lora',serif",fontSize:13,fontStyle:"italic",color:"rgba(255,255,255,.8)",marginTop:6,textAlign:"center" }}>{pf.subtext}</div>}
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="invite-guest-cover" style={{ background:pit.cover }}>
+                        <div style={{ fontSize:52,marginBottom:12 }}>{pit.emoji}</div>
+                        {pf.host&&<div className="invite-guest-host" style={{ color:pit.accent }}>{pf.host} invites you to</div>}
+                        <div className="invite-guest-title" style={{ color:pit.accent }}>{pf.title||pit.label}</div>
+                        {pf.subtext&&<div style={{ fontFamily:"'Lora',serif",fontSize:14,fontStyle:"italic",color:pit.accent,opacity:.7,marginTop:6 }}>{pf.subtext}</div>}
+                      </div>
+                    )}
+                    <div className="invite-guest-details">
+                      {pf.date&&<div className="invite-guest-detail-row">
+                        <div className="invite-guest-detail-icon" style={{ background:pit.cover }}>{"📅"}</div>
+                        <div><div className="invite-guest-detail-label">Date &amp; Time</div><div className="invite-guest-detail-val">{new Date(pf.date).toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric",year:"numeric"})}{pf.time&&" at "+pf.time}</div></div>
+                      </div>}
+                      {pf.location&&<div className="invite-guest-detail-row">
+                        <div className="invite-guest-detail-icon" style={{ background:pit.cover }}>{"📍"}</div>
+                        <div><div className="invite-guest-detail-label">Location</div><div className="invite-guest-detail-val">{pf.location}</div></div>
+                      </div>}
+                      {pf.dress&&<div className="invite-guest-detail-row">
+                        <div className="invite-guest-detail-icon" style={{ background:pit.cover }}>{"👗"}</div>
+                        <div><div className="invite-guest-detail-label">Dress Code</div><div className="invite-guest-detail-val">{pf.dress}</div></div>
+                      </div>}
+                      {pf.rsvpDeadline&&<div className="invite-guest-detail-row">
+                        <div className="invite-guest-detail-icon" style={{ background:pit.cover }}>{"✉️"}</div>
+                        <div><div className="invite-guest-detail-label">RSVP by</div><div className="invite-guest-detail-val">{new Date(pf.rsvpDeadline).toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"})}</div></div>
+                      </div>}
+                    </div>
+                    {pf.note&&<div className="invite-guest-note">"{pf.note}"</div>}
+                    {pf.location&&<div style={{ borderTop:"1px solid rgba(42,21,8,.06)" }}>
+                      <iframe src={"https://maps.google.com/maps?q="+encodeURIComponent(pf.location)+"&output=embed&z=15"} width="100%" height="180" style={{ display:"block",border:"none" }} loading="lazy" title="Map"/>
+                    </div>}
+                    {pf.musicUrl&&<div style={{ padding:"14px 28px",borderTop:"1px solid rgba(42,21,8,.06)",background:"#FDFAF6" }}>
+                      {pf.musicLabel&&<div style={{ fontFamily:"'Jost',sans-serif",fontSize:11,color:"rgba(42,21,8,.45)",marginBottom:8 }}>{"🎵"} {pf.musicLabel}</div>}
+                      <audio controls src={pf.musicUrl} style={{ width:"100%",height:36,borderRadius:6 }}/>
+                    </div>}
+                    <div style={{ padding:"28px 28px",background:"white",textAlign:"center",borderTop:"1px solid rgba(42,21,8,.06)" }}>
+                      <div style={{ fontFamily:"'Jost',sans-serif",fontSize:12,fontWeight:300,color:"rgba(42,21,8,.5)",marginBottom:12 }}>RSVP buttons will appear here for guests</div>
+                      <div style={{ display:"flex",gap:8,justifyContent:"center" }}>
+                        <div style={{ padding:"10px 20px",borderRadius:8,border:"1.5px solid rgba(42,21,8,.15)",fontFamily:"'Jost',sans-serif",fontSize:13,color:"#2a7a50" }}>✓ Yes</div>
+                        <div style={{ padding:"10px 20px",borderRadius:8,border:"1.5px solid rgba(42,21,8,.15)",fontFamily:"'Jost',sans-serif",fontSize:13,color:"#c8860a" }}>~ Maybe</div>
+                        <div style={{ padding:"10px 20px",borderRadius:8,border:"1.5px solid rgba(42,21,8,.15)",fontFamily:"'Jost',sans-serif",fontSize:13,color:"#b84848" }}>✗ No</div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -2866,3 +2963,4 @@ function AudioPanel({ onAdd }) {
     </div>
   );
 }
+
