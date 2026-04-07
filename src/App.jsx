@@ -191,6 +191,8 @@ html,body{width:100%;min-height:100%;background:#FAF5EE;}
 .page-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
 /* ── Physical card & envelope ──────────────────────────── */
 /* Card face styles */
+.card-scene{width:clamp(300px,60vw,540px);position:relative;animation:fadeUp .4s ease both;filter:drop-shadow(0 24px 48px rgba(42,21,8,.2)) drop-shadow(0 4px 14px rgba(42,21,8,.1));}
+.card-wrap{position:relative;width:100%;}
 .card-cover{width:100%;min-height:clamp(260px,36vw,400px);border-radius:5px;overflow:hidden;position:relative;background:white;border:1px solid rgba(42,21,8,.07);}
 .card-cover-face{position:absolute;inset:0;border-radius:5px;overflow:hidden;}
 .card-page{width:100%;min-height:clamp(320px,42vw,460px);border-radius:5px;background:white;position:relative;overflow:visible;border:1px solid rgba(42,21,8,.07);}
