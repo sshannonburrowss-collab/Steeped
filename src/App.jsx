@@ -1152,11 +1152,37 @@ export default function Steeped() {
 
   const nudgeInvitee = async (inv) => {
     const msg = WARM_NUDGE_MESSAGES[Math.floor(Math.random()*WARM_NUDGE_MESSAGES.length)];
-    const full = inv.email
-      ? `mailto:${inv.email}?subject=A card is waiting for your message&body=${encodeURIComponent(msg+(cardUrl?`\n\nSign here: ${cardUrl}`:""))}`
-      : null;
-    if (full) { window.open(full); }
-    else { await navigator.clipboard.writeText(msg+(cardUrl?`\n\nSign here: ${cardUrl}`:"")); setNudgeCopied(inv.id); setTimeout(()=>setNudgeCopied(null),2200); }
+    const senderName = user?.user_metadata?.full_name?.split(" ")[0] || "Someone";
+    if (inv.email) {
+      // Send via API
+      setNudgeCopied(inv.id + "_sending");
+      try {
+        const res = await fetch("/api/send-email", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            type: "nudge",
+            to: inv.email,
+            signerName: inv.name,
+            senderName,
+            message: msg,
+            cardUrl,
+          }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data?.error || "Send failed");
+        setNudgeCopied(inv.id + "_sent");
+      } catch (err) {
+        console.error("Nudge email failed:", err.message);
+        setNudgeCopied(inv.id + "_error");
+      }
+      setTimeout(() => setNudgeCopied(null), 2800);
+    } else {
+      // No email — copy message to clipboard as fallback
+      await navigator.clipboard.writeText(msg + (cardUrl ? `\n\nSign here: ${cardUrl}` : ""));
+      setNudgeCopied(inv.id + "_copied");
+      setTimeout(() => setNudgeCopied(null), 2200);
+    }
   };
 
   const addViewSignature = async () => {
@@ -1776,7 +1802,7 @@ export default function Steeped() {
                 {inv.status==="signed"
                   ? <span className="invitee-badge" style={{ background:"rgba(42,122,80,.1)",color:"#2a7a50" }}>✓ signed</span>
                   : <button className="btn-nudge" onClick={()=>nudgeInvitee(inv)} title={inv.email?"Send a warm email nudge":"Copy a warm nudge message"}>
-                      {nudgeCopied===inv.id ? "Copied! 💌" : <>{Icon.bell(9,"#8B6E4E")} nudge</>}
+                      {nudgeCopied===inv.id+"_sending" ? "Sending… ⏳" : nudgeCopied===inv.id+"_sent" ? "Sent! 💌" : nudgeCopied===inv.id+"_error" ? "Failed ✗" : nudgeCopied===inv.id+"_copied" ? "Copied! 📋" : <>{Icon.bell(9,"#8B6E4E")} nudge</>}
                     </button>
                 }
                 <button onClick={()=>removeInvitee(inv.id)} style={{ background:"none",border:"none",cursor:"pointer",color:"rgba(42,21,8,.2)",padding:2,display:"flex",alignItems:"center",flexShrink:0 }} title="Remove">{Icon.x(9)}</button>
@@ -1923,7 +1949,7 @@ export default function Steeped() {
                 {inv.status==="signed"
                   ?<span className="invitee-badge" style={{ background:"rgba(42,122,80,.1)",color:"#2a7a50" }}>✓ signed</span>
                   :<button className="btn-nudge" onClick={()=>nudgeInvitee(inv)}>
-                    {nudgeCopied===inv.id?"Copied! 💌":<>{Icon.bell(9,"#8B6E4E")} nudge</>}
+                    {nudgeCopied===inv.id+"_sending"?"Sending…":nudgeCopied===inv.id+"_sent"?"Sent! 💌":nudgeCopied===inv.id+"_error"?"Failed ✗":nudgeCopied===inv.id+"_copied"?"Copied! 📋":<>{Icon.bell(9,"#8B6E4E")} nudge</>}
                   </button>
                 }
                 <button onClick={()=>removeInvitee(inv.id)} style={{ background:"none",border:"none",cursor:"pointer",color:"rgba(42,21,8,.2)",padding:4,display:"flex",alignItems:"center",flexShrink:0 }}>{Icon.x(9)}</button>
