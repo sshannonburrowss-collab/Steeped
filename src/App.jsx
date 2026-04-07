@@ -913,7 +913,7 @@ export default function Steeped() {
   const [inviteType, setInviteType] = useState(null);
   const [inviteId, setInviteId] = useState(null);
   const [inviteForm, setInviteForm] = useState({
-    title:"", host:"", date:"", time:"", location:"", dress:"", note:"", rsvpDeadline:""
+    title:"", host:"", subtext:"", date:"", time:"", location:"", dress:"", note:"", rsvpDeadline:"", photo:"", musicUrl:"", musicLabel:""
   });
   const [myInvites, setMyInvites] = useState([]);
   const [guestInvite, setGuestInvite] = useState(null);
@@ -923,7 +923,9 @@ export default function Steeped() {
   const [rsvpSent, setRsvpSent] = useState(false);
   const [inviteSaving, setInviteSaving] = useState(false);
   const [inviteCopied, setInviteCopied] = useState(false);
-  const [inviteUrl, setInviteUrl] = useState(""); // theme waiting for recipient name
+  const [inviteUrl, setInviteUrl] = useState("");
+  const [invitePhotoUploading, setInvitePhotoUploading] = useState(false);
+  const inviteFileRef = React.useRef(null); // theme waiting for recipient name
   const [pendingRecipient, setPendingRecipient] = useState("");
   const [activePage, setActivePage] = useState(0);
   const [pages, setPages] = useState([makePage(1)]);
@@ -1467,6 +1469,13 @@ export default function Steeped() {
     setView("my-invites");
   };
 
+  const handleInvitePhoto = (e) => {
+    const file = e.target.files?.[0]; if(!file) return;
+    setInvitePhotoUploading(true);
+    const reader = new FileReader();
+    reader.onload = ev => { setInviteForm(f=>({...f, photo:ev.target.result})); setInvitePhotoUploading(false); };
+    reader.readAsDataURL(file);
+  };
   const navAwayFromEditor = (dest) => {
     if (view === "editor" && theme) {
       const snap = { id: cardId || `local_${uid()}`, theme, pages, coverItems, updatedAt: new Date().toISOString() };
@@ -1875,12 +1884,24 @@ export default function Steeped() {
         </nav>
         <div className="invite-guest-wrap">
           <div className="invite-guest-card" style={{ animation:"fadeUp .5s ease" }}>
-            <div className="invite-guest-cover" style={{ background:it.cover }}>
-              <div style={{ fontSize:52,marginBottom:12 }}>{it.emoji}</div>
-              {f.host&&<div className="invite-guest-host" style={{ color:it.accent }}>{f.host} invites you to</div>}
-              <div className="invite-guest-title" style={{ color:it.accent }}>{f.title||it.label}</div>
-              {yesCount>0&&<div style={{ fontFamily:"'Jost',sans-serif",fontSize:12,fontWeight:300,color:it.accent,opacity:.6,marginTop:8 }}>{yesCount} {yesCount===1?"person is":"people are"} coming</div>}
-            </div>
+            {f.photo ? (
+              <div style={{ position:"relative" }}>
+                <img src={f.photo} alt="" style={{ width:"100%",height:240,objectFit:"cover",display:"block" }}/>
+                <div style={{ position:"absolute",inset:0,background:"linear-gradient(to bottom,transparent 35%,rgba(0,0,0,.6) 100%)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"flex-end",padding:"24px 28px" }}>
+                  {f.host&&<div style={{ fontFamily:"'Jost',sans-serif",fontSize:11,letterSpacing:3,textTransform:"uppercase",color:"rgba(255,255,255,.75)",marginBottom:6 }}>{f.host} invites you to</div>}
+                  <div style={{ fontFamily:"'Playfair Display',serif",fontSize:32,fontWeight:400,color:"white",textAlign:"center",lineHeight:1.2,textShadow:"0 2px 8px rgba(0,0,0,.4)" }}>{f.title||it.label}</div>
+                  {f.subtext&&<div style={{ fontFamily:"'Lora',serif",fontSize:13,fontStyle:"italic",color:"rgba(255,255,255,.8)",marginTop:6,textAlign:"center" }}>{f.subtext}</div>}
+                </div>
+              </div>
+            ) : (
+              <div className="invite-guest-cover" style={{ background:it.cover }}>
+                <div style={{ fontSize:52,marginBottom:12 }}>{it.emoji}</div>
+                {f.host&&<div className="invite-guest-host" style={{ color:it.accent }}>{f.host} invites you to</div>}
+                <div className="invite-guest-title" style={{ color:it.accent }}>{f.title||it.label}</div>
+                {f.subtext&&<div style={{ fontFamily:"'Lora',serif",fontSize:14,fontStyle:"italic",color:it.accent,opacity:.7,marginTop:6 }}>{f.subtext}</div>}
+                {yesCount>0&&<div style={{ fontFamily:"'Jost',sans-serif",fontSize:12,fontWeight:300,color:it.accent,opacity:.6,marginTop:8 }}>{yesCount} {yesCount===1?"person is":"people are"} coming</div>}
+              </div>
+            )}
             <div className="invite-guest-details">
               {f.date&&<div className="invite-guest-detail-row">
                 <div className="invite-guest-detail-icon" style={{ background:it.cover }}>📅</div>
@@ -1900,6 +1921,24 @@ export default function Steeped() {
               </div>}
             </div>
             {f.note&&<div className="invite-guest-note">"{f.note}"</div>}
+          </div>
+            {f.location&&(
+              <div style={{ borderTop:"1px solid rgba(42,21,8,.06)" }}>
+                <iframe src={`https://maps.google.com/maps?q=${encodeURIComponent(f.location)}&output=embed&z=15`}
+                  width="100%" height="200" style={{ display:"block",border:"none" }} loading="lazy" title="Map"/>
+                <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(f.location)}`}
+                  target="_blank" rel="noopener noreferrer"
+                  style={{ display:"flex",alignItems:"center",justifyContent:"center",gap:6,padding:"10px",background:"#FAF5EE",fontFamily:"'Jost',sans-serif",fontSize:11,color:"#8B6E4E",textDecoration:"none" }}>
+                  Open in Google Maps {Icon.arrow(11,"#8B6E4E")}
+                </a>
+              </div>
+            )}
+            {f.musicUrl&&(
+              <div style={{ padding:"16px 28px",borderTop:"1px solid rgba(42,21,8,.06)",background:"#FDFAF6" }}>
+                {f.musicLabel&&<div style={{ fontFamily:"'Jost',sans-serif",fontSize:11,color:"rgba(42,21,8,.45)",marginBottom:8 }}>{"\uD83C\uDFB5"} {f.musicLabel}</div>}
+                <audio controls src={f.musicUrl} style={{ width:"100%",height:36,borderRadius:6 }}/>
+              </div>
+            )}
           </div>
 
           {!rsvpSent ? (
@@ -1979,6 +2018,7 @@ export default function Steeped() {
             <div className="invite-preview-watermark">{it.emoji}</div>
             {f.host&&<div className="invite-preview-host">{f.host} invites you to</div>}
             <div className="invite-preview-title">{f.title||it.label}</div>
+            {f.subtext&&<div style={{ fontFamily:"'Lora',serif",fontSize:14,fontStyle:"italic",opacity:.7,marginBottom:12,lineHeight:1.6 }}>{f.subtext}</div>}
             <div className="invite-preview-meta">
               {f.date&&<div className="invite-preview-row"><span>📅</span><span>{new Date(f.date).toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"})}{f.time&&` at ${f.time}`}</span></div>}
               {f.location&&<div className="invite-preview-row"><span>📍</span><span>{f.location}</span></div>}
@@ -1988,45 +2028,79 @@ export default function Steeped() {
             <div style={{ marginTop:24 }}><span className="invite-preview-rsvp">RSVP</span></div>
           </div>
 
-          {/* Form */}
-          <div style={{ background:"white",borderRadius:12,padding:"28px 28px 24px",boxShadow:"0 2px 14px rgba(42,21,8,.07)",marginBottom:20 }}>
-            <div style={{ fontFamily:"'Jost',sans-serif",fontSize:10,fontWeight:500,letterSpacing:2,textTransform:"uppercase",color:"rgba(42,21,8,.38)",marginBottom:18 }}>Event details</div>
+          {/* Section 1: Core details */}
+          <div style={{ background:"white",borderRadius:12,padding:"24px 28px",boxShadow:"0 2px 14px rgba(42,21,8,.07)",marginBottom:14 }}>
+            <div style={{ fontFamily:"'Jost',sans-serif",fontSize:10,fontWeight:500,letterSpacing:2,textTransform:"uppercase",color:"rgba(42,21,8,.38)",marginBottom:16 }}>Event details</div>
             <div className="invite-form-grid">
               <div className="invite-form-full">
                 <label className="field-label">Event title</label>
-                <input className="f-input" placeholder={`e.g. Emma's 30th Birthday 🎂`} value={f.title} onChange={iSet("title")}/>
-              </div>
-              <div>
-                <label className="field-label">Hosted by</label>
-                <input className="f-input" placeholder="Your name" value={f.host} onChange={iSet("host")}/>
-              </div>
-              <div>
-                <label className="field-label">Dress code (optional)</label>
-                <input className="f-input" placeholder="e.g. Smart casual" value={f.dress} onChange={iSet("dress")}/>
-              </div>
-              <div>
-                <label className="field-label">Date</label>
-                <input className="f-input" type="date" value={f.date} onChange={iSet("date")}/>
-              </div>
-              <div>
-                <label className="field-label">Time</label>
-                <input className="f-input" type="time" value={f.time} onChange={iSet("time")}/>
+                <input className="f-input" placeholder="e.g. Wyatt's 3rd Birthday Party!" value={f.title} onChange={iSet("title")}/>
               </div>
               <div className="invite-form-full">
-                <label className="field-label">Location / Venue</label>
-                <input className="f-input" placeholder="Address or venue name" value={f.location} onChange={iSet("location")}/>
+                <label className="field-label">Subtext (optional)</label>
+                <input className="f-input" placeholder="e.g. Join us for an afternoon of fun and cake" value={f.subtext||""} onChange={iSet("subtext")}/>
               </div>
-              <div>
-                <label className="field-label">RSVP deadline (optional)</label>
-                <input className="f-input" type="date" value={f.rsvpDeadline} onChange={iSet("rsvpDeadline")}/>
-              </div>
+              <div><label className="field-label">Hosted by</label><input className="f-input" placeholder="Your name" value={f.host} onChange={iSet("host")}/></div>
+              <div><label className="field-label">Dress code (optional)</label><input className="f-input" placeholder="e.g. Smart casual" value={f.dress} onChange={iSet("dress")}/></div>
+              <div><label className="field-label">Date</label><input className="f-input" type="date" value={f.date} onChange={iSet("date")}/></div>
+              <div><label className="field-label">Time</label><input className="f-input" type="time" value={f.time} onChange={iSet("time")}/></div>
+              <div><label className="field-label">RSVP deadline (optional)</label><input className="f-input" type="date" value={f.rsvpDeadline} onChange={iSet("rsvpDeadline")}/></div>
               <div className="invite-form-full">
                 <label className="field-label">Personal note (optional)</label>
-                <textarea className="f-textarea" rows={3} placeholder="Add a warm personal message…" value={f.note} onChange={iSet("note")}/>
+                <textarea className="f-textarea" rows={2} placeholder="Add a warm personal message..." value={f.note} onChange={iSet("note")}/>
               </div>
             </div>
           </div>
 
+          {/* Section 2: Location + map */}
+          <div style={{ background:"white",borderRadius:12,padding:"24px 28px",boxShadow:"0 2px 14px rgba(42,21,8,.07)",marginBottom:14 }}>
+            <div style={{ fontFamily:"'Jost',sans-serif",fontSize:10,fontWeight:500,letterSpacing:2,textTransform:"uppercase",color:"rgba(42,21,8,.38)",marginBottom:16 }}>Location</div>
+            <label className="field-label">Venue / Address</label>
+            <input className="f-input" placeholder="e.g. 123 Main St, Tulsa OK 74103" value={f.location} onChange={iSet("location")} style={{ marginBottom:12 }}/>
+            {f.location ? (
+              <div style={{ borderRadius:8,overflow:"hidden",border:"1px solid rgba(42,21,8,.1)" }}>
+                <iframe src={`https://maps.google.com/maps?q=${encodeURIComponent(f.location)}&output=embed&z=15`}
+                  width="100%" height="200" style={{ display:"block",border:"none" }} loading="lazy" title="Map"/>
+                <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(f.location)}`}
+                  target="_blank" rel="noopener noreferrer"
+                  style={{ display:"flex",alignItems:"center",justifyContent:"center",gap:6,padding:"9px",background:"#FAF5EE",fontFamily:"'Jost',sans-serif",fontSize:11,color:"#8B6E4E",textDecoration:"none",borderTop:"1px solid rgba(42,21,8,.08)" }}>
+                  Open in Google Maps {Icon.arrow(11,"#8B6E4E")}
+                </a>
+              </div>
+            ) : <div style={{ fontFamily:"'Jost',sans-serif",fontSize:12,fontWeight:300,color:"rgba(42,21,8,.32)",fontStyle:"italic" }}>Enter an address to show a live map preview</div>}
+          </div>
+
+          {/* Section 3: Cover photo */}
+          <div style={{ background:"white",borderRadius:12,padding:"24px 28px",boxShadow:"0 2px 14px rgba(42,21,8,.07)",marginBottom:14 }}>
+            <div style={{ fontFamily:"'Jost',sans-serif",fontSize:10,fontWeight:500,letterSpacing:2,textTransform:"uppercase",color:"rgba(42,21,8,.38)",marginBottom:16 }}>Cover photo</div>
+            <input type="file" accept="image/*" ref={inviteFileRef} style={{ display:"none" }} onChange={handleInvitePhoto}/>
+            {f.photo ? (
+              <div style={{ position:"relative",borderRadius:8,overflow:"hidden" }}>
+                <img src={f.photo} alt="" style={{ width:"100%",height:160,objectFit:"cover",display:"block" }}/>
+                <button onClick={()=>setInviteForm(fm=>({...fm,photo:""}))} style={{ position:"absolute",top:8,right:8,background:"rgba(42,21,8,.6)",border:"none",borderRadius:50,width:26,height:26,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center" }}>{Icon.x(10,"white")}</button>
+              </div>
+            ) : (
+              <div onClick={()=>inviteFileRef.current?.click()} style={{ border:"2px dashed rgba(42,21,8,.15)",borderRadius:8,padding:"28px 20px",textAlign:"center",cursor:"pointer" }} onMouseEnter={e=>e.currentTarget.style.borderColor="rgba(42,21,8,.3)"} onMouseLeave={e=>e.currentTarget.style.borderColor="rgba(42,21,8,.15)"}>
+                <div style={{ fontSize:28,marginBottom:8 }}>{"📷"}</div>
+                <div style={{ fontFamily:"'Jost',sans-serif",fontSize:13,color:"#8B6E4E",marginBottom:4 }}>{invitePhotoUploading?"Uploading...":"Upload a cover photo"}</div>
+                <div style={{ fontFamily:"'Jost',sans-serif",fontSize:11,fontWeight:300,color:"rgba(42,21,8,.35)" }}>Appears at the top of your invite</div>
+              </div>
+            )}
+          </div>
+
+          {/* Section 4: Background music */}
+          <div style={{ background:"white",borderRadius:12,padding:"24px 28px",boxShadow:"0 2px 14px rgba(42,21,8,.07)",marginBottom:14 }}>
+            <div style={{ display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:8 }}>
+              <div style={{ fontFamily:"'Jost',sans-serif",fontSize:10,fontWeight:500,letterSpacing:2,textTransform:"uppercase",color:"rgba(42,21,8,.38)" }}>Background music</div>
+              <a href="https://pixabay.com/music/" target="_blank" rel="noopener noreferrer" style={{ fontFamily:"'Jost',sans-serif",fontSize:10,color:"#d4a843",textDecoration:"none" }}>Browse free music</a>
+            </div>
+            <p style={{ fontFamily:"'Jost',sans-serif",fontSize:12,fontWeight:300,color:"#8B6E4E",marginBottom:12,lineHeight:1.6 }}>Paste a direct link to a royalty-free .mp3. We recommend <strong style={{ fontWeight:500 }}>Pixabay Music</strong> — free, no credit needed.</p>
+            <label className="field-label">Song label (shown to guests)</label>
+            <input className="f-input" placeholder="e.g. Happy by Pharrell Williams" value={f.musicLabel||""} onChange={iSet("musicLabel")} style={{ marginBottom:10 }}/>
+            <label className="field-label">Audio URL (.mp3 link)</label>
+            <input className="f-input" placeholder="https://cdn.pixabay.com/audio/..." value={f.musicUrl||""} onChange={iSet("musicUrl")}/>
+            {f.musicUrl&&<audio controls src={f.musicUrl} style={{ width:"100%",marginTop:10,borderRadius:6,height:36 }}/>}
+          </div>
           {/* Share */}
           {inviteUrl ? (
             <div style={{ background:"white",borderRadius:12,padding:"20px 24px",boxShadow:"0 2px 14px rgba(42,21,8,.07)",display:"flex",gap:10,alignItems:"center" }}>
