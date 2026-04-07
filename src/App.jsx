@@ -1582,11 +1582,11 @@ export default function Steeped() {
       <nav className="nav">
         <NavLogo onClick={()=>{}}/>
         <div style={{ display:"flex",alignItems:"center",gap:10 }}>
+          <button onClick={()=>{ setMyInvites(readLocalInvites()); setView("my-invites"); }} style={{ display:"inline-flex",alignItems:"center",gap:6,padding:"7px 14px",borderRadius:4,border:"1px solid rgba(42,21,8,.14)",background:"transparent",color:"#8B6E4E",fontFamily:"'Jost',sans-serif",fontSize:12,cursor:"pointer",transition:"all .15s" }}>
+            ✉️ My Invites
+          </button>
           {(()=>{ const cnt=readLocalCards().length; return (
-            <button onClick={()=>{ setMyInvites(readLocalInvites()); setView("my-invites"); }} style={{ display:"inline-flex",alignItems:"center",gap:6,padding:"7px 14px",borderRadius:4,border:"1px solid rgba(42,21,8,.14)",background:"transparent",color:"#8B6E4E",fontFamily:"'Jost',sans-serif",fontSize:12,cursor:"pointer",transition:"all .15s",marginRight:4 }}>
-              ✉️ My Invites
-            </button>
-          <button onClick={()=>openMyDashboard()} style={{ display:"inline-flex",alignItems:"center",gap:6,padding:"7px 14px",borderRadius:4,border:cnt?"1px solid rgba(212,168,67,.4)":"1px solid rgba(42,21,8,.14)",background:cnt?"rgba(212,168,67,.1)":"transparent",color:cnt?"#8B6E4E":"#8B6E4E",fontFamily:"'Jost',sans-serif",fontSize:12,cursor:"pointer",transition:"all .15s" }}>
+            <button onClick={()=>openMyDashboard()} style={{ display:"inline-flex",alignItems:"center",gap:6,padding:"7px 14px",borderRadius:4,border:cnt?"1px solid rgba(212,168,67,.4)":"1px solid rgba(42,21,8,.14)",background:cnt?"rgba(212,168,67,.1)":"transparent",color:cnt?"#8B6E4E":"#8B6E4E",fontFamily:"'Jost',sans-serif",fontSize:12,cursor:"pointer",transition:"all .15s" }}>
               {Icon.user(13)} My Cards{cnt?<span style={{ background:"#d4a843",color:"white",borderRadius:"100px",fontSize:9,padding:"1px 7px",marginLeft:2 }}>{cnt}</span>:null}
             </button>
           ); })()}
