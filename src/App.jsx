@@ -1476,10 +1476,10 @@ export default function Steeped() {
             )}
 
             {!myCardsLoading && myCards.length===0 && (
-              <div className="my-cards-empty">
-                <div className="my-cards-empty-icon">{Icon.mail(60,"#2A1508")}</div>
-                <h2 className="my-cards-empty-title">No cards yet</h2>
-                <p className="my-cards-empty-sub">Every card you brew is saved here automatically,<br/>ready to pick up or send again.</p>
+              <div style={{ textAlign:"center",padding:"72px 20px",animation:"fadeUp .5s ease" }}>
+                <div style={{ marginBottom:22,opacity:.22 }}>{Icon.mail(60,"#2A1508")}</div>
+                <h2 style={{ fontFamily:"'Jost',sans-serif",fontSize:24,fontWeight:400,color:"#2A1508",marginBottom:10,letterSpacing:"-.2px" }}>No cards yet</h2>
+                <p style={{ fontFamily:"'Jost',sans-serif",fontSize:14,fontWeight:300,color:"#8B6E4E",lineHeight:1.85,marginBottom:28 }}>Every card you brew is saved here automatically,<br/>ready to pick up or send again.</p>
                 <button className="btn-hero" onClick={()=>setView("themes")}>Brew your first card {Icon.arrow(16,"#FAF5EE")}</button>
               </div>
             )}
