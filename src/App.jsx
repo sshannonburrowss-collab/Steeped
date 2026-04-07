@@ -1921,12 +1921,12 @@ export default function Steeped() {
               </div>}
             </div>
             {f.note&&<div className="invite-guest-note">"{f.note}"</div>}
-          </div>
             {f.location&&(
               <div style={{ borderTop:"1px solid rgba(42,21,8,.06)" }}>
-                <iframe src={`https://maps.google.com/maps?q=${encodeURIComponent(f.location)}&output=embed&z=15`}
+                <iframe
+                  src={"https://maps.google.com/maps?q="+encodeURIComponent(f.location)+"&output=embed&z=15"}
                   width="100%" height="200" style={{ display:"block",border:"none" }} loading="lazy" title="Map"/>
-                <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(f.location)}`}
+                <a href={"https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(f.location)}
                   target="_blank" rel="noopener noreferrer"
                   style={{ display:"flex",alignItems:"center",justifyContent:"center",gap:6,padding:"10px",background:"#FAF5EE",fontFamily:"'Jost',sans-serif",fontSize:11,color:"#8B6E4E",textDecoration:"none" }}>
                   Open in Google Maps {Icon.arrow(11,"#8B6E4E")}
@@ -2059,9 +2059,9 @@ export default function Steeped() {
             <input className="f-input" placeholder="e.g. 123 Main St, Tulsa OK 74103" value={f.location} onChange={iSet("location")} style={{ marginBottom:12 }}/>
             {f.location ? (
               <div style={{ borderRadius:8,overflow:"hidden",border:"1px solid rgba(42,21,8,.1)" }}>
-                <iframe src={`https://maps.google.com/maps?q=${encodeURIComponent(f.location)}&output=embed&z=15`}
+                <iframe src={"https://maps.google.com/maps?q="+encodeURIComponent(f.location)+"&output=embed&z=15"}
                   width="100%" height="200" style={{ display:"block",border:"none" }} loading="lazy" title="Map"/>
-                <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(f.location)}`}
+                <a href={"https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(f.location)}
                   target="_blank" rel="noopener noreferrer"
                   style={{ display:"flex",alignItems:"center",justifyContent:"center",gap:6,padding:"9px",background:"#FAF5EE",fontFamily:"'Jost',sans-serif",fontSize:11,color:"#8B6E4E",textDecoration:"none",borderTop:"1px solid rgba(42,21,8,.08)" }}>
                   Open in Google Maps {Icon.arrow(11,"#8B6E4E")}
