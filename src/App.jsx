@@ -920,10 +920,15 @@ export default function Steeped() {
     setLoadingCard(true);
     try {
       const res = await fetch(`/api/get-card?id=${cid}`);
-      if (!res.ok) throw new Error("Not found");
+      if (!res.ok) throw new Error(`Card not found (${res.status})`);
       const data = await res.json();
       setViewCard(data); setCardId(cid); setView("view");
-    } catch(e) { console.error("loadCard:", e); }
+    } catch(e) {
+      console.error("loadCard error:", e.message);
+      // Clear the ?card= param so refresh goes to home cleanly
+      window.history.replaceState({}, "", window.location.pathname);
+      setView("home");
+    }
     setLoadingCard(false);
   };
 
