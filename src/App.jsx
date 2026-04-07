@@ -78,6 +78,19 @@ const THEMES = [
   { id:"blank",       name:"Just a Card",      icon:"mail",      accent:"#5a4030", cover:"linear-gradient(150deg,#faf7f2,#f0e8dc,#e8ddd0)" },
 ];
 
+const INVITE_TYPES = [
+  { id:"birthday",    label:"Birthday Party",   emoji:"🎂", accent:"#c0392b", cover:"linear-gradient(135deg,#fff0f0,#ffd6d6,#ffb3b3)", icon:"🎉" },
+  { id:"wedding",     label:"Wedding",          emoji:"💍", accent:"#8e6b3e", cover:"linear-gradient(135deg,#fefdf8,#f5edd8,#eedcb8)", icon:"🌸" },
+  { id:"babyshower",  label:"Baby Shower",      emoji:"🍼", accent:"#5b9bd5", cover:"linear-gradient(135deg,#f0f8ff,#d6ebff,#c0deff)", icon:"⭐" },
+  { id:"dinnerparty", label:"Dinner Party",     emoji:"🍽️", accent:"#2c5f2e", cover:"linear-gradient(135deg,#f0fff4,#d6f5dc,#b8ecc0)", icon:"🕯️" },
+  { id:"bookclub",    label:"Book Club",        emoji:"📚", accent:"#6b4f3a", cover:"linear-gradient(135deg,#fdf6f0,#f5e6d8,#edd6c0)", icon:"🍵" },
+  { id:"girlstrip",   label:"Girls' Trip",      emoji:"✈️", accent:"#7b3f9e", cover:"linear-gradient(135deg,#fdf0ff,#f0d6ff,#e8b8ff)", icon:"🌺" },
+  { id:"workevent",   label:"Work Event",       emoji:"💼", accent:"#1a4a7a", cover:"linear-gradient(135deg,#f0f4ff,#d6e4ff,#b8d0ff)", icon:"🎯" },
+  { id:"holiday",     label:"Holiday Gathering",emoji:"🎄", accent:"#1a5c2e", cover:"linear-gradient(135deg,#f0fff4,#c8f0d8,#a8e4bc)", icon:"❄️" },
+  { id:"graduation",  label:"Graduation",       emoji:"🎓", accent:"#7a5c00", cover:"linear-gradient(135deg,#fffdf0,#fff3c8,#ffe8a0)", icon:"⭐" },
+  { id:"housewarming",label:"Housewarming",     emoji:"🏡", accent:"#a0522d", cover:"linear-gradient(135deg,#fff8f0,#ffe8d0,#ffd4b0)", icon:"🌿" },
+];
+
 const FONTS = [
   { label:"Playfair",    value:"'Playfair Display', serif" },
   { label:"Lora",        value:"'Lora', serif" },
@@ -443,6 +456,67 @@ html,body{width:100%;min-height:100%;background:#FAF5EE;}
 .prodigi-badge{display:flex;align-items:center;justify-content:center;gap:5px;font-family:'Jost',sans-serif;font-size:9.5px;color:rgba(42,21,8,.32);letter-spacing:.5px;margin-top:12px;}
 
 @media(max-width:680px){.ship-addr-grid{grid-template-columns:1fr;}.ship-size-btn{font-size:10px;padding:7px 3px;}}
+}
+/* ══ INVITES ══════════════════════════════════════════════════════════ */
+.invite-types-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;margin-top:24px;}
+.invite-type-card{border-radius:12px;padding:28px 16px 20px;text-align:center;cursor:pointer;transition:all .2s;box-shadow:0 2px 14px rgba(42,21,8,.07);border:1.5px solid transparent;animation:fadeUp .4s ease both;}
+.invite-type-card:hover{transform:translateY(-4px);box-shadow:0 14px 36px rgba(42,21,8,.14);border-color:rgba(42,21,8,.1);}
+.invite-type-emoji{font-size:38px;margin-bottom:12px;display:block;line-height:1;}
+.invite-type-label{font-family:'Jost',sans-serif;font-size:13px;font-weight:400;color:#2A1508;margin-top:4px;}
+/* Invite editor */
+.invite-editor-wrap{max-width:700px;margin:0 auto;padding:40px 40px 80px;box-sizing:border-box;}
+.invite-preview{border-radius:16px;padding:44px 40px 40px;position:relative;overflow:hidden;box-shadow:0 20px 60px rgba(42,21,8,.18),0 4px 16px rgba(42,21,8,.1);margin-bottom:32px;animation:fadeUp .4s ease;}
+.invite-preview-watermark{position:absolute;bottom:24px;right:28px;font-size:48px;opacity:.12;pointer-events:none;}
+.invite-preview-host{font-family:'Jost',sans-serif;font-size:11px;font-weight:400;letter-spacing:3px;text-transform:uppercase;opacity:.55;margin-bottom:8px;}
+.invite-preview-title{font-family:'Playfair Display',serif;font-size:36px;font-weight:400;line-height:1.2;margin-bottom:20px;}
+.invite-preview-meta{display:flex;flex-direction:column;gap:8px;margin-bottom:20px;}
+.invite-preview-row{display:flex;align-items:center;gap:10px;font-family:'Jost',sans-serif;font-size:14px;font-weight:300;opacity:.8;}
+.invite-preview-divider{height:1px;background:currentColor;opacity:.15;margin:20px 0;}
+.invite-preview-note{font-family:'Lora',serif;font-size:14px;font-style:italic;line-height:1.75;opacity:.7;}
+.invite-preview-rsvp{display:inline-block;margin-top:24px;padding:11px 28px;border-radius:100px;font-family:'Jost',sans-serif;font-size:12px;font-weight:500;letter-spacing:1px;text-transform:uppercase;background:rgba(0,0,0,.12);color:inherit;cursor:default;}
+/* Form */
+.invite-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.invite-form-full{grid-column:1/-1;}
+/* Guest view */
+.invite-guest-wrap{max-width:560px;margin:0 auto;padding:40px 24px 80px;}
+.invite-guest-card{border-radius:20px;overflow:hidden;box-shadow:0 32px 80px rgba(42,21,8,.22),0 6px 20px rgba(42,21,8,.12);margin-bottom:32px;}
+.invite-guest-cover{padding:52px 40px 44px;text-align:center;}
+.invite-guest-title{font-family:'Playfair Display',serif;font-size:42px;font-weight:400;line-height:1.15;margin-bottom:8px;}
+.invite-guest-host{font-family:'Jost',sans-serif;font-size:12px;font-weight:300;letter-spacing:3px;text-transform:uppercase;opacity:.6;margin-bottom:28px;}
+.invite-guest-details{background:white;padding:32px 36px;display:flex;flex-direction:column;gap:16px;}
+.invite-guest-detail-row{display:flex;align-items:flex-start;gap:14px;}
+.invite-guest-detail-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:17px;}
+.invite-guest-detail-label{font-family:'Jost',sans-serif;font-size:10px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:rgba(42,21,8,.38);margin-bottom:2px;}
+.invite-guest-detail-val{font-family:'Jost',sans-serif;font-size:14px;font-weight:400;color:#2A1508;line-height:1.5;}
+.invite-guest-note{padding:24px 36px 32px;background:#FDFAF6;border-top:1px solid rgba(42,21,8,.06);font-family:'Lora',serif;font-size:14px;font-style:italic;color:#5a3a10;line-height:1.8;}
+/* RSVP */
+.rsvp-section{background:white;border-radius:16px;padding:28px 28px 24px;box-shadow:0 4px 24px rgba(42,21,8,.08);margin-bottom:20px;}
+.rsvp-title{font-family:'Jost',sans-serif;font-size:13px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:rgba(42,21,8,.4);margin-bottom:16px;}
+.rsvp-btns{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;}
+.rsvp-btn{padding:14px 8px;border-radius:10px;border:1.5px solid rgba(42,21,8,.12);background:white;font-family:'Jost',sans-serif;font-size:13px;font-weight:400;color:#8B6E4E;cursor:pointer;transition:all .15s;text-align:center;}
+.rsvp-btn:hover{border-color:rgba(42,21,8,.3);background:#FAF5EE;}
+.rsvp-btn.yes{border-color:#2a7a50;background:rgba(42,122,80,.08);color:#2a7a50;}
+.rsvp-btn.maybe{border-color:#c8860a;background:rgba(200,134,10,.08);color:#c8860a;}
+.rsvp-btn.no{border-color:#b84848;background:rgba(184,72,72,.08);color:#b84848;}
+/* My invites */
+.my-inv-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+.my-inv-card{border-radius:12px;overflow:hidden;box-shadow:0 2px 14px rgba(42,21,8,.08);border:1.5px solid rgba(42,21,8,.07);cursor:pointer;transition:transform .2s,box-shadow .2s;animation:fadeUp .4s ease both;}
+.my-inv-card:hover{transform:translateY(-4px);box-shadow:0 14px 36px rgba(42,21,8,.14);}
+.my-inv-cover{height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:16px;}
+.my-inv-body{padding:12px 14px;background:white;}
+@media(max-width:680px){
+  .invite-types-grid{grid-template-columns:repeat(2,1fr);}
+  .invite-editor-wrap{padding:20px 16px 60px;}
+  .invite-preview{padding:32px 24px 28px;}
+  .invite-preview-title{font-size:26px;}
+  .invite-form-grid{grid-template-columns:1fr;}
+  .invite-guest-cover{padding:36px 24px 32px;}
+  .invite-guest-title{font-size:30px;}
+  .invite-guest-details{padding:24px 20px;}
+  .my-inv-grid{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:400px){
+  .my-inv-grid{grid-template-columns:1fr;}
 }
 `;
 
@@ -833,7 +907,23 @@ function ColorPicker({ value, onChange }) {
 export default function Steeped() {
   const [view, setView] = useState("home");
   const [theme, setTheme] = useState(null);
-  const [pendingTheme, setPendingTheme] = useState(null); // theme waiting for recipient name
+  const [pendingTheme, setPendingTheme] = useState(null);
+  // ── Invite state ───────────────────────────────────────────────
+  const [inviteView, setInviteView] = useState(null); // "types"|"editor"|"guest"|"my-invites"
+  const [inviteType, setInviteType] = useState(null);
+  const [inviteId, setInviteId] = useState(null);
+  const [inviteForm, setInviteForm] = useState({
+    title:"", host:"", date:"", time:"", location:"", dress:"", note:"", rsvpDeadline:""
+  });
+  const [myInvites, setMyInvites] = useState([]);
+  const [guestInvite, setGuestInvite] = useState(null);
+  const [rsvpName, setRsvpName] = useState("");
+  const [rsvpEmail, setRsvpEmail] = useState("");
+  const [rsvpChoice, setRsvpChoice] = useState(null); // "yes"|"maybe"|"no"
+  const [rsvpSent, setRsvpSent] = useState(false);
+  const [inviteSaving, setInviteSaving] = useState(false);
+  const [inviteCopied, setInviteCopied] = useState(false);
+  const [inviteUrl, setInviteUrl] = useState(""); // theme waiting for recipient name
   const [pendingRecipient, setPendingRecipient] = useState("");
   const [activePage, setActivePage] = useState(0);
   const [pages, setPages] = useState([makePage(1)]);
@@ -932,6 +1022,8 @@ export default function Steeped() {
     const params = new URLSearchParams(window.location.search);
     const cid = params.get("card");
     if (cid) loadCard(cid);
+    const iid = params.get("invite");
+    if (iid) loadGuestInvite(iid);
     supabase.auth.getSession().then(({ data: { session } }) => { if (session?.user) setUser(session.user); });
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => { setUser(session?.user||null); });
     return () => listener?.subscription?.unsubscribe();
@@ -1319,6 +1411,62 @@ export default function Steeped() {
   };
 
   // Auto-persist to local store whenever navigating away from editor
+  // ── Invite helpers ────────────────────────────────────────────
+  const iSet = k => e => setInviteForm(f=>({...f,[k]:e.target.value}));
+
+  const readLocalInvites = () => {
+    try { return JSON.parse(localStorage.getItem("steeped_invites")||"[]"); } catch(e){ return []; }
+  };
+  const writeLocalInvites = (arr) => {
+    try { localStorage.setItem("steeped_invites", JSON.stringify(arr.slice(0,50))); } catch(e){}
+  };
+  const persistInviteLocally = (inv) => {
+    const existing = readLocalInvites();
+    const idx = existing.findIndex(i=>i.id===inv.id);
+    const entry = {...inv, updatedAt:new Date().toISOString()};
+    if(idx>=0) existing[idx]=entry; else existing.unshift(entry);
+    writeLocalInvites(existing);
+  };
+  const saveInvite = async () => {
+    setInviteSaving(true);
+    const id = inviteId || `inv_${uid()}`;
+    if(!inviteId) setInviteId(id);
+    const inv = { id, type:inviteType, form:inviteForm, rsvps:[], createdAt:new Date().toISOString(), updatedAt:new Date().toISOString() };
+    persistInviteLocally(inv);
+    const url = `${window.location.origin}/?invite=${id}`;
+    setInviteUrl(url);
+    try {
+      const res = await fetch("/api/save-invite",{ method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({inviteId:id, type:inviteType, form:inviteForm, userId:user?.id}) });
+      if(res.ok){ const data=await res.json(); if(data.inviteId){ setInviteId(data.inviteId); setInviteUrl(`${window.location.origin}/?invite=${data.inviteId}`); persistInviteLocally({...inv,id:data.inviteId}); } }
+    } catch(e){ console.warn("save-invite API unavailable"); }
+    setInviteSaving(false);
+  };
+  const loadGuestInvite = async (iid) => {
+    const local = readLocalInvites().find(i=>i.id===iid);
+    if(local){ setGuestInvite(local); setView("invite-guest"); return; }
+    try {
+      const res = await fetch(`/api/get-invite?id=${iid}`);
+      if(res.ok){ const data=await res.json(); persistInviteLocally(data); setGuestInvite(data); setView("invite-guest"); }
+    } catch(e){ console.error(e); }
+  };
+  const submitRsvp = async () => {
+    if(!rsvpName.trim()||!rsvpChoice) return;
+    const rsvp = { id:uid(), name:rsvpName.trim(), email:rsvpEmail.trim(), response:rsvpChoice, at:new Date().toISOString() };
+    const updated = {...guestInvite, rsvps:[...(guestInvite.rsvps||[]), rsvp]};
+    setGuestInvite(updated); persistInviteLocally(updated); setRsvpSent(true);
+    try { await fetch("/api/rsvp-invite",{ method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({inviteId:guestInvite.id, rsvp}) }); } catch(e){}
+  };
+  const openInviteEditor = (type, existingInvite=null) => {
+    setInviteType(type);
+    if(existingInvite){ setInviteId(existingInvite.id); setInviteForm(existingInvite.form||{}); setInviteUrl(`${window.location.origin}/?invite=${existingInvite.id}`); }
+    else { setInviteId(null); setInviteForm({title:"",host:user?.user_metadata?.full_name||"",date:"",time:"",location:"",dress:"",note:"",rsvpDeadline:""}); setInviteUrl(""); }
+    setView("invite-editor");
+  };
+  const loadMyInvites = () => {
+    setMyInvites(readLocalInvites());
+    setView("my-invites");
+  };
+
   const navAwayFromEditor = (dest) => {
     if (view === "editor" && theme) {
       const snap = { id: cardId || `local_${uid()}`, theme, pages, coverItems, updatedAt: new Date().toISOString() };
@@ -1435,7 +1583,10 @@ export default function Steeped() {
         <NavLogo onClick={()=>{}}/>
         <div style={{ display:"flex",alignItems:"center",gap:10 }}>
           {(()=>{ const cnt=readLocalCards().length; return (
-            <button onClick={()=>openMyDashboard()} style={{ display:"inline-flex",alignItems:"center",gap:6,padding:"7px 14px",borderRadius:4,border:cnt?"1px solid rgba(212,168,67,.4)":"1px solid rgba(42,21,8,.14)",background:cnt?"rgba(212,168,67,.1)":"transparent",color:cnt?"#8B6E4E":"#8B6E4E",fontFamily:"'Jost',sans-serif",fontSize:12,cursor:"pointer",transition:"all .15s" }}>
+            <button onClick={()=>{ setMyInvites(readLocalInvites()); setView("my-invites"); }} style={{ display:"inline-flex",alignItems:"center",gap:6,padding:"7px 14px",borderRadius:4,border:"1px solid rgba(42,21,8,.14)",background:"transparent",color:"#8B6E4E",fontFamily:"'Jost',sans-serif",fontSize:12,cursor:"pointer",transition:"all .15s",marginRight:4 }}>
+              ✉️ My Invites
+            </button>
+          <button onClick={()=>openMyDashboard()} style={{ display:"inline-flex",alignItems:"center",gap:6,padding:"7px 14px",borderRadius:4,border:cnt?"1px solid rgba(212,168,67,.4)":"1px solid rgba(42,21,8,.14)",background:cnt?"rgba(212,168,67,.1)":"transparent",color:cnt?"#8B6E4E":"#8B6E4E",fontFamily:"'Jost',sans-serif",fontSize:12,cursor:"pointer",transition:"all .15s" }}>
               {Icon.user(13)} My Cards{cnt?<span style={{ background:"#d4a843",color:"white",borderRadius:"100px",fontSize:9,padding:"1px 7px",marginLeft:2 }}>{cnt}</span>:null}
             </button>
           ); })()}
@@ -1452,7 +1603,10 @@ export default function Steeped() {
           <div className="hero-eyebrow">a little warmth, sent with care</div>
           <h1 className="hero-title">Cards <em>brewed</em><br/>with kindness</h1>
           <p className="hero-sub">Beautiful multi-page cards for every occasion.<br/>Sign together, add photos &amp; GIFs, share warmly.</p>
-          <button className="btn-hero" onClick={()=>setView("themes")}>Brew a card {Icon.arrow(16,"#FAF5EE")}</button>
+          <div style={{ display:"flex",gap:12,flexWrap:"wrap",justifyContent:"center" }}>
+              <button className="btn-hero" onClick={()=>setView("themes")}>Brew a card {Icon.arrow(16,"#FAF5EE")}</button>
+              <button className="btn-hero" style={{ background:"white",color:"#2A1508",border:"2px solid rgba(42,21,8,.15)",boxShadow:"0 4px 18px rgba(42,21,8,.08)" }} onClick={()=>setView("invite-types")}>Create an invite {Icon.arrow(16,"#2A1508")}</button>
+            </div>
           <div className="hero-pills">{["Multiple signing pages","Custom cover design","Drag & resize anything","Photos & GIFs","Email, text or print"].map(f=><span key={f} className="pill">{f}</span>)}</div>
         </div>
         <div className="fan-wrap">{THEMES.slice(0,5).map((t,i)=>{ const rots=[-10,-4,0,5,11],ty=[5,2,0,2,5]; return <div key={t.id} className="fan-card" onClick={()=>goEditor(t)} style={{ background:t.cover,transform:`rotate(${rots[i]}deg) translateY(${ty[i]}px)`,zIndex:i===2?5:i }}><div style={{ color:t.accent }}>{Icon[t.icon](26,t.accent)}</div><div className="fan-card-name" style={{ color:t.accent }}>{t.name.split(" ")[0]}</div></div>; })}</div>
@@ -1654,6 +1808,247 @@ export default function Steeped() {
       </div>
     );
   }
+
+  // ── Invite: guest RSVP view ──────────────────────────────────────────────
+  if (view==="invite-guest"&&guestInvite) {
+    const it = INVITE_TYPES.find(x=>x.id===guestInvite.type)||INVITE_TYPES[0];
+    const f = guestInvite.form||{};
+    const yesCount = (guestInvite.rsvps||[]).filter(r=>r.response==="yes").length;
+    return (
+      <div className="app"><style>{CSS}</style>
+        <nav className="nav">
+          <NavLogo onClick={()=>window.location.href="/"}/>
+          <button className="btn-dark" onClick={()=>{ setView("invite-types"); }}>Create your own {Icon.arrow(14,"#FAF5EE")}</button>
+        </nav>
+        <div className="invite-guest-wrap">
+          <div className="invite-guest-card" style={{ animation:"fadeUp .5s ease" }}>
+            <div className="invite-guest-cover" style={{ background:it.cover }}>
+              <div style={{ fontSize:52,marginBottom:12 }}>{it.emoji}</div>
+              {f.host&&<div className="invite-guest-host" style={{ color:it.accent }}>{f.host} invites you to</div>}
+              <div className="invite-guest-title" style={{ color:it.accent }}>{f.title||it.label}</div>
+              {yesCount>0&&<div style={{ fontFamily:"'Jost',sans-serif",fontSize:12,fontWeight:300,color:it.accent,opacity:.6,marginTop:8 }}>{yesCount} {yesCount===1?"person is":"people are"} coming</div>}
+            </div>
+            <div className="invite-guest-details">
+              {f.date&&<div className="invite-guest-detail-row">
+                <div className="invite-guest-detail-icon" style={{ background:it.cover }}>📅</div>
+                <div><div className="invite-guest-detail-label">Date & Time</div><div className="invite-guest-detail-val">{new Date(f.date).toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric",year:"numeric"})}{f.time&&` at ${f.time}`}</div></div>
+              </div>}
+              {f.location&&<div className="invite-guest-detail-row">
+                <div className="invite-guest-detail-icon" style={{ background:it.cover }}>📍</div>
+                <div><div className="invite-guest-detail-label">Location</div><div className="invite-guest-detail-val">{f.location}</div></div>
+              </div>}
+              {f.dress&&<div className="invite-guest-detail-row">
+                <div className="invite-guest-detail-icon" style={{ background:it.cover }}>👗</div>
+                <div><div className="invite-guest-detail-label">Dress Code</div><div className="invite-guest-detail-val">{f.dress}</div></div>
+              </div>}
+              {f.rsvpDeadline&&<div className="invite-guest-detail-row">
+                <div className="invite-guest-detail-icon" style={{ background:it.cover }}>✉️</div>
+                <div><div className="invite-guest-detail-label">RSVP by</div><div className="invite-guest-detail-val">{new Date(f.rsvpDeadline).toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"})}</div></div>
+              </div>}
+            </div>
+            {f.note&&<div className="invite-guest-note">"{f.note}"</div>}
+          </div>
+
+          {!rsvpSent ? (
+            <div className="rsvp-section">
+              <div className="rsvp-title">Will you be there?</div>
+              <div className="rsvp-btns">
+                <button className={`rsvp-btn${rsvpChoice==="yes"?" yes":""}`} onClick={()=>setRsvpChoice("yes")}>✓ Yes</button>
+                <button className={`rsvp-btn${rsvpChoice==="maybe"?" maybe":""}`} onClick={()=>setRsvpChoice("maybe")}>~ Maybe</button>
+                <button className={`rsvp-btn${rsvpChoice==="no"?" no":""}`} onClick={()=>setRsvpChoice("no")}>✗ Can't make it</button>
+              </div>
+              <label style={{ fontFamily:"'Jost',sans-serif",fontSize:11,fontWeight:500,letterSpacing:1.5,textTransform:"uppercase",color:"rgba(42,21,8,.38)",display:"block",marginBottom:6 }}>Your name</label>
+              <input className="f-input" placeholder="Your name" value={rsvpName} onChange={e=>setRsvpName(e.target.value)} style={{ marginBottom:10 }}/>
+              <label style={{ fontFamily:"'Jost',sans-serif",fontSize:11,fontWeight:500,letterSpacing:1.5,textTransform:"uppercase",color:"rgba(42,21,8,.38)",display:"block",marginBottom:6 }}>Email (optional)</label>
+              <input className="f-input" type="email" placeholder="you@example.com" value={rsvpEmail} onChange={e=>setRsvpEmail(e.target.value)} style={{ marginBottom:16 }}/>
+              <button className="btn-dark" style={{ width:"100%",justifyContent:"center",opacity:(!rsvpName.trim()||!rsvpChoice)?.5:1 }} onClick={submitRsvp} disabled={!rsvpName.trim()||!rsvpChoice}>
+                Send my RSVP
+              </button>
+            </div>
+          ) : (
+            <div style={{ textAlign:"center",padding:"32px 20px",background:"white",borderRadius:16,boxShadow:"0 4px 24px rgba(42,21,8,.08)" }}>
+              {Icon.check(52)}
+              <div style={{ fontFamily:"'Jost',sans-serif",fontSize:20,fontWeight:400,color:"#2A1508",marginTop:14,marginBottom:8 }}>
+                {rsvpChoice==="yes"?"See you there! 🎉":rsvpChoice==="maybe"?"Hopefully see you soon!":"Thanks for letting us know."}
+              </div>
+              <p style={{ fontFamily:"'Jost',sans-serif",fontSize:13,fontWeight:300,color:"#8B6E4E",lineHeight:1.7 }}>Your RSVP has been recorded.</p>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // ── Invite: type picker ───────────────────────────────────────────────────
+  if (view==="invite-types") return (
+    <div className="app"><style>{CSS}</style>
+      <nav className="nav">
+        <NavLogo onClick={()=>setView("home")}/>
+        <button className="btn-ghost" onClick={()=>setView("home")}>{Icon.back(13)} Back</button>
+      </nav>
+      <div style={{ maxWidth:900,margin:"0 auto",padding:"44px 40px 80px" }}>
+        <div style={{ marginBottom:32 }}>
+          <div style={{ fontFamily:"'Jost',sans-serif",fontSize:11,fontWeight:300,letterSpacing:4,textTransform:"uppercase",color:"rgba(42,21,8,.45)",marginBottom:10 }}>create an invite</div>
+          <h2 style={{ fontFamily:"'Jost',sans-serif",fontSize:34,fontWeight:400,color:"#2A1508",margin:"0 0 8px",letterSpacing:"-.3px" }}>What's the occasion?</h2>
+          <p style={{ fontFamily:"'Jost',sans-serif",fontSize:14,fontWeight:300,color:"#8B6E4E",lineHeight:1.7,margin:0 }}>Choose a type and we'll help you craft a beautiful invite in minutes.</p>
+        </div>
+        <div className="invite-types-grid">
+          {INVITE_TYPES.map((it,i)=>(
+            <div key={it.id} className="invite-type-card" style={{ background:it.cover,animationDelay:`${i*.05}s` }} onClick={()=>openInviteEditor(it.id)}>
+              <span className="invite-type-emoji">{it.emoji}</span>
+              <div className="invite-type-label" style={{ color:it.accent }}>{it.label}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+
+  // ── Invite: editor ────────────────────────────────────────────────────────
+  if (view==="invite-editor"&&inviteType) {
+    const it = INVITE_TYPES.find(x=>x.id===inviteType)||INVITE_TYPES[0];
+    const f = inviteForm;
+    return (
+      <div className="app"><style>{CSS}</style>
+        <nav className="nav">
+          <NavLogo onClick={()=>setView("home")}/>
+          <div style={{ display:"flex",gap:8,alignItems:"center" }}>
+            {user&&<span className="nav-user-name">{user.user_metadata?.full_name||user.email}</span>}
+            <button className="btn-ghost-sm" onClick={()=>setView("invite-types")}>{Icon.back(13)} Back</button>
+            <button className="btn-send" onClick={saveInvite} disabled={inviteSaving}>
+              {inviteSaving?<><span className="spinner"/> Saving…</>:<>{Icon.send(14,"#FAF5EE")} Save & Share</>}
+            </button>
+          </div>
+        </nav>
+        <div className="invite-editor-wrap">
+          {/* Live preview */}
+          <div className="invite-preview" style={{ background:it.cover,color:it.accent }}>
+            <div className="invite-preview-watermark">{it.emoji}</div>
+            {f.host&&<div className="invite-preview-host">{f.host} invites you to</div>}
+            <div className="invite-preview-title">{f.title||it.label}</div>
+            <div className="invite-preview-meta">
+              {f.date&&<div className="invite-preview-row"><span>📅</span><span>{new Date(f.date).toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"})}{f.time&&` at ${f.time}`}</span></div>}
+              {f.location&&<div className="invite-preview-row"><span>📍</span><span>{f.location}</span></div>}
+              {f.dress&&<div className="invite-preview-row"><span>👗</span><span>{f.dress}</span></div>}
+            </div>
+            {f.note&&<><div className="invite-preview-divider"/><div className="invite-preview-note">"{f.note}"</div></>}
+            <div style={{ marginTop:24 }}><span className="invite-preview-rsvp">RSVP</span></div>
+          </div>
+
+          {/* Form */}
+          <div style={{ background:"white",borderRadius:12,padding:"28px 28px 24px",boxShadow:"0 2px 14px rgba(42,21,8,.07)",marginBottom:20 }}>
+            <div style={{ fontFamily:"'Jost',sans-serif",fontSize:10,fontWeight:500,letterSpacing:2,textTransform:"uppercase",color:"rgba(42,21,8,.38)",marginBottom:18 }}>Event details</div>
+            <div className="invite-form-grid">
+              <div className="invite-form-full">
+                <label className="field-label">Event title</label>
+                <input className="f-input" placeholder={`e.g. Emma's 30th Birthday 🎂`} value={f.title} onChange={iSet("title")}/>
+              </div>
+              <div>
+                <label className="field-label">Hosted by</label>
+                <input className="f-input" placeholder="Your name" value={f.host} onChange={iSet("host")}/>
+              </div>
+              <div>
+                <label className="field-label">Dress code (optional)</label>
+                <input className="f-input" placeholder="e.g. Smart casual" value={f.dress} onChange={iSet("dress")}/>
+              </div>
+              <div>
+                <label className="field-label">Date</label>
+                <input className="f-input" type="date" value={f.date} onChange={iSet("date")}/>
+              </div>
+              <div>
+                <label className="field-label">Time</label>
+                <input className="f-input" type="time" value={f.time} onChange={iSet("time")}/>
+              </div>
+              <div className="invite-form-full">
+                <label className="field-label">Location / Venue</label>
+                <input className="f-input" placeholder="Address or venue name" value={f.location} onChange={iSet("location")}/>
+              </div>
+              <div>
+                <label className="field-label">RSVP deadline (optional)</label>
+                <input className="f-input" type="date" value={f.rsvpDeadline} onChange={iSet("rsvpDeadline")}/>
+              </div>
+              <div className="invite-form-full">
+                <label className="field-label">Personal note (optional)</label>
+                <textarea className="f-textarea" rows={3} placeholder="Add a warm personal message…" value={f.note} onChange={iSet("note")}/>
+              </div>
+            </div>
+          </div>
+
+          {/* Share */}
+          {inviteUrl ? (
+            <div style={{ background:"white",borderRadius:12,padding:"20px 24px",boxShadow:"0 2px 14px rgba(42,21,8,.07)",display:"flex",gap:10,alignItems:"center" }}>
+              <div style={{ flex:1,fontFamily:"'Jost',sans-serif",fontSize:12,color:"#8B6E4E",background:"#FAF5EE",padding:"8px 12px",borderRadius:6,border:"1px solid rgba(42,21,8,.1)",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap" }}>{inviteUrl}</div>
+              <button className="btn-dark" style={{ flexShrink:0,padding:"8px 18px",fontSize:12 }} onClick={async()=>{ await navigator.clipboard.writeText(inviteUrl); setInviteCopied(true); setTimeout(()=>setInviteCopied(false),2200); }}>
+                {inviteCopied?"✓ Copied!":"Copy link"}
+              </button>
+            </div>
+          ) : (
+            <div style={{ textAlign:"center",padding:"16px",fontFamily:"'Jost',sans-serif",fontSize:12,color:"rgba(42,21,8,.38)",fontWeight:300 }}>
+              Hit "Save &amp; Share" to generate your invite link
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // ── My Invites view ───────────────────────────────────────────────────────
+  if (view==="my-invites") return (
+    <div className="app"><style>{CSS}</style>
+      <nav className="nav">
+        <NavLogo onClick={()=>setView("home")}/>
+        <div style={{ display:"flex",gap:8 }}>
+          {user&&<span className="nav-user-name">{user.user_metadata?.full_name||user.email}</span>}
+          <button className="btn-dark" onClick={()=>setView("invite-types")}>New invite {Icon.plus(12,"#FAF5EE")}</button>
+        </div>
+      </nav>
+      <div style={{ maxWidth:960,margin:"0 auto",padding:"44px 44px 80px",boxSizing:"border-box" }}>
+        <div style={{ fontFamily:"'Jost',sans-serif",fontSize:11,fontWeight:300,letterSpacing:4,textTransform:"uppercase",color:"rgba(42,21,8,.45)",marginBottom:10 }}>my invites</div>
+        <h1 style={{ fontFamily:"'Jost',sans-serif",fontSize:34,fontWeight:400,color:"#2A1508",margin:"0 0 8px" }}>Your Invites ✉️</h1>
+        <p style={{ fontFamily:"'Jost',sans-serif",fontSize:14,fontWeight:300,color:"#8B6E4E",marginBottom:32 }}>All your created invitations in one place.</p>
+        {myInvites.length===0 ? (
+          <div style={{ textAlign:"center",padding:"72px 20px" }}>
+            <div style={{ fontSize:52,marginBottom:16,opacity:.4 }}>✉️</div>
+            <h2 style={{ fontFamily:"'Jost',sans-serif",fontSize:22,fontWeight:400,color:"#2A1508",marginBottom:10 }}>No invites yet</h2>
+            <p style={{ fontFamily:"'Jost',sans-serif",fontSize:14,fontWeight:300,color:"#8B6E4E",marginBottom:24 }}>Create your first invite and share it with guests.</p>
+            <button className="btn-hero" onClick={()=>setView("invite-types")}>Create an invite {Icon.arrow(16,"#FAF5EE")}</button>
+          </div>
+        ) : (
+          <div className="my-inv-grid">
+            {myInvites.map((inv,i)=>{
+              const it = INVITE_TYPES.find(x=>x.id===inv.type)||INVITE_TYPES[0];
+              const f = inv.form||{};
+              const yCount=(inv.rsvps||[]).filter(r=>r.response==="yes").length;
+              const iid=inv.id;
+              const iurl=`${window.location.origin}/?invite=${iid}`;
+              return (
+                <div key={inv.id} className="my-inv-card" style={{ animationDelay:`${i*.05}s` }}>
+                  <div className="my-inv-cover" style={{ background:it.cover }} onClick={()=>openInviteEditor(it.id,inv)}>
+                    <div style={{ fontSize:32 }}>{it.emoji}</div>
+                    <div style={{ fontFamily:"'Jost',sans-serif",fontSize:12,fontWeight:300,color:it.accent,textAlign:"center" }}>{f.title||it.label}</div>
+                  </div>
+                  <div className="my-inv-body">
+                    <div style={{ fontFamily:"'Jost',sans-serif",fontSize:13,fontWeight:400,color:"#2A1508",marginBottom:4 }}>{f.title||it.label}</div>
+                    <div style={{ fontFamily:"'Jost',sans-serif",fontSize:11,fontWeight:300,color:"#8B6E4E",marginBottom:10,display:"flex",gap:10,flexWrap:"wrap" }}>
+                      {f.date&&<span>📅 {new Date(f.date).toLocaleDateString("en-US",{month:"short",day:"numeric"})}</span>}
+                      <span>✓ {yCount} going</span>
+                      <span>📨 {(inv.rsvps||[]).length} RSVPs</span>
+                    </div>
+                    <div style={{ display:"grid",gridTemplateColumns:"1fr 1fr",gap:5 }}>
+                      <button style={{ padding:"6px 4px",borderRadius:4,border:"1px solid rgba(42,21,8,.11)",background:"white",fontFamily:"'Jost',sans-serif",fontSize:10.5,color:"#8B6E4E",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:3 }} onClick={()=>openInviteEditor(it.id,inv)}>{Icon.edit(10,"#8B6E4E")} Edit</button>
+                      <button style={{ padding:"6px 4px",borderRadius:4,border:"none",background:"#2A1508",fontFamily:"'Jost',sans-serif",fontSize:10.5,color:"#FAF5EE",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:3 }} onClick={async()=>{ await navigator.clipboard.writeText(iurl); }}>
+                        {Icon.copy(10,"#FAF5EE")} Copy link
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </div>
+  );
 
   if (view==="themes"||pendingTheme) return (
     <div className="app"><style>{CSS}</style>
