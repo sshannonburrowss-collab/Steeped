@@ -937,14 +937,25 @@ export default function Steeped() {
 
   const loadCard = async (cid) => {
     setLoadingCard(true);
+
+    // 1. Try localStorage first (instant, works offline/pre-deploy)
+    const local = readLocalCards().find(c => c.id === cid);
+    if (local) {
+      setViewCard(local); setCardId(cid); setView("view");
+      setLoadingCard(false);
+      return;
+    }
+
+    // 2. Try the API (needed for recipients on other devices)
     try {
       const res = await fetch(`/api/get-card?id=${cid}`);
-      if (!res.ok) throw new Error(`Card not found (${res.status})`);
+      if (!res.ok) throw new Error(`API ${res.status}`);
       const data = await res.json();
+      // Cache locally so future visits are instant
+      persistCardLocally(data);
       setViewCard(data); setCardId(cid); setView("view");
     } catch(e) {
-      console.error("loadCard error:", e.message);
-      // Clear the ?card= param so refresh goes to home cleanly
+      console.error("loadCard failed:", e.message);
       window.history.replaceState({}, "", window.location.pathname);
       setView("home");
     }
@@ -959,21 +970,31 @@ export default function Steeped() {
     if (!cardId) setCardId(localId);
     const cardSnapshot = { id:localId, theme, pages, coverItems, updatedAt:new Date().toISOString() };
     persistCardLocally(cardSnapshot);
-    const url = `${window.location.origin}/?card=${localId}`;
-    setCardUrl(url);
+    // Set a provisional local URL immediately so the UI is responsive
+    const localUrl = `${window.location.origin}/?card=${localId}`;
+    setCardUrl(localUrl);
     if (!currentUser) { setSaving(false); return localId; }
     try {
       const res = await fetch("/api/save-card", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ theme, pages, coverItems, userId:currentUser.id, cardId:cardId||undefined }) });
+      if (!res.ok) throw new Error(`save-card ${res.status}`);
       const data = await res.json();
       if (data.cardId) {
         const remoteId = data.cardId;
         const remoteUrl = `${window.location.origin}/?card=${remoteId}`;
-        setCardId(remoteId); setCardUrl(remoteUrl);
-        // Update local store with real remote id
+        setCardId(remoteId);
+        setCardUrl(remoteUrl);
+        // Migrate local entry to the canonical remote ID
         persistCardLocally({ ...cardSnapshot, id:remoteId });
+        // Remove old local_xxx entry if ID changed
+        if (remoteId !== localId) {
+          const cards = readLocalCards().filter(c => c.id !== localId);
+          writeLocalCards(cards);
+        }
         setSaving(false); return remoteId;
       }
-    } catch(e) { /* API not available, local save succeeded */ }
+    } catch(e) {
+      console.warn("save-card API unavailable, using local ID:", e.message);
+    }
     setSaving(false); return localId;
   };
 
@@ -1039,7 +1060,7 @@ export default function Steeped() {
         const res = await fetch(`/api/my-cards?userId=${u.id}`);
         if (res.ok) {
           const data = await res.json();
-          const remote = data.cards || [];
+          const remote = Array.isArray(data) ? data : (data.cards || []);
           // Merge: remote wins on conflicts by id, local-only cards appended
           const remoteIds = new Set(remote.map(c => c.id));
           const localOnly = local.filter(c => !remoteIds.has(c.id));
