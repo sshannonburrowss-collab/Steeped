@@ -1739,12 +1739,16 @@ export default function Steeped() {
                 {pages.length>1&&<button className="page-del-btn" onClick={()=>delPage(activePage-1)}>{Icon.trash(13,"rgba(42,21,8,.28)")}</button>}
               </div>
 
+              {curPage.items.length===0&&(
+                <p style={{ fontFamily:"'Jost',sans-serif",fontSize:12,fontWeight:300,color:"rgba(42,21,8,.38)",textAlign:"center",marginBottom:12,lineHeight:1.7,fontStyle:"italic" }}>
+                  This page is waiting to be filled with warm words and kind hearts…
+                </p>
+              )}
               <div className="card-scene" onClick={e=>e.stopPropagation()}>
                 <div className="card-wrap">
                   <div className="card-page">
                     <div style={{ position:"absolute",top:0,left:0,right:0,height:5,background:theme.cover,borderRadius:"5px 5px 0 0",opacity:.9 }}/>
                     <div ref={el=>pageRefs.current[activePage-1]=el} className="page-canvas" onClick={desel}>
-                      {curPage.items.length===0&&<div className="page-empty">This page is waiting to be filled<br/>with warm words and kind hearts…</div>}
                       {curPage.items.map(item=>(
                         <DItem key={item.id} item={item} selected={selPage===item.id}
                           onSelect={id=>{setSelPage(id);setSelCover(null);}}
@@ -1855,8 +1859,8 @@ export default function Steeped() {
                   </button>
                 </div>
               ) : (
-                <button className="btn-ghost-sm" style={{ width:"100%",fontSize:11 }} onClick={async()=>{ await saveCard(); }}>
-                  {saving ? "Saving…" : `${Icon.copy(11)} Generate invite link`}
+                <button className="btn-ghost-sm" style={{ width:"100%",fontSize:11,display:"flex",alignItems:"center",justifyContent:"center",gap:6 }} onClick={async()=>{ await saveCard(); }}>
+                  {saving ? "Saving…" : <>{Icon.copy(11)} Generate invite link</>}
                 </button>
               )}
               <p style={{ fontFamily:"'Jost',sans-serif",fontSize:10,fontWeight:300,color:"rgba(42,21,8,.38)",lineHeight:1.6,marginTop:5 }}>
