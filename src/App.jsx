@@ -1655,16 +1655,59 @@ export default function Steeped() {
     );
   }
 
-  if (view==="themes") return (
+  if (view==="themes"||pendingTheme) return (
     <div className="app"><style>{CSS}</style>
       <nav className="nav">
         <NavLogo onClick={()=>setView("home")}/>
-        <button className="btn-ghost" onClick={()=>setView("home")}>{Icon.back(13)} Back</button>
+        <button className="btn-ghost" onClick={()=>{ setPendingTheme(null); setView("home"); }}>{Icon.back(13)} Back</button>
       </nav>
       <div className="themes-view">
         <div className="section-header"><h2 className="section-title">Choose your card</h2><p className="section-sub">Each card opens into multiple pages — plenty of room for everyone to sign.</p></div>
-        <div className="themes-grid">{THEMES.map((t,i)=><div key={t.id} className="theme-card" style={{ background:t.cover,animationDelay:`${i*.06}s` }} onClick={()=>goEditor(t)}><div style={{ color:t.accent }}>{Icon[t.icon](34,t.accent)}</div><div className="theme-card-name" style={{ color:t.accent }}>{t.name}</div><div className="theme-card-sub" style={{ color:t.accent }}>Open card</div></div>)}</div>
+        <div className="themes-grid">{THEMES.map((t,i)=><div key={t.id} className="theme-card" style={{ background:t.cover,animationDelay:`${i*.06}s`,opacity:pendingTheme&&pendingTheme.id!==t.id?.7:1 }} onClick={()=>goEditor(t)}><div style={{ color:t.accent }}>{Icon[t.icon](34,t.accent)}</div><div className="theme-card-name" style={{ color:t.accent }}>{t.name}</div><div className="theme-card-sub" style={{ color:t.accent }}>Open card</div></div>)}</div>
       </div>
+
+      {pendingTheme&&(
+        <div style={{ position:"fixed",inset:0,background:"rgba(42,21,8,.52)",zIndex:9999,display:"flex",alignItems:"center",justifyContent:"center",padding:24 }}
+          onClick={e=>e.target===e.currentTarget&&setPendingTheme(null)}>
+          <div style={{ background:"white",borderRadius:14,padding:"36px 32px 28px",maxWidth:400,width:"100%",boxShadow:"0 28px 72px rgba(42,21,8,.28)",animation:"cardIn .22s cubic-bezier(.16,1,.3,1)" }}>
+            <div style={{ display:"flex",alignItems:"center",gap:12,marginBottom:24 }}>
+              <div style={{ width:44,height:44,borderRadius:8,background:pendingTheme.cover,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0 }}>
+                {Icon[pendingTheme.icon]?.(20,pendingTheme.accent)}
+              </div>
+              <div>
+                <div style={{ fontFamily:"'Jost',sans-serif",fontSize:11,fontWeight:500,letterSpacing:2,textTransform:"uppercase",color:"rgba(42,21,8,.38)",marginBottom:2 }}>Selected theme</div>
+                <div style={{ fontFamily:"'Jost',sans-serif",fontSize:16,fontWeight:400,color:"#2A1508" }}>{pendingTheme.name}</div>
+              </div>
+            </div>
+            <div style={{ fontFamily:"'Jost',sans-serif",fontSize:22,fontWeight:400,color:"#2A1508",marginBottom:6,letterSpacing:"-.2px" }}>Who is this for?</div>
+            <p style={{ fontFamily:"'Jost',sans-serif",fontSize:13,fontWeight:300,color:"#8B6E4E",lineHeight:1.7,marginBottom:20 }}>
+              Your card will be saved under their name so it’s easy to find later.
+            </p>
+            <input
+              autoFocus
+              className="f-input"
+              placeholder="e.g. Sarah, Mum, the whole team…"
+              value={pendingRecipient}
+              onChange={e=>setPendingRecipient(e.target.value)}
+              onKeyDown={e=>{
+                if(e.key==="Enter") confirmRecipientAndOpen(pendingTheme, pendingRecipient);
+                if(e.key==="Escape") setPendingTheme(null);
+              }}
+              style={{ marginBottom:16,fontSize:15 }}
+            />
+            <div style={{ display:"flex",gap:8 }}>
+              <button className="btn-ghost" style={{ flex:1,justifyContent:"center" }}
+                onClick={()=>confirmRecipientAndOpen(pendingTheme,"")}>
+                Skip
+              </button>
+              <button className="btn-dark" style={{ flex:2,justifyContent:"center" }}
+                onClick={()=>confirmRecipientAndOpen(pendingTheme,pendingRecipient)}>
+                Start the card →
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 
