@@ -1935,7 +1935,7 @@ export default function Steeped() {
             )}
             {f.musicUrl&&(
               <div style={{ padding:"16px 28px",borderTop:"1px solid rgba(42,21,8,.06)",background:"#FDFAF6" }}>
-                {f.musicLabel&&<div style={{ fontFamily:"'Jost',sans-serif",fontSize:11,color:"rgba(42,21,8,.45)",marginBottom:8 }}>{"\uD83C\uDFB5"} {f.musicLabel}</div>}
+                {f.musicLabel&&<div style={{ fontFamily:"'Jost',sans-serif",fontSize:11,color:"rgba(42,21,8,.45)",marginBottom:8 }}>{"🎵"} {f.musicLabel}</div>}
                 <audio controls src={f.musicUrl} style={{ width:"100%",height:36,borderRadius:6 }}/>
               </div>
             )}
