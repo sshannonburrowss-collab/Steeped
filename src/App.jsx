@@ -571,13 +571,32 @@ function DItem({ item, selected, onSelect, onDelete, onMove, onResize, onTextCha
 
   const handlePointerDown = useCallback((e) => {
     if (editing||resizing.current) return;
-    e.stopPropagation(); onSelect(item.id); dragging.current=true;
+    e.stopPropagation();
+    e.preventDefault(); // prevent native browser image/text drag
+    onSelect(item.id); dragging.current=true;
     const cx=e.touches?e.touches[0].clientX:e.clientX, cy=e.touches?e.touches[0].clientY:e.clientY;
-    const r=ref.current.getBoundingClientRect(); off.current={x:cx-r.left,y:cy-r.top};
-    const move=(e)=>{ if(!dragging.current||!containerRef.current)return; const mx=e.touches?e.touches[0].clientX:e.clientX,my=e.touches?e.touches[0].clientY:e.clientY; const c=containerRef.current.getBoundingClientRect(); onMove(item.id,Math.max(0,mx-c.left-off.current.x),Math.max(0,my-c.top-off.current.y)); };
-    const up=()=>{ dragging.current=false; window.removeEventListener("mousemove",move); window.removeEventListener("mouseup",up); window.removeEventListener("touchmove",move); window.removeEventListener("touchend",up); };
-    window.addEventListener("mousemove",move); window.addEventListener("mouseup",up);
-    window.addEventListener("touchmove",move,{passive:false}); window.addEventListener("touchend",up);
+    // Capture cursor offset relative to the item's top-left corner
+    const r=ref.current.getBoundingClientRect();
+    off.current={x:cx-r.left, y:cy-r.top};
+    const move=(ev)=>{
+      if(!dragging.current||!containerRef.current)return;
+      ev.preventDefault();
+      const mx=ev.touches?ev.touches[0].clientX:ev.clientX;
+      const my=ev.touches?ev.touches[0].clientY:ev.clientY;
+      const c=containerRef.current.getBoundingClientRect();
+      onMove(item.id,Math.max(0,mx-c.left-off.current.x),Math.max(0,my-c.top-off.current.y));
+    };
+    const up=()=>{
+      dragging.current=false;
+      window.removeEventListener("mousemove",move);
+      window.removeEventListener("mouseup",up);
+      window.removeEventListener("touchmove",move);
+      window.removeEventListener("touchend",up);
+    };
+    window.addEventListener("mousemove",move);
+    window.addEventListener("mouseup",up);
+    window.addEventListener("touchmove",move,{passive:false});
+    window.addEventListener("touchend",up);
   },[editing,item.id,onSelect,onMove,containerRef]);
 
   const handleResizeDown = useCallback((e) => {
@@ -595,7 +614,7 @@ function DItem({ item, selected, onSelect, onDelete, onMove, onResize, onTextCha
 
   return (
     <div ref={ref} className={`d-item${selected?" sel":""}`}
-      style={{ left:item.x,top:item.y,width:w,height:item.type==="text"?"auto":h,zIndex:selected?50:10 }}
+      style={{ left:item.x,top:item.y,width:w,height:item.type==="text"?"auto":h,zIndex:selected?50:10,userSelect:"none",WebkitUserSelect:"none",touchAction:"none" }}
       onMouseDown={handlePointerDown} onTouchStart={handlePointerDown}
       onClick={e=>{ e.stopPropagation(); onSelect(item.id); }}>
       <div className="d-border"/>
@@ -615,8 +634,8 @@ function DItem({ item, selected, onSelect, onDelete, onMove, onResize, onTextCha
           )}
         </div>
       )}
-      {item.type==="emoji"&&<span style={{ fontSize:Math.max(20,w*0.62),lineHeight:1,display:"block",textAlign:"center",width:w,height:h,lineHeight:h+"px" }}>{item.content}</span>}
-      {(item.type==="photo"||item.type==="gif")&&<img src={item.url} alt="" style={{ width:w,height:h,objectFit:"cover",borderRadius:7,display:"block",boxShadow:"0 4px 18px rgba(42,21,8,.15)" }} onError={e=>e.target.style.opacity=".3"}/>}
+      {item.type==="emoji"&&<span style={{ fontSize:Math.max(20,w*0.62),lineHeight:1,display:"block",textAlign:"center",width:w,height:h,lineHeight:h+"px",userSelect:"none",WebkitUserSelect:"none",pointerEvents:"none" }}>{item.content}</span>}
+      {(item.type==="photo"||item.type==="gif")&&<img src={item.url} alt="" draggable={false} onDragStart={e=>e.preventDefault()} style={{ width:w,height:h,objectFit:"cover",borderRadius:7,display:"block",boxShadow:"0 4px 18px rgba(42,21,8,.15)",userSelect:"none",WebkitUserSelect:"none",pointerEvents:"none" }} onError={e=>e.target.style.opacity=".3"}/>}
       {item.type==="audio"&&<div style={{ width:w,padding:"10px 12px",background:"#FAF5EE",borderRadius:8,border:"1px solid rgba(42,21,8,.1)",display:"flex",alignItems:"center",gap:8 }}>{Icon.music(17,"#8B6E4E")}<audio controls style={{ width:"100%",height:32 }} src={item.url}/></div>}
       {selected&&<>
         <div onMouseDown={handleResizeDown} onTouchStart={handleResizeDown}
