@@ -833,6 +833,8 @@ function ColorPicker({ value, onChange }) {
 export default function Steeped() {
   const [view, setView] = useState("home");
   const [theme, setTheme] = useState(null);
+  const [pendingTheme, setPendingTheme] = useState(null); // theme waiting for recipient name
+  const [pendingRecipient, setPendingRecipient] = useState("");
   const [activePage, setActivePage] = useState(0);
   const [pages, setPages] = useState([makePage(1)]);
   const [coverItems, setCoverItems] = useState([]);
@@ -968,7 +970,7 @@ export default function Steeped() {
     // Generate a local id if we don't have one yet
     const localId = cardId || `local_${uid()}`;
     if (!cardId) setCardId(localId);
-    const cardSnapshot = { id:localId, theme, pages, coverItems, updatedAt:new Date().toISOString() };
+    const cardSnapshot = { id:localId, theme, pages, coverItems, recipientName:form.name||"", updatedAt:new Date().toISOString() };
     persistCardLocally(cardSnapshot);
     // Set a provisional local URL immediately so the UI is responsive
     const localUrl = `${window.location.origin}/?card=${localId}`;
@@ -1096,6 +1098,7 @@ export default function Steeped() {
     setCardUrl(`${window.location.origin}/?card=${card.id}`);
     setSelectedTemplate("default");
     setActivePage(0);
+    if (card.recipientName) setForm(f=>({...f, name:card.recipientName}));
     setView("editor");
   };
 
@@ -1240,14 +1243,38 @@ export default function Steeped() {
       font:viewSignFont, size:15, color:viewSignColor, bold:false, italic:false,
       x:22, y:62+((viewCard.pages[viewSignPage]?.items||[]).length*82)
     };
+
+    // 1. Update UI immediately — never block on the API
+    const updatedCard = {
+      ...viewCard,
+      pages: viewCard.pages.map((pg,i) =>
+        i===viewSignPage ? {...pg, items:[...(pg.items||[]), sig]} : pg
+      ),
+      updatedAt: new Date().toISOString(),
+    };
+    setViewCard(updatedCard);
+
+    // 2. Persist to localStorage so the organizer sees it on their device
+    persistCardLocally(updatedCard);
+
+    // 3. Show success immediately
+    setViewSigned(true);
+    setViewSignMsg(""); setViewSignName(""); setViewSignAnonymous(false);
+    setTimeout(() => { setShowViewSignForm(false); setViewSigned(false); }, 2500);
+
+    // 4. Also try the API in the background (needed for cross-device sync)
     try {
-      const res = await fetch("/api/add-signature", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ cardId, pageIndex:viewSignPage, signature:sig }) });
-      if (res.ok) {
-        setViewCard(prev=>({ ...prev, pages:prev.pages.map((pg,i)=>i===viewSignPage?{...pg,items:[...(pg.items||[]),sig]}:pg) }));
-        setViewSigned(true); setViewSignMsg(""); setViewSignName(""); setViewSignAnonymous(false);
-        setTimeout(()=>{ setShowViewSignForm(false); setViewSigned(false); },2500);
+      const cid = viewCard.id || cardId;
+      if (cid) {
+        await fetch("/api/add-signature", {
+          method:"POST",
+          headers:{"Content-Type":"application/json"},
+          body:JSON.stringify({ cardId:cid, pageIndex:viewSignPage, signature:sig }),
+        });
       }
-    } catch(e) { console.error(e); }
+    } catch(e) {
+      console.warn("add-signature API unavailable, saved locally:", e.message);
+    }
     setViewSigning(false);
   };
 
@@ -1276,10 +1303,19 @@ export default function Steeped() {
   const handleUpload = (e) => { Array.from(e.target.files).forEach(f=>{ const r=new FileReader(); r.onload=ev=>setUploads(p=>[...p,{id:uid(),url:ev.target.result,label:f.name}]); r.readAsDataURL(f); }); };
   const allSigs = pages.flatMap(pg=>pg.items.filter(it=>it.type==="text").map(s=>({...s,pageNum:pg.num})));
   const goEditor = (t) => {
+    // Show "who is this for?" prompt before opening editor
+    setPendingTheme(t);
+    setPendingRecipient("");
+  };
+
+  const confirmRecipientAndOpen = (t, name) => {
     setTheme(t); setView("editor"); setActivePage(0);
     setPages([makePage(1)]); setCardId(null); setCardUrl("");
     setCoverItems(TEMPLATES["default"](t));
     setSelectedTemplate("default");
+    // Pre-fill recipient name in send form
+    setForm(f=>({...f, name:name.trim()}));
+    setPendingTheme(null); setPendingRecipient("");
   };
 
   // Auto-persist to local store whenever navigating away from editor
@@ -1542,7 +1578,7 @@ export default function Steeped() {
                       {/* Body */}
                       <div style={{ padding:"14px 16px 12px",textAlign:"left",background:"white" }}>
                         <div style={{ display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:6,marginBottom:6 }}>
-                          <div style={{ fontFamily:"'Jost',sans-serif",fontSize:14,fontWeight:400,color:"#2A1508",letterSpacing:.1,margin:0 }}>{th.name}</div>
+                          <div style={{ fontFamily:"'Jost',sans-serif",fontSize:14,fontWeight:400,color:"#2A1508",letterSpacing:.1,margin:0 }}>{card.recipientName ? `For ${card.recipientName}` : th.name}</div>
                           <button style={{ background:"none",border:"none",cursor:"pointer",fontFamily:"'Jost',sans-serif",fontSize:9.5,color:"rgba(42,21,8,.22)",padding:"2px 4px",display:"flex",alignItems:"center",borderRadius:3,flexShrink:0 }} onClick={()=>setDeleteConfirm(card.id)} title="Delete this card">
                             {Icon.trash(11,"rgba(42,21,8,.28)")}
                           </button>
