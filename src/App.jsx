@@ -1324,61 +1324,6 @@ export default function Steeped() {
   };
 
   /* sign modal for recipients */
-  const SignModal = () => (
-    <div className="modal-overlay" onClick={e=>e.target===e.currentTarget&&setShowViewSignForm(false)}>
-      <div className="sign-modal">
-        <div className="sign-modal-header">
-          <h2 className="modal-title">{viewSigned?"Signed!":"Sign this card"}</h2>
-          <button className="close-btn" onClick={()=>{ setShowViewSignForm(false); setViewSigned(false); }}>{Icon.x(14)}</button>
-        </div>
-        <div className="sign-modal-body">
-          {viewSigned?(
-            <div style={{ textAlign:"center",padding:"20px 0" }}>
-              {Icon.check(52)}
-              <div style={{ fontFamily:"'Playfair Display',serif",fontSize:20,marginTop:14,marginBottom:8 }}>Your message has been added!</div>
-              <p style={{ fontFamily:"'Jost',sans-serif",fontSize:13,color:"#8B6E4E",fontWeight:300,lineHeight:1.7 }}>Thank you for signing the card.</p>
-            </div>
-          ):(
-            <>
-              {/* Anonymous toggle */}
-              <label className="anon-toggle" onClick={()=>setViewSignAnonymous(v=>!v)}>
-                <input type="checkbox" checked={viewSignAnonymous} onChange={()=>{}} style={{ accentColor:"#d4a843" }}/>
-                <span className="anon-toggle-label">
-                  <strong style={{ fontWeight:500,display:"block",marginBottom:2 }}>Stay anonymous ✨</strong>
-                  Your name will appear as a secret admirer — revealed by the feeling, not the face.
-                </span>
-              </label>
-
-              {!viewSignAnonymous && <>
-                <label className="field-label" style={{ marginTop:14 }}>Your name</label>
-                <input className="f-input" placeholder="Your name" value={viewSignName} onChange={e=>setViewSignName(e.target.value)}/>
-              </>}
-
-              <label className="field-label" style={{ marginTop:14 }}>Your message</label>
-              <textarea className="f-textarea" rows={4} placeholder="Write something wonderful…" value={viewSignMsg} onChange={e=>setViewSignMsg(e.target.value)}/>
-              {(viewCard?.pages||[]).length>1&&<>
-                <label className="field-label">Add to page</label>
-                <select className="f-select" style={{ width:"100%",marginBottom:4 }} value={viewSignPage} onChange={e=>setViewSignPage(Number(e.target.value))}>
-                  {(viewCard?.pages||[]).map((p,i)=><option key={p.id} value={i}>Page {p.num}</option>)}
-                </select>
-              </>}
-              <div style={{ display:"flex",gap:8,alignItems:"flex-end",marginTop:10 }}>
-                <div className="style-col" style={{ flex:1 }}><span className="sub-label">Font</span><select className="f-select" style={{ width:"100%" }} value={viewSignFont} onChange={e=>setViewSignFont(e.target.value)}>{FONTS.map(f=><option key={f.value} value={f.value}>{f.label}</option>)}</select></div>
-                <div className="style-col" style={{flex:1}}>
-                  <span className="sub-label">Color</span>
-                  <ColorPicker value={viewSignColor} onChange={setViewSignColor}/>
-                </div>
-              </div>
-              <button className="btn-send" style={{ width:"100%",marginTop:16,justifyContent:"center" }} onClick={addViewSignature} disabled={viewSigning||!viewSignMsg.trim()}>
-                {viewSigning?<><span className="spinner"/> Signing…</>:<>{Icon.pen(14,"#FAF5EE")} {viewSignAnonymous?"Sign anonymously":"Sign this card"}</>}
-              </button>
-            </>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-
   const authProps = { authMode, setAuthMode, authForm, setAuthForm, authError, doSignUp, doSignIn, setShowAuth, authLoading };
 
   if (loadingCard) return (
@@ -1397,7 +1342,54 @@ export default function Steeped() {
         <button className="btn-dark" onClick={()=>setView("themes")}>Create your own {Icon.arrow(14,"#FAF5EE")}</button>
       </nav>
       <CardViewer theme={viewCard.theme} coverItems={viewCard.coverItems||[]} pages={viewCard.pages||[]} recipientName="" onSign={()=>setShowViewSignForm(true)}/>
-      {showViewSignForm&&<SignModal/>}
+      {showViewSignForm&&(
+        <div className="modal-overlay" onClick={e=>e.target===e.currentTarget&&setShowViewSignForm(false)}>
+          <div className="sign-modal">
+            <div className="sign-modal-header">
+              <h2 className="modal-title">{viewSigned?"Signed!":"Sign this card"}</h2>
+              <button className="close-btn" onClick={()=>{ setShowViewSignForm(false); setViewSigned(false); }}>{Icon.x(14)}</button>
+            </div>
+            <div className="sign-modal-body">
+              {viewSigned?(
+                <div style={{ textAlign:"center",padding:"20px 0" }}>
+                  {Icon.check(52)}
+                  <div style={{ fontFamily:"'Jost',sans-serif",fontSize:20,fontWeight:400,marginTop:14,marginBottom:8 }}>Your message has been added!</div>
+                  <p style={{ fontFamily:"'Jost',sans-serif",fontSize:13,color:"#8B6E4E",fontWeight:300,lineHeight:1.7 }}>Thank you for signing the card.</p>
+                </div>
+              ):(
+                <>
+                  <label className="anon-toggle" onClick={()=>setViewSignAnonymous(v=>!v)}>
+                    <input type="checkbox" checked={viewSignAnonymous} onChange={()=>{}} style={{ accentColor:"#d4a843" }}/>
+                    <span className="anon-toggle-label">
+                      <strong style={{ fontWeight:500,display:"block",marginBottom:2 }}>Stay anonymous ✨</strong>
+                      Your name will appear as a secret admirer — revealed by the feeling, not the face.
+                    </span>
+                  </label>
+                  {!viewSignAnonymous&&<>
+                    <label className="field-label" style={{ marginTop:14 }}>Your name</label>
+                    <input className="f-input" placeholder="Your name" value={viewSignName} onChange={e=>setViewSignName(e.target.value)}/>
+                  </>}
+                  <label className="field-label" style={{ marginTop:14 }}>Your message</label>
+                  <textarea className="f-textarea" rows={4} placeholder="Write something wonderful…" value={viewSignMsg} onChange={e=>setViewSignMsg(e.target.value)}/>
+                  {(viewCard?.pages||[]).length>1&&<>
+                    <label className="field-label">Add to page</label>
+                    <select className="f-select" style={{ width:"100%",marginBottom:4 }} value={viewSignPage} onChange={e=>setViewSignPage(Number(e.target.value))}>
+                      {(viewCard?.pages||[]).map((p,i)=><option key={p.id} value={i}>Page {p.num}</option>)}
+                    </select>
+                  </>}
+                  <div style={{ display:"flex",gap:8,alignItems:"flex-end",marginTop:10 }}>
+                    <div className="style-col" style={{ flex:1 }}><span className="sub-label">Font</span><select className="f-select" style={{ width:"100%" }} value={viewSignFont} onChange={e=>setViewSignFont(e.target.value)}>{FONTS.map(f=><option key={f.value} value={f.value}>{f.label}</option>)}</select></div>
+                    <div className="style-col" style={{ flex:1 }}><span className="sub-label">Color</span><ColorPicker value={viewSignColor} onChange={setViewSignColor}/></div>
+                  </div>
+                  <button className="btn-send" style={{ width:"100%",marginTop:16,justifyContent:"center" }} onClick={addViewSignature} disabled={viewSigning||!viewSignMsg.trim()}>
+                    {viewSigning?<><span className="spinner"/> Signing…</>:<>{Icon.pen(14,"#FAF5EE")} {viewSignAnonymous?"Sign anonymously":"Sign this card"}</>}
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 
