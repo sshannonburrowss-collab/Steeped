@@ -1441,9 +1441,9 @@ export default function Steeped() {
             {/* ── Top bar ── */}
             <div style={{ display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:24,marginBottom:36,flexWrap:"wrap" }}>
               <div style={{ flex:1,minWidth:0 }}>
-                <div className="mc-eyebrow">good {timeOfDay}</div>
-                <h1 className="mc-title">{firstName ? `Welcome back, ${firstName} ✨` : "My Cards ✨"}</h1>
-                <p className="mc-sub">Here are all the cards you’ve brewed with care.</p>
+                <div style={{fontFamily:"'Jost',sans-serif",fontWeight:300,fontSize:11,color:"rgba(42,21,8,.45)",letterSpacing:3,textTransform:"uppercase",marginBottom:10}}>good {timeOfDay}</div>
+                <h1 style={{fontFamily:"'Jost',sans-serif",fontSize:34,fontWeight:400,color:"#2A1508",margin:"0 0 8px",lineHeight:1.2,letterSpacing:"-.3px"}}>{firstName ? `Welcome back, ${firstName} ✨` : "My Cards ✨"}</h1>
+                <p style={{fontFamily:"'Jost',sans-serif",fontSize:14,fontWeight:300,color:"#8B6E4E",lineHeight:1.7,margin:0}}>Here are all the cards you’ve brewed with care.</p>
               </div>
               <button className="btn-dark" onClick={()=>setView("themes")} style={{ flexShrink:0,marginTop:4 }}>
                 {Icon.plus(13,"#FAF5EE")} New card
@@ -1454,8 +1454,8 @@ export default function Steeped() {
             {!user && (
               <div style={{ display:"flex",alignItems:"center",justifyContent:"space-between",gap:20,padding:"14px 18px",background:"linear-gradient(135deg,#FFF9F2,#FAF5EE)",border:"1px solid rgba(212,168,67,.28)",borderRadius:8,marginBottom:28,flexWrap:"wrap" }}>
                 <div>
-                  <div className="mc-banner-title">Sign in to sync your cards across devices</div>
-                  <div className="mc-banner-sub">Cards are saved locally for now — log in to keep them safe.</div>
+                  <div style={{fontFamily:"'Jost',sans-serif",fontSize:13,fontWeight:500,color:"#5a3a10",marginBottom:3}}>Sign in to sync your cards across devices</div>
+                  <div style={{fontFamily:"'Jost',sans-serif",fontSize:12,fontWeight:300,color:"#8B6E4E",lineHeight:1.5}}>Cards are saved locally for now — log in to keep them safe.</div>
                 </div>
                 <button className="btn-dark" style={{ fontSize:12,padding:"9px 20px",flexShrink:0 }} onClick={()=>{ setAuthMode("login"); setShowAuth(true); }}>
                   {Icon.user(12,"#FAF5EE")} Log in
@@ -1471,7 +1471,7 @@ export default function Steeped() {
             {myCardsLoading && (
               <div className="my-cards-loading">
                 <div className="spinner" style={{ width:26,height:26,borderWidth:3,borderColor:"rgba(42,21,8,.12)",borderTopColor:"#d4a843" }}/>
-                <p className="loading-text">Gathering your cards…</p>
+                <p style={{fontFamily:"'Jost',sans-serif",fontSize:13,fontWeight:300,color:"#8B6E4E"}}>Gathering your cards…</p>
               </div>
             )}
 
