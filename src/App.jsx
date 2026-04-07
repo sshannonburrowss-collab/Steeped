@@ -56,7 +56,7 @@ const TEMPLATES = {
     { id:uid(), type:"text", x:30, y:60, text:theme.name, font:"'Playfair Display',serif", size:42, color:theme.accent, bold:true, italic:false },
   ],
   script: (theme) => [
-    { id:uid(), type:"text", x:50, y:110, text:"With love,", font:"'Dancing Script',cursive", size:20, color:theme.accent, bold:false, italic:false },
+    { id:uid(), type:"text", x:50, y:110, text:theme.name, font:"'Dancing Script',cursive", size:32, color:theme.accent, bold:false, italic:true },
   ],
 };
 
