@@ -1496,38 +1496,38 @@ export default function Steeped() {
                   const isCopied = cardCopied===card.id;
                   const dateStr = card.updatedAt ? new Date(card.updatedAt).toLocaleDateString("en-US",{month:"short",day:"numeric"}) : null;
                   return (
-                    <div key={card.id} className="mc-card" style={{ animationDelay:`${i*.05}s` }}>
+                    <div key={card.id} style={{ background:"white",borderRadius:10,overflow:"hidden",boxShadow:"0 2px 14px rgba(42,21,8,.08)",border:"1.5px solid rgba(42,21,8,.07)",transition:"transform .2s,box-shadow .2s",animationDelay:`${i*.05}s`,animation:"fadeUp .4s ease both",minWidth:0 }}>
                       {/* Cover — click opens editor */}
-                      <div className="mc-cover" style={{ background:th.cover }} onClick={()=>loadCardIntoEditor(card)}>
-                        <div className="mc-cover-icon">{Icon[th.icon]?.(22,th.accent)}</div>
-                        <div className="mc-cover-text" style={{ color:th.accent,fontFamily:cti?.font||"'Playfair Display',serif" }}>
+                      <div style={{ height:148,position:"relative",overflow:"hidden",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:8,padding:16,background:th.cover }} onClick={()=>loadCardIntoEditor(card)}>
+                        <div style={{ opacity:.72,position:"relative",zIndex:2 }}>{Icon[th.icon]?.(22,th.accent)}</div>
+                        <div style={{ fontFamily:"'Jost',sans-serif",fontWeight:300,fontSize:13,color:th.accent,textAlign:"center",lineHeight:1.4,maxWidth:"85%",overflow:"hidden",display:"-webkit-box",WebkitLineClamp:2,WebkitBoxOrient:"vertical",position:"relative",zIndex:2 }}>
                           {cti?.text || th.name}
                         </div>
-                        <div className="mc-cover-watermark">{Icon[th.icon]?.(26,th.accent)}</div>
-                        <div className="mc-cover-cta"><span className="mc-cover-cta-label">Open card</span></div>
+                        <div style={{ opacity:.11,position:"absolute",bottom:8,right:10,pointerEvents:"none" }}>{Icon[th.icon]?.(26,th.accent)}</div>
+                        {/* Hover overlay */}
+                        <div className="mc-cover-cta"><span style={{ fontFamily:"'Jost',sans-serif",fontSize:12,letterSpacing:1,textTransform:"uppercase",color:"white",fontWeight:500 }}>Open card</span></div>
                       </div>
                       {/* Body */}
-                      <div className="mc-body">
+                      <div style={{ padding:"14px 16px 12px",textAlign:"left",background:"white" }}>
                         <div style={{ display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:6,marginBottom:6 }}>
-                          <div className="mc-name" style={{ margin:0 }}>{th.name}</div>
-                          {/* Delete button inline with title */}
-                          <button className="mc-del" onClick={()=>setDeleteConfirm(card.id)} title="Delete this card">
+                          <div style={{ fontFamily:"'Jost',sans-serif",fontSize:14,fontWeight:400,color:"#2A1508",letterSpacing:.1,margin:0 }}>{th.name}</div>
+                          <button style={{ background:"none",border:"none",cursor:"pointer",fontFamily:"'Jost',sans-serif",fontSize:9.5,color:"rgba(42,21,8,.22)",padding:"2px 4px",display:"flex",alignItems:"center",borderRadius:3,flexShrink:0 }} onClick={()=>setDeleteConfirm(card.id)} title="Delete this card">
                             {Icon.trash(11,"rgba(42,21,8,.28)")}
                           </button>
                         </div>
-                        <div className="mc-chips">
-                          <span className="mc-chip">{Icon.pen(10,"#8B6E4E")} {sigCount} sig{sigCount!==1?"s":""}</span>
-                          <span className="mc-chip">{Icon.copy(10,"#8B6E4E")} {pageCount} pg</span>
-                          {dateStr && <span className="mc-chip">{Icon.clock(10,"#8B6E4E")} {dateStr}</span>}
+                        <div style={{ display:"flex",gap:10,alignItems:"center",marginBottom:12,flexWrap:"wrap" }}>
+                          <span style={{ fontFamily:"'Jost',sans-serif",fontSize:10.5,fontWeight:300,color:"#8B6E4E",display:"inline-flex",alignItems:"center",gap:3 }}>{Icon.pen(10,"#8B6E4E")} {sigCount} sig{sigCount!==1?"s":""}</span>
+                          <span style={{ fontFamily:"'Jost',sans-serif",fontSize:10.5,fontWeight:300,color:"#8B6E4E",display:"inline-flex",alignItems:"center",gap:3 }}>{Icon.copy(10,"#8B6E4E")} {pageCount} pg</span>
+                          {dateStr && <span style={{ fontFamily:"'Jost',sans-serif",fontSize:10.5,fontWeight:300,color:"#8B6E4E",display:"inline-flex",alignItems:"center",gap:3 }}>{Icon.clock(10,"#8B6E4E")} {dateStr}</span>}
                         </div>
-                        <div className="mc-rule"/>
-                        <div className="mc-actions">
-                          <button className="mc-btn" onClick={()=>loadCardIntoEditor(card)}>{Icon.edit(10,"#8B6E4E")} Edit</button>
-                          <button className="mc-btn" onClick={()=>window.open(cardLink,"_blank")}>{Icon.arrow(10,"#8B6E4E")} View</button>
-                          <button className="mc-btn" onClick={async()=>{ await navigator.clipboard.writeText(cardLink); setCardCopied(card.id); setTimeout(()=>setCardCopied(null),2200); }}>
+                        <div style={{ height:1,background:"rgba(42,21,8,.06)",marginBottom:10 }}/>
+                        <div style={{ display:"grid",gridTemplateColumns:"1fr 1fr 1fr 1fr",gap:4 }}>
+                          <button style={{ padding:"7px 3px",borderRadius:4,border:"1px solid rgba(42,21,8,.11)",background:"white",fontFamily:"'Jost',sans-serif",fontSize:10.5,color:"#8B6E4E",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:3 }} onClick={()=>loadCardIntoEditor(card)}>{Icon.edit(10,"#8B6E4E")} Edit</button>
+                          <button style={{ padding:"7px 3px",borderRadius:4,border:"1px solid rgba(42,21,8,.11)",background:"white",fontFamily:"'Jost',sans-serif",fontSize:10.5,color:"#8B6E4E",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:3 }} onClick={()=>window.open(cardLink,"_blank")}>{Icon.arrow(10,"#8B6E4E")} View</button>
+                          <button style={{ padding:"7px 3px",borderRadius:4,border:"1px solid rgba(42,21,8,.11)",background:"white",fontFamily:"'Jost',sans-serif",fontSize:10.5,color:"#8B6E4E",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:3 }} onClick={async()=>{ await navigator.clipboard.writeText(cardLink); setCardCopied(card.id); setTimeout(()=>setCardCopied(null),2200); }}>
                             {isCopied?<>✓ Done</>:<>{Icon.copy(10,"#8B6E4E")} Copy</>}
                           </button>
-                          <button className="mc-btn-send" onClick={()=>{ loadCardIntoEditor(card); setTimeout(()=>setShowSend(true),60); }}>
+                          <button style={{ padding:"7px 3px",borderRadius:4,border:"none",background:"#2A1508",fontFamily:"'Jost',sans-serif",fontSize:10.5,color:"#FAF5EE",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:3 }} onClick={()=>{ loadCardIntoEditor(card); setTimeout(()=>setShowSend(true),60); }}>
                             {Icon.send(10,"#FAF5EE")} Send
                           </button>
                         </div>
