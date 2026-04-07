@@ -1597,22 +1597,75 @@ export default function Steeped() {
           <button className="btn-dark" onClick={()=>setView("themes")}>Create a card {Icon.arrow(14,"#FAF5EE")}</button>
         </div>
       </nav>
-      <div className="home">
+      <div className="home" style={{ paddingBottom:80 }}>
         <div className="steam-bg">{[0,1,2,3,4].map(i=><div key={i} className="steam-bubble" style={{ width:90+i*26,height:90+i*26,left:`${10+i*18}%`,bottom:0,animationDelay:`${i*1.3}s`,animationDuration:`${8+i*1}s` }}/>)}</div>
-        <div className="hero">
+
+        {/* ── Hero ── */}
+        <div className="hero" style={{ paddingBottom:40 }}>
           <div className="hero-eyebrow">a little warmth, sent with care</div>
-          <h1 className="hero-title">Cards <em>brewed</em><br/>with kindness</h1>
-          <p className="hero-sub">Beautiful multi-page cards for every occasion.<br/>Sign together, add photos &amp; GIFs, share warmly.</p>
-          <div style={{ display:"flex",gap:12,flexWrap:"wrap",justifyContent:"center" }}>
-              <button className="btn-hero" onClick={()=>setView("themes")}>Brew a card {Icon.arrow(16,"#FAF5EE")}</button>
-              <button className="btn-hero" style={{ background:"white",color:"#2A1508",border:"2px solid rgba(42,21,8,.15)",boxShadow:"0 4px 18px rgba(42,21,8,.08)" }} onClick={()=>setView("invite-types")}>Create an invite {Icon.arrow(16,"#2A1508")}</button>
-            </div>
-          <div className="hero-pills">{["Multiple signing pages","Custom cover design","Drag & resize anything","Photos & GIFs","Email, text or print"].map(f=><span key={f} className="pill">{f}</span>)}</div>
+          <h1 className="hero-title">Brewed<br/>with <em>kindness</em></h1>
+          <p className="hero-sub">Beautiful cards &amp; invites for every occasion.<br/>Sign together, share warmly, celebrate fully.</p>
+          <div className="hero-pills">{["Group signing","Photos & GIFs","RSVP tracking","Share via link","Email & print"].map(f=><span key={f} className="pill">{f}</span>)}</div>
         </div>
-        <div className="fan-wrap">{THEMES.slice(0,5).map((t,i)=>{ const rots=[-10,-4,0,5,11],ty=[5,2,0,2,5]; return <div key={t.id} className="fan-card" onClick={()=>goEditor(t)} style={{ background:t.cover,transform:`rotate(${rots[i]}deg) translateY(${ty[i]}px)`,zIndex:i===2?5:i }}><div style={{ color:t.accent }}>{Icon[t.icon](26,t.accent)}</div><div className="fan-card-name" style={{ color:t.accent }}>{t.name.split(" ")[0]}</div></div>; })}</div>
-        {/* ── Recent cards shelf on home page ── */}
+
+        {/* ── Two feature cards ── */}
+        <div style={{ width:"100%",maxWidth:800,margin:"0 auto",padding:"0 24px",position:"relative",zIndex:2 }}>
+          <div style={{ display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,animation:"fadeUp .5s ease both" }}>
+
+            {/* Cards feature */}
+            <div style={{ borderRadius:16,overflow:"hidden",boxShadow:"0 8px 32px rgba(42,21,8,.12)",cursor:"pointer",transition:"transform .22s,box-shadow .22s" }}
+              onClick={()=>setView("themes")}
+              onMouseEnter={e=>{ e.currentTarget.style.transform="translateY(-5px)"; e.currentTarget.style.boxShadow="0 20px 48px rgba(42,21,8,.18)"; }}
+              onMouseLeave={e=>{ e.currentTarget.style.transform=""; e.currentTarget.style.boxShadow="0 8px 32px rgba(42,21,8,.12)"; }}>
+              {/* Mini fan preview */}
+              <div style={{ background:"linear-gradient(150deg,#fdf0e8,#f8dcc8,#f0c4a8)",padding:"32px 24px 20px",position:"relative",minHeight:160,display:"flex",alignItems:"flex-end" }}>
+                <div style={{ position:"absolute",top:16,right:16,display:"flex",gap:-6 }}>
+                  {THEMES.slice(0,3).map((t,i)=>(
+                    <div key={t.id} style={{ width:44,height:56,borderRadius:6,background:t.cover,border:"2px solid white",marginLeft:i?-10:0,boxShadow:"0 3px 10px rgba(42,21,8,.15)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:i,transform:`rotate(${[-6,0,6][i]}deg)` }}>
+                      {Icon[t.icon]?.(14,t.accent)}
+                    </div>
+                  ))}
+                </div>
+                <div>
+                  <div style={{ fontFamily:"'Jost',sans-serif",fontSize:11,fontWeight:500,letterSpacing:2,textTransform:"uppercase",color:"rgba(42,21,8,.45)",marginBottom:4 }}>Group cards</div>
+                  <div style={{ fontFamily:"'Jost',sans-serif",fontSize:22,fontWeight:400,color:"#2A1508",letterSpacing:"-.2px",lineHeight:1.2 }}>Sign a card<br/>together</div>
+                </div>
+              </div>
+              <div style={{ background:"white",padding:"16px 20px",display:"flex",alignItems:"center",justifyContent:"space-between" }}>
+                <div style={{ fontFamily:"'Jost',sans-serif",fontSize:12,fontWeight:300,color:"#8B6E4E" }}>Birthday · Wedding · Thank you · +more</div>
+                <div style={{ fontFamily:"'Jost',sans-serif",fontSize:12,fontWeight:500,color:"#d4a843",whiteSpace:"nowrap" }}>Brew one →</div>
+              </div>
+            </div>
+
+            {/* Invites feature */}
+            <div style={{ borderRadius:16,overflow:"hidden",boxShadow:"0 8px 32px rgba(42,21,8,.12)",cursor:"pointer",transition:"transform .22s,box-shadow .22s" }}
+              onClick={()=>setView("invite-types")}
+              onMouseEnter={e=>{ e.currentTarget.style.transform="translateY(-5px)"; e.currentTarget.style.boxShadow="0 20px 48px rgba(42,21,8,.18)"; }}
+              onMouseLeave={e=>{ e.currentTarget.style.transform=""; e.currentTarget.style.boxShadow="0 8px 32px rgba(42,21,8,.12)"; }}>
+              <div style={{ background:"linear-gradient(150deg,#fdf0ff,#f0d6ff,#e8b8ff)",padding:"32px 24px 20px",position:"relative",minHeight:160,display:"flex",alignItems:"flex-end" }}>
+                <div style={{ position:"absolute",top:16,right:16,display:"flex",flexDirection:"column",gap:4,alignItems:"flex-end" }}>
+                  {INVITE_TYPES.slice(0,4).map((it,i)=>(
+                    <div key={it.id} style={{ background:"white",borderRadius:100,padding:"4px 10px",fontSize:11,fontFamily:"'Jost',sans-serif",color:"#5a3a10",opacity:1-i*.18,boxShadow:"0 2px 8px rgba(42,21,8,.1)" }}>
+                      {it.emoji} {it.label}
+                    </div>
+                  ))}
+                </div>
+                <div>
+                  <div style={{ fontFamily:"'Jost',sans-serif",fontSize:11,fontWeight:500,letterSpacing:2,textTransform:"uppercase",color:"rgba(42,21,8,.45)",marginBottom:4 }}>Invitations</div>
+                  <div style={{ fontFamily:"'Jost',sans-serif",fontSize:22,fontWeight:400,color:"#2A1508",letterSpacing:"-.2px",lineHeight:1.2 }}>Create a<br/>beautiful invite</div>
+                </div>
+              </div>
+              <div style={{ background:"white",padding:"16px 20px",display:"flex",alignItems:"center",justifyContent:"space-between" }}>
+                <div style={{ fontFamily:"'Jost',sans-serif",fontSize:12,fontWeight:300,color:"#8B6E4E" }}>Party · Wedding · Book club · +more</div>
+                <div style={{ fontFamily:"'Jost',sans-serif",fontSize:12,fontWeight:500,color:"#7b3f9e",whiteSpace:"nowrap" }}>Create one →</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Recent cards shelf ── */}
         {(()=>{ const recent = readLocalCards().slice(0,3); if(!recent.length) return null; return (
-          <div style={{ width:"100%",maxWidth:700,margin:"32px auto 0",padding:"0 24px",position:"relative",zIndex:2,animation:"fadeUp .7s ease .2s both" }}>
+          <div style={{ width:"100%",maxWidth:800,margin:"32px auto 0",padding:"0 24px",position:"relative",zIndex:2,animation:"fadeUp .7s ease .2s both" }}>
             <div style={{ display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:14 }}>
               <div style={{ fontFamily:"'Jost',sans-serif",fontSize:10,fontWeight:500,letterSpacing:"2px",textTransform:"uppercase",color:"rgba(42,21,8,.38)" }}>Recently edited</div>
               <button onClick={()=>openMyDashboard()} style={{ background:"none",border:"none",cursor:"pointer",fontFamily:"'Jost',sans-serif",fontSize:11,color:"#d4a843",letterSpacing:".3px",display:"flex",alignItems:"center",gap:5 }}>See all {Icon.arrow(11,"#d4a843")}</button>
