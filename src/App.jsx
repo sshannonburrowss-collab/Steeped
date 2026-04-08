@@ -914,7 +914,7 @@ export default function Steeped() {
   const [inviteId, setInviteId] = useState(null);
   const [inviteForm, setInviteForm] = useState({
     title:"", host:"", subtext:"", date:"", time:"", location:"", dress:"", note:"", rsvpDeadline:"",
-    photo:"", photoPosition:"center", overlayOpacity:0.5, musicUrl:"", musicLabel:"", musicFile:""
+    photo:"", photoPosition:"center", overlayOpacity:0.5, photoZoom:100, musicUrl:"", musicLabel:"", musicFile:""
   });
   const [myInvites, setMyInvites] = useState([]);
   const [guestInvite, setGuestInvite] = useState(null);
@@ -1920,8 +1920,11 @@ export default function Steeped() {
         <div className="invite-guest-wrap">
           <div className="invite-guest-card" style={{ animation:"fadeUp .5s ease" }}>
             {f.photo ? (
-              <div style={{ position:"relative" }}>
-                <img src={f.photo} alt="" style={{ width:"100%",height:240,objectFit:"cover",objectPosition:f.photoPosition||"center",display:"block" }}/>
+              <div style={{ position:"relative",height:260,
+                backgroundImage:"url("+f.photo+")",
+                backgroundSize:(f.photoZoom||100)+"%",
+                backgroundPosition:f.photoPosition||"center",
+                backgroundRepeat:"no-repeat" }}>
                 <div style={{ position:"absolute",inset:0,background:"linear-gradient(to bottom,transparent 20%,rgba(0,0,0,"+(f.overlayOpacity??0.5)+") 100%)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"flex-end",padding:"24px 28px" }}>
                   {f.host&&<div style={{ fontFamily:"'Jost',sans-serif",fontSize:11,letterSpacing:3,textTransform:"uppercase",color:"rgba(255,255,255,.75)",marginBottom:6 }}>{f.host} invites you to</div>}
                   <div style={{ fontFamily:"'Playfair Display',serif",fontSize:32,fontWeight:400,color:"white",textAlign:"center",lineHeight:1.2,textShadow:"0 2px 8px rgba(0,0,0,.4)" }}>{f.title||it.label}</div>
@@ -2112,38 +2115,54 @@ export default function Steeped() {
             <input type="file" accept="image/*" ref={inviteFileRef} style={{ display:"none" }} onChange={handleInvitePhoto}/>
             {f.photo ? (
               <>
-                {/* Preview with live overlay */}
-                <div style={{ position:"relative",borderRadius:8,overflow:"hidden",marginBottom:14,height:200 }}>
-                  <img src={f.photo} alt="" style={{ width:"100%",height:"100%",objectFit:"cover",objectPosition:f.photoPosition||"center",display:"block" }}/>
-                  <div style={{ position:"absolute",inset:0,background:"rgba(0,0,0,"+(f.overlayOpacity??0.5)+")",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"flex-end",padding:"16px 20px" }}>
+                {/* Preview with live overlay — uses background-image for zoom control */}
+                <div style={{ position:"relative",borderRadius:8,overflow:"hidden",marginBottom:14,height:200,
+                  backgroundImage:"url("+f.photo+")",
+                  backgroundSize:(f.photoZoom||100)+"%",
+                  backgroundPosition:f.photoPosition||"center",
+                  backgroundRepeat:"no-repeat" }}>
+                  <div style={{ position:"absolute",inset:0,background:"linear-gradient(to bottom,transparent 20%,rgba(0,0,0,"+(f.overlayOpacity??0.5)+") 100%)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"flex-end",padding:"16px 20px" }}>
                     <div style={{ fontFamily:"'Playfair Display',serif",fontSize:22,color:"white",textShadow:"0 1px 4px rgba(0,0,0,.5)",textAlign:"center" }}>{f.title||"Your event title"}</div>
                     {f.subtext&&<div style={{ fontFamily:"'Lora',serif",fontSize:13,fontStyle:"italic",color:"rgba(255,255,255,.8)",marginTop:4,textAlign:"center" }}>{f.subtext}</div>}
                   </div>
                   <button onClick={()=>setInviteForm(fm=>({...fm,photo:""}))} style={{ position:"absolute",top:8,right:8,background:"rgba(42,21,8,.7)",border:"none",borderRadius:50,width:26,height:26,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center" }}>{Icon.x(10,"white")}</button>
-                  <button onClick={()=>inviteFileRef.current?.click()} style={{ position:"absolute",top:8,left:8,background:"rgba(42,21,8,.7)",border:"none",borderRadius:6,padding:"4px 10px",cursor:"pointer",fontFamily:"'Jost',sans-serif",fontSize:10,color:"white" }}>Change photo</button>
+                  <button onClick={()=>inviteFileRef.current?.click()} style={{ position:"absolute",top:8,left:8,background:"rgba(42,21,8,.7)",border:"none",borderRadius:6,padding:"4px 10px",cursor:"pointer",fontFamily:"'Jost',sans-serif",fontSize:10,color:"white" }}>Change</button>
                 </div>
-                {/* Photo controls */}
-                <div style={{ display:"grid",gridTemplateColumns:"1fr 1fr",gap:14 }}>
+                {/* Photo controls — 3 sliders */}
+                <div style={{ display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:14,marginBottom:4 }}>
                   <div>
-                    <label className="field-label">Photo focus</label>
-                    <select className="f-select" value={f.photoPosition||"center"} onChange={e=>setInviteForm(fm=>({...fm,photoPosition:e.target.value}))} style={{ width:"100%" }}>
-                      <option value="top">Top</option>
+                    <label className="field-label">Zoom</label>
+                    <div style={{ display:"flex",alignItems:"center",gap:8,marginTop:2 }}>
+                      <span style={{ fontFamily:"'Jost',sans-serif",fontSize:10,color:"rgba(42,21,8,.4)" }}>{"−"}</span>
+                      <input type="range" min={50} max={300} step={5}
+                        value={f.photoZoom||100}
+                        onChange={e=>setInviteForm(fm=>({...fm,photoZoom:Number(e.target.value)}))}
+                        style={{ flex:1,accentColor:"#2A1508" }}/>
+                      <span style={{ fontFamily:"'Jost',sans-serif",fontSize:10,color:"rgba(42,21,8,.4)" }}>{"+"}</span>
+                    </div>
+                    <div style={{ fontFamily:"'Jost',sans-serif",fontSize:9,color:"rgba(42,21,8,.3)",textAlign:"center",marginTop:2 }}>{f.photoZoom||100}%</div>
+                  </div>
+                  <div>
+                    <label className="field-label">Position</label>
+                    <select className="f-select" value={f.photoPosition||"center"} onChange={e=>setInviteForm(fm=>({...fm,photoPosition:e.target.value}))} style={{ width:"100%",marginTop:2 }}>
                       <option value="center">Center</option>
+                      <option value="top">Top</option>
                       <option value="bottom">Bottom</option>
-                      <option value="left">Left</option>
-                      <option value="right">Right</option>
+                      <option value="left center">Left</option>
+                      <option value="right center">Right</option>
                     </select>
                   </div>
                   <div>
-                    <label className="field-label">Text overlay darkness</label>
-                    <div style={{ display:"flex",alignItems:"center",gap:10,marginTop:4 }}>
-                      <span style={{ fontFamily:"'Jost',sans-serif",fontSize:10,color:"rgba(42,21,8,.4)" }}>Light</span>
+                    <label className="field-label">Overlay</label>
+                    <div style={{ display:"flex",alignItems:"center",gap:8,marginTop:2 }}>
+                      <span style={{ fontFamily:"'Jost',sans-serif",fontSize:10,color:"rgba(42,21,8,.4)" }}>☀</span>
                       <input type="range" min={0} max={0.85} step={0.05}
                         value={f.overlayOpacity??0.5}
                         onChange={e=>setInviteForm(fm=>({...fm,overlayOpacity:parseFloat(e.target.value)}))}
                         style={{ flex:1,accentColor:"#2A1508" }}/>
-                      <span style={{ fontFamily:"'Jost',sans-serif",fontSize:10,color:"rgba(42,21,8,.4)" }}>Dark</span>
+                      <span style={{ fontFamily:"'Jost',sans-serif",fontSize:10,color:"rgba(42,21,8,.4)" }}>◗</span>
                     </div>
+                    <div style={{ fontFamily:"'Jost',sans-serif",fontSize:9,color:"rgba(42,21,8,.3)",textAlign:"center",marginTop:2 }}>Text contrast</div>
                   </div>
                 </div>
               </>
@@ -2223,8 +2242,11 @@ export default function Steeped() {
                 return (
                   <div style={{ borderRadius:20,overflow:"hidden",boxShadow:"0 32px 80px rgba(42,21,8,.3)" }}>
                     {pf.photo ? (
-                      <div style={{ position:"relative" }}>
-                        <img src={pf.photo} alt="" style={{ width:"100%",height:240,objectFit:"cover",objectPosition:pf.photoPosition||"center",display:"block" }}/>
+                      <div style={{ position:"relative",height:240,
+                        backgroundImage:"url("+pf.photo+")",
+                        backgroundSize:(pf.photoZoom||100)+"%",
+                        backgroundPosition:pf.photoPosition||"center",
+                        backgroundRepeat:"no-repeat" }}>
                         <div style={{ position:"absolute",inset:0,background:"linear-gradient(to bottom,transparent 20%,rgba(0,0,0,"+(pf.overlayOpacity??0.5)+") 100%)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"flex-end",padding:"24px 28px" }}>
                           {pf.host&&<div style={{ fontFamily:"'Jost',sans-serif",fontSize:11,letterSpacing:3,textTransform:"uppercase",color:"rgba(255,255,255,.75)",marginBottom:6 }}>{pf.host} invites you to</div>}
                           <div style={{ fontFamily:"'Playfair Display',serif",fontSize:32,fontWeight:400,color:"white",textAlign:"center",lineHeight:1.2,textShadow:"0 2px 8px rgba(0,0,0,.4)" }}>{pf.title||pit.label}</div>
