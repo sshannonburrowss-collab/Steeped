@@ -965,6 +965,8 @@ export default function Steeped() {
   const [rsvpName, setRsvpName] = useState("");
   const [rsvpEmail, setRsvpEmail] = useState("");
   const [rsvpChoice, setRsvpChoice] = useState(null); // "yes"|"maybe"|"no"
+  const [rsvpGuests, setRsvpGuests] = useState([]); // additional guests [{name}]
+  const [rsvpReminder, setRsvpReminder] = useState(true); // opt-in reminder email
   const [rsvpSent, setRsvpSent] = useState(false);
   const [inviteSaving, setInviteSaving] = useState(false);
   const [inviteCopied, setInviteCopied] = useState(false);
@@ -1523,10 +1525,27 @@ export default function Steeped() {
   };
   const submitRsvp = async () => {
     if(!rsvpName.trim()||!rsvpChoice) return;
-    const rsvp = { id:uid(), name:rsvpName.trim(), email:rsvpEmail.trim(), response:rsvpChoice, at:new Date().toISOString() };
+    const validGuests = rsvpGuests.filter(g=>g.name.trim());
+    const totalCount = 1 + validGuests.length;
+    const rsvp = {
+      id: uid(),
+      name: rsvpName.trim(),
+      email: rsvpEmail.trim(),
+      response: rsvpChoice,
+      guests: validGuests,
+      totalCount,
+      reminder: rsvpEmail.trim() && rsvpReminder,
+      at: new Date().toISOString(),
+    };
     const updated = {...guestInvite, rsvps:[...(guestInvite.rsvps||[]), rsvp]};
     setGuestInvite(updated); persistInviteLocally(updated); setRsvpSent(true);
-    try { await fetch("/api/rsvp-invite",{ method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({inviteId:guestInvite.id, rsvp}) }); } catch(e){}
+    try {
+      await fetch("/api/rsvp-invite", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({inviteId:guestInvite.id, rsvp, scheduleReminder:rsvp.reminder, eventDate:guestInvite.form?.date})
+      });
+    } catch(e){ console.warn("RSVP API unavailable"); }
   };
   const openInviteEditor = (type, existingInvite=null) => {
     setInviteType(type);
@@ -2080,12 +2099,58 @@ export default function Steeped() {
                 </button>
               </div>
               <div className="ig-fields">
+                {/* Primary guest */}
                 <input className="f-input" placeholder="Your name *" value={rsvpName} onChange={e=>setRsvpName(e.target.value)} style={{ fontSize:15,padding:"12px 16px" }}/>
-                <input className="f-input" type="email" placeholder="Email (optional)" value={rsvpEmail} onChange={e=>setRsvpEmail(e.target.value)} style={{ fontSize:15,padding:"12px 16px" }}/>
+                <input className="f-input" type="email" placeholder="Your email (for reminder)" value={rsvpEmail} onChange={e=>setRsvpEmail(e.target.value)} style={{ fontSize:15,padding:"12px 16px" }}/>
+
+                {/* Email reminder opt-in — only show if email entered */}
+                {rsvpEmail.trim()&&guestInvite.form?.date&&(
+                  <label style={{ display:"flex",alignItems:"center",gap:10,padding:"10px 14px",borderRadius:10,background:"rgba(212,168,67,.08)",border:"1px solid rgba(212,168,67,.25)",cursor:"pointer" }} onClick={()=>setRsvpReminder(r=>!r)}>
+                    <input type="checkbox" checked={rsvpReminder} onChange={()=>{}} style={{ accentColor:"#d4a843",width:16,height:16,flexShrink:0 }}/>
+                    <div>
+                      <div style={{ fontFamily:"'Jost',sans-serif",fontSize:13,fontWeight:500,color:"#5a3a10" }}>Send me a reminder</div>
+                      <div style={{ fontFamily:"'Jost',sans-serif",fontSize:11,fontWeight:300,color:"#8B6E4E",marginTop:1 }}>
+                        {"We'll email you 3 days before — "}
+                        {new Date(new Date(guestInvite.form.date).getTime()-3*24*60*60*1000).toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"})}
+                      </div>
+                    </div>
+                  </label>
+                )}
+
+                {/* Additional guests */}
+                {rsvpChoice!=="no"&&(
+                  <div style={{ marginTop:4 }}>
+                    <div style={{ fontFamily:"'Jost',sans-serif",fontSize:11,fontWeight:500,letterSpacing:1.5,textTransform:"uppercase",color:"rgba(42,21,8,.38)",marginBottom:8 }}>
+                      Bringing anyone else?
+                    </div>
+                    {rsvpGuests.map((g,i)=>(
+                      <div key={i} style={{ display:"flex",gap:8,marginBottom:8,alignItems:"center" }}>
+                        <input className="f-input" placeholder={`Guest ${i+2} name`} value={g.name}
+                          onChange={e=>{ const u=[...rsvpGuests]; u[i]={name:e.target.value}; setRsvpGuests(u); }}
+                          style={{ fontSize:14,padding:"10px 14px",flex:1 }}/>
+                        <button onClick={()=>setRsvpGuests(rsvpGuests.filter((_,j)=>j!==i))}
+                          style={{ background:"none",border:"none",cursor:"pointer",color:"rgba(42,21,8,.28)",padding:6,flexShrink:0,display:"flex",alignItems:"center" }}>
+                          {Icon.x(12,"rgba(42,21,8,.28)")}
+                        </button>
+                      </div>
+                    ))}
+                    <button onClick={()=>setRsvpGuests([...rsvpGuests,{name:""}])}
+                      style={{ display:"flex",alignItems:"center",gap:6,background:"none",border:"1.5px dashed rgba(42,21,8,.16)",borderRadius:8,padding:"9px 14px",cursor:"pointer",fontFamily:"'Jost',sans-serif",fontSize:12,color:"#8B6E4E",width:"100%",justifyContent:"center" }}
+                      onMouseEnter={e=>e.currentTarget.style.borderColor="rgba(42,21,8,.3)"}
+                      onMouseLeave={e=>e.currentTarget.style.borderColor="rgba(42,21,8,.16)"}>
+                      {Icon.plus(12,"#8B6E4E")} Add another guest
+                    </button>
+                    {(rsvpGuests.filter(g=>g.name.trim()).length>0||rsvpName.trim())&&(
+                      <div style={{ fontFamily:"'Jost',sans-serif",fontSize:11,fontWeight:300,color:"rgba(42,21,8,.45)",marginTop:8,textAlign:"center" }}>
+                        {1+rsvpGuests.filter(g=>g.name.trim()).length} {1+rsvpGuests.filter(g=>g.name.trim()).length===1?"person":"people"} total
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
               <button className="ig-send-btn" onClick={submitRsvp} disabled={!rsvpName.trim()||!rsvpChoice}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-                Send RSVP
+                Send RSVP {(1+rsvpGuests.filter(g=>g.name.trim()).length)>1?"for "+( 1+rsvpGuests.filter(g=>g.name.trim()).length):""}
               </button>
             </div>
           ) : (
@@ -2094,7 +2159,17 @@ export default function Steeped() {
               <div style={{ fontFamily:"'Jost',sans-serif",fontSize:22,fontWeight:400,color:"#2A1508",marginTop:16,marginBottom:10 }}>
                 {rsvpChoice==="yes"?"See you there!":rsvpChoice==="maybe"?"Hopefully see you soon.":"Thanks for letting us know."}
               </div>
-              <p style={{ fontFamily:"'Jost',sans-serif",fontSize:14,fontWeight:300,color:"#8B6E4E",lineHeight:1.75 }}>Your RSVP has been recorded.</p>
+              <p style={{ fontFamily:"'Jost',sans-serif",fontSize:14,fontWeight:300,color:"#8B6E4E",lineHeight:1.75,marginBottom:rsvpGuests.filter(g=>g.name.trim()).length>0?8:0 }}>
+                {rsvpChoice!=="no"&&(1+rsvpGuests.filter(g=>g.name.trim()).length)>1
+                  ? `You’ve RSVPed for ${1+rsvpGuests.filter(g=>g.name.trim()).length} guests.`
+                  : "Your RSVP has been recorded."}
+              </p>
+              {rsvpEmail.trim()&&rsvpReminder&&guestInvite.form?.date&&(
+                <p style={{ fontFamily:"'Jost',sans-serif",fontSize:12,fontWeight:300,color:"rgba(42,21,8,.45)",lineHeight:1.7 }}>
+                  {"We’ll send you a reminder on "}
+                  {new Date(new Date(guestInvite.form.date).getTime()-3*24*60*60*1000).toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"})}.
+                </p>
+              )}
             </div>
           )}
           </div>
