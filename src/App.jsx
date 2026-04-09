@@ -88,6 +88,7 @@ const INVITE_TYPES = [
   { id:"workevent",   label:"Work Event",       svg:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>',   accent:"#1a4a7a", cover:"linear-gradient(135deg,#f0f4ff,#d6e4ff,#b8d0ff)" },
   { id:"holiday",     label:"Holiday Gathering",svg:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><path d="M17 14l-5-5-5 5"/><path d="M19 18l-7-7-7 7"/><line x1="12" y1="22" x2="12" y2="9"/></svg>',     accent:"#1a5c2e", cover:"linear-gradient(135deg,#f0fff4,#c8f0d8,#a8e4bc)" },
   { id:"graduation",  label:"Graduation",       svg:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 22 8.5 12 15 2 8.5 12 2"/><line x1="12" y1="15" x2="12" y2="22"/><path d="M20 12v5a8 8 0 0 1-16 0v-5"/></svg>',  accent:"#7a5c00", cover:"linear-gradient(135deg,#fffdf0,#fff3c8,#ffe8a0)" },
+  { id:"custom",      label:"Custom / Other",   svg:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>', accent:"#5a4030", cover:"linear-gradient(135deg,#faf7f2,#f0e8dc,#e8ddd0)" },
   { id:"housewarming",label:"Housewarming",     svg:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M9 21V12h6v9"/></svg>',accent:"#a0522d", cover:"linear-gradient(135deg,#fff8f0,#ffe8d0,#ffd4b0)" },
 ];
 
@@ -2122,6 +2123,20 @@ export default function Steeped() {
               <div className="invite-type-label" style={{ color:it.accent }}>{it.label}</div>
             </div>
           ))}
+          {/* Custom blank invite — full width row at bottom */}
+          <div style={{ gridColumn:"1/-1",marginTop:6,borderRadius:12,border:"2px dashed rgba(42,21,8,.16)",cursor:"pointer",transition:"all .2s",display:"flex",alignItems:"center",gap:20,padding:"20px 28px",background:"white" }}
+            onClick={()=>openInviteEditor("custom")}
+            onMouseEnter={e=>{ e.currentTarget.style.borderColor="rgba(42,21,8,.3)"; e.currentTarget.style.background="#FAF5EE"; }}
+            onMouseLeave={e=>{ e.currentTarget.style.borderColor="rgba(42,21,8,.16)"; e.currentTarget.style.background="white"; }}>
+            <div style={{ width:48,height:48,borderRadius:10,background:"linear-gradient(135deg,#faf7f2,#e8ddd0)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0 }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(42,21,8,.5)" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+            </div>
+            <div style={{ flex:1 }}>
+              <div style={{ fontFamily:"'Jost',sans-serif",fontSize:15,fontWeight:400,color:"#2A1508",marginBottom:3 }}>Custom / Other</div>
+              <div style={{ fontFamily:"'Jost',sans-serif",fontSize:12,fontWeight:300,color:"#8B6E4E",lineHeight:1.6 }}>None of these fit? Start with a blank invite and customise every detail from scratch.</div>
+            </div>
+            <div style={{ fontFamily:"'Jost',sans-serif",fontSize:12,color:"rgba(42,21,8,.35)",flexShrink:0,display:"flex",alignItems:"center",gap:4 }}>Create {Icon.arrow(12,"rgba(42,21,8,.35)")}</div>
+          </div>
         </div>
       </div>
     </div>
@@ -2517,7 +2532,32 @@ export default function Steeped() {
       </nav>
       <div className="themes-view">
         <div className="section-header"><h2 className="section-title">Choose your card</h2><p className="section-sub">Each card opens into multiple pages — plenty of room for everyone to sign.</p></div>
-        <div className="themes-grid">{THEMES.map((t,i)=><div key={t.id} className="theme-card" style={{ background:t.cover,animationDelay:`${i*.06}s`,opacity:pendingTheme&&pendingTheme.id!==t.id?.7:1 }} onClick={()=>goEditor(t)}><div style={{ color:t.accent }}>{Icon[t.icon](34,t.accent)}</div><div className="theme-card-name" style={{ color:t.accent }}>{t.name}</div><div className="theme-card-sub" style={{ color:t.accent }}>Open card</div></div>)}</div>
+        {/* Themed cards — all except blank */}
+        <div className="themes-grid">
+          {THEMES.filter(t=>t.id!=="blank").map((t,i)=>(
+            <div key={t.id} className="theme-card" style={{ background:t.cover,animationDelay:`${i*.06}s`,opacity:pendingTheme&&pendingTheme.id!==t.id?.7:1 }} onClick={()=>goEditor(t)}>
+              <div style={{ color:t.accent }}>{Icon[t.icon](34,t.accent)}</div>
+              <div className="theme-card-name" style={{ color:t.accent }}>{t.name}</div>
+              <div className="theme-card-sub" style={{ color:t.accent }}>Open card</div>
+            </div>
+          ))}
+        </div>
+        {/* Blank / custom card — full width, clearly labelled */}
+        {(()=>{ const blank=THEMES.find(t=>t.id==="blank"); if(!blank) return null; return (
+          <div style={{ marginTop:20,borderRadius:12,overflow:"hidden",border:"2px dashed rgba(42,21,8,.16)",cursor:"pointer",transition:"all .2s",display:"flex",alignItems:"center",gap:24,padding:"22px 32px",background:"white",opacity:pendingTheme&&pendingTheme.id!==blank.id?.7:1 }}
+            onClick={()=>goEditor(blank)}
+            onMouseEnter={e=>{ e.currentTarget.style.borderColor="rgba(42,21,8,.32)"; e.currentTarget.style.background="#FAF5EE"; }}
+            onMouseLeave={e=>{ e.currentTarget.style.borderColor="rgba(42,21,8,.16)"; e.currentTarget.style.background="white"; }}>
+            <div style={{ width:52,height:52,borderRadius:12,background:"linear-gradient(135deg,#faf7f2,#e8ddd0)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0 }}>
+              {Icon[blank.icon](26,blank.accent)}
+            </div>
+            <div style={{ flex:1 }}>
+              <div style={{ fontFamily:"'Jost',sans-serif",fontSize:16,fontWeight:400,color:"#2A1508",marginBottom:4 }}>Start from scratch</div>
+              <div style={{ fontFamily:"'Jost',sans-serif",fontSize:12,fontWeight:300,color:"#8B6E4E",lineHeight:1.6 }}>No theme, no template — a completely blank canvas. Add your own text, photos, and style from scratch.</div>
+            </div>
+            <div style={{ fontFamily:"'Jost',sans-serif",fontSize:12,color:"rgba(42,21,8,.35)",flexShrink:0,display:"flex",alignItems:"center",gap:4 }}>Open {Icon.arrow(12,"rgba(42,21,8,.35)")}</div>
+          </div>
+        ); })()}
       </div>
 
       {pendingTheme&&(
