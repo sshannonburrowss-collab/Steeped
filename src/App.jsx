@@ -478,23 +478,66 @@ html,body{width:100%;min-height:100%;background:#FAF5EE;}
 .invite-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
 .invite-form-full{grid-column:1/-1;}
 /* Guest view */
+/* ── Guest invite view — mobile-first ──────────────────── */
+.ig-page{min-height:100vh;background:#FAF5EE;padding-bottom:100px;}
+/* Hero cover */
+.ig-hero{position:relative;width:100%;min-height:50vw;max-height:420px;}
+.ig-hero-gradient{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:clamp(16px,5vw,40px) clamp(16px,6vw,48px) clamp(20px,5vw,40px);}
+.ig-host{font-family:'Jost',sans-serif;font-size:11px;font-weight:300;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.75);margin-bottom:8px;text-align:center;}
+.ig-title{font-family:'Playfair Display',serif;font-size:clamp(26px,7vw,48px);font-weight:400;color:white;text-align:center;line-height:1.15;text-shadow:0 2px 12px rgba(0,0,0,.45);margin-bottom:6px;}
+.ig-sub{font-family:'Lora',serif;font-size:clamp(13px,3.5vw,16px);font-style:italic;color:rgba(255,255,255,.85);text-align:center;line-height:1.5;}
+/* Floating card body */
+.ig-body{max-width:540px;margin:-24px auto 0;position:relative;z-index:2;padding:0 14px;}
+.ig-card{background:white;border-radius:20px;overflow:hidden;box-shadow:0 8px 40px rgba(42,21,8,.14);}
+/* Details */
+.ig-details{padding:24px 22px;display:flex;flex-direction:column;gap:16px;}
+.ig-detail-row{display:flex;align-items:flex-start;gap:12px;}
+.ig-detail-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;}
+.ig-detail-label{font-family:'Jost',sans-serif;font-size:9.5px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:rgba(42,21,8,.38);margin-bottom:3px;}
+.ig-detail-val{font-family:'Jost',sans-serif;font-size:15px;font-weight:400;color:#2A1508;line-height:1.45;}
+.ig-note{padding:20px 22px;background:#FDFAF6;border-top:1px solid rgba(42,21,8,.06);font-family:'Lora',serif;font-size:15px;font-style:italic;color:#5a3a10;line-height:1.8;}
+/* RSVP — sticky bottom on mobile */
+.ig-rsvp-wrap{max-width:540px;margin:16px auto 0;padding:0 14px;}
+.ig-rsvp{background:white;border-radius:20px;box-shadow:0 8px 32px rgba(42,21,8,.12);padding:22px 20px 20px;}
+.ig-rsvp-title{font-family:'Jost',sans-serif;font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:rgba(42,21,8,.4);margin-bottom:14px;text-align:center;}
+.ig-rsvp-btns{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px;}
+.ig-rsvp-btn{padding:14px 6px;border-radius:10px;border:1.5px solid rgba(42,21,8,.12);background:white;font-family:'Jost',sans-serif;font-size:clamp(12px,3.5vw,14px);font-weight:400;letter-spacing:.2px;color:#8B6E4E;cursor:pointer;transition:all .18s;text-align:center;min-height:64px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;}
+.ig-rsvp-btn-icon{display:flex;align-items:center;justify-content:center;opacity:.7;}
+.ig-rsvp-btn:hover{transform:translateY(-2px);box-shadow:0 5px 18px rgba(42,21,8,.1);border-color:rgba(42,21,8,.22);}
+.ig-rsvp-btn.yes{border-color:#2a7a50;background:rgba(42,122,80,.07);color:#2a7a50;}
+.ig-rsvp-btn.yes .ig-rsvp-btn-icon{opacity:1;}
+.ig-rsvp-btn.maybe{border-color:#c8860a;background:rgba(200,134,10,.07);color:#c8860a;}
+.ig-rsvp-btn.maybe .ig-rsvp-btn-icon{opacity:1;}
+.ig-rsvp-btn.no{border-color:rgba(42,21,8,.2);background:rgba(42,21,8,.04);color:rgba(42,21,8,.5);}
+.ig-rsvp-btn.no .ig-rsvp-btn-icon{opacity:.6;}
+.ig-fields{display:flex;flex-direction:column;gap:10px;}
+.ig-send-btn{width:100%;padding:clamp(14px,4vw,18px);border-radius:12px;border:none;background:#2A1508;font-family:'Jost',sans-serif;font-size:15px;font-weight:400;letter-spacing:.3px;color:#FAF5EE;cursor:pointer;transition:all .2s;margin-top:14px;display:flex;align-items:center;justify-content:center;gap:8px;}
+.ig-send-btn:disabled{opacity:.45;cursor:default;}
+.ig-send-btn:not(:disabled):hover{background:#3d2010;transform:translateY(-1px);}
+/* Music player */
+.ig-music{padding:14px 22px;background:#FDFAF6;border-top:1px solid rgba(42,21,8,.06);display:flex;align-items:center;gap:10px;}
+.ig-music-label{font-family:'Jost',sans-serif;font-size:11px;font-weight:300;color:rgba(42,21,8,.45);flex-shrink:0;}
+/* Gradient cover fallback */
+.ig-cover-fallback{padding:clamp(36px,8vw,64px) clamp(20px,6vw,48px) clamp(28px,6vw,48px);text-align:center;}
+.ig-cover-emoji{font-size:clamp(44px,10vw,68px);display:block;margin-bottom:12px;}
+.ig-cover-title{font-family:'Playfair Display',serif;font-size:clamp(28px,7vw,46px);font-weight:400;line-height:1.15;margin-bottom:8px;}
+.ig-cover-host{font-family:'Jost',sans-serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;opacity:.55;margin-bottom:24px;}
+/* Old classes kept for backwards compat */
 .invite-guest-wrap{max-width:560px;margin:0 auto;padding:40px 24px 80px;}
-.invite-guest-card{border-radius:20px;overflow:hidden;box-shadow:0 32px 80px rgba(42,21,8,.22),0 6px 20px rgba(42,21,8,.12);margin-bottom:32px;}
+.invite-guest-card{border-radius:20px;overflow:hidden;box-shadow:0 32px 80px rgba(42,21,8,.22);margin-bottom:32px;}
 .invite-guest-cover{padding:52px 40px 44px;text-align:center;}
 .invite-guest-title{font-family:'Playfair Display',serif;font-size:42px;font-weight:400;line-height:1.15;margin-bottom:8px;}
-.invite-guest-host{font-family:'Jost',sans-serif;font-size:12px;font-weight:300;letter-spacing:3px;text-transform:uppercase;opacity:.6;margin-bottom:28px;}
+.invite-guest-host{font-family:'Jost',sans-serif;font-size:12px;letter-spacing:3px;text-transform:uppercase;opacity:.6;margin-bottom:28px;}
 .invite-guest-details{background:white;padding:32px 36px;display:flex;flex-direction:column;gap:16px;}
 .invite-guest-detail-row{display:flex;align-items:flex-start;gap:14px;}
 .invite-guest-detail-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:17px;}
-.invite-guest-detail-label{font-family:'Jost',sans-serif;font-size:10px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:rgba(42,21,8,.38);margin-bottom:2px;}
-.invite-guest-detail-val{font-family:'Jost',sans-serif;font-size:14px;font-weight:400;color:#2A1508;line-height:1.5;}
+.invite-guest-detail-label{font-family:'Jost',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(42,21,8,.38);margin-bottom:2px;}
+.invite-guest-detail-val{font-family:'Jost',sans-serif;font-size:14px;color:#2A1508;line-height:1.5;}
 .invite-guest-note{padding:24px 36px 32px;background:#FDFAF6;border-top:1px solid rgba(42,21,8,.06);font-family:'Lora',serif;font-size:14px;font-style:italic;color:#5a3a10;line-height:1.8;}
-/* RSVP */
 .rsvp-section{background:white;border-radius:16px;padding:28px 28px 24px;box-shadow:0 4px 24px rgba(42,21,8,.08);margin-bottom:20px;}
-.rsvp-title{font-family:'Jost',sans-serif;font-size:13px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:rgba(42,21,8,.4);margin-bottom:16px;}
+.rsvp-title{font-family:'Jost',sans-serif;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:rgba(42,21,8,.4);margin-bottom:16px;}
 .rsvp-btns{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;}
-.rsvp-btn{padding:14px 8px;border-radius:10px;border:1.5px solid rgba(42,21,8,.12);background:white;font-family:'Jost',sans-serif;font-size:13px;font-weight:400;color:#8B6E4E;cursor:pointer;transition:all .15s;text-align:center;}
-.rsvp-btn:hover{border-color:rgba(42,21,8,.3);background:#FAF5EE;}
+.rsvp-btn{padding:14px 8px;border-radius:10px;border:1.5px solid rgba(42,21,8,.12);background:white;font-family:'Jost',sans-serif;font-size:13px;color:#8B6E4E;cursor:pointer;transition:all .15s;text-align:center;}
 .rsvp-btn.yes{border-color:#2a7a50;background:rgba(42,122,80,.08);color:#2a7a50;}
 .rsvp-btn.maybe{border-color:#c8860a;background:rgba(200,134,10,.08);color:#c8860a;}
 .rsvp-btn.no{border-color:#b84848;background:rgba(184,72,72,.08);color:#b84848;}
@@ -1913,97 +1956,122 @@ export default function Steeped() {
     const yesCount = (guestInvite.rsvps||[]).filter(r=>r.response==="yes").length;
     return (
       <div className="app"><style>{CSS}</style>
-        <nav className="nav">
+        {/* Minimal nav on mobile */}
+        <nav className="nav" style={{ height:52 }}>
           <NavLogo onClick={()=>window.location.href="/"}/>
-          <button className="btn-dark" onClick={()=>{ setView("invite-types"); }}>Create your own {Icon.arrow(14,"#FAF5EE")}</button>
+          <button className="btn-dark" style={{ fontSize:11,padding:"7px 14px" }} onClick={()=>setView("invite-types")}>Create yours {Icon.arrow(12,"#FAF5EE")}</button>
         </nav>
-        <div className="invite-guest-wrap">
-          <div className="invite-guest-card" style={{ animation:"fadeUp .5s ease" }}>
-            {f.photo ? (
-              <div style={{ position:"relative",height:260,
-                backgroundImage:"url("+f.photo+")",
-                backgroundSize:(f.photoZoom||100)+"%",
-                backgroundPosition:f.photoPosition||"center",
-                backgroundRepeat:"no-repeat" }}>
-                <div style={{ position:"absolute",inset:0,background:"linear-gradient(to bottom,transparent 20%,rgba(0,0,0,"+(f.overlayOpacity??0.5)+") 100%)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"flex-end",padding:"24px 28px" }}>
-                  {f.host&&<div style={{ fontFamily:"'Jost',sans-serif",fontSize:11,letterSpacing:3,textTransform:"uppercase",color:"rgba(255,255,255,.75)",marginBottom:6 }}>{f.host} invites you to</div>}
-                  <div style={{ fontFamily:"'Playfair Display',serif",fontSize:32,fontWeight:400,color:"white",textAlign:"center",lineHeight:1.2,textShadow:"0 2px 8px rgba(0,0,0,.4)" }}>{f.title||it.label}</div>
-                  {f.subtext&&<div style={{ fontFamily:"'Lora',serif",fontSize:13,fontStyle:"italic",color:"rgba(255,255,255,.8)",marginTop:6,textAlign:"center" }}>{f.subtext}</div>}
-                </div>
+        <div className="ig-page">
+          {/* ── Hero cover ── */}
+          {/* Cover */}
+          {f.photo ? (
+            <div className="ig-hero" style={{
+              backgroundImage:"url("+f.photo+")",
+              backgroundSize:(f.photoZoom||100)+"%",
+              backgroundPosition:f.photoPosition||"center",
+              backgroundRepeat:"no-repeat" }}>
+              <div className="ig-hero-gradient" style={{ background:"linear-gradient(to bottom,rgba(0,0,0,.1) 0%,rgba(0,0,0,"+(f.overlayOpacity??0.5)+") 100%)" }}>
+                {f.host&&<div className="ig-host">{f.host} invites you to</div>}
+                <div className="ig-title">{f.title||it.label}</div>
+                {f.subtext&&<div className="ig-sub">{f.subtext}</div>}
               </div>
-            ) : (
-              <div className="invite-guest-cover" style={{ background:it.cover }}>
-                <div style={{ fontSize:52,marginBottom:12 }}>{it.emoji}</div>
-                {f.host&&<div className="invite-guest-host" style={{ color:it.accent }}>{f.host} invites you to</div>}
-                <div className="invite-guest-title" style={{ color:it.accent }}>{f.title||it.label}</div>
-                {f.subtext&&<div style={{ fontFamily:"'Lora',serif",fontSize:14,fontStyle:"italic",color:it.accent,opacity:.7,marginTop:6 }}>{f.subtext}</div>}
-                {yesCount>0&&<div style={{ fontFamily:"'Jost',sans-serif",fontSize:12,fontWeight:300,color:it.accent,opacity:.6,marginTop:8 }}>{yesCount} {yesCount===1?"person is":"people are"} coming</div>}
-              </div>
-            )}
-            <div className="invite-guest-details">
-              {f.date&&<div className="invite-guest-detail-row">
-                <div className="invite-guest-detail-icon" style={{ background:it.cover }}>📅</div>
-                <div><div className="invite-guest-detail-label">Date & Time</div><div className="invite-guest-detail-val">{new Date(f.date).toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric",year:"numeric"})}{f.time&&` at ${f.time}`}</div></div>
-              </div>}
-              {f.location&&<div className="invite-guest-detail-row">
-                <div className="invite-guest-detail-icon" style={{ background:it.cover }}>📍</div>
-                <div><div className="invite-guest-detail-label">Location</div><div className="invite-guest-detail-val">{f.location}</div></div>
-              </div>}
-              {f.dress&&<div className="invite-guest-detail-row">
-                <div className="invite-guest-detail-icon" style={{ background:it.cover }}>👗</div>
-                <div><div className="invite-guest-detail-label">Dress Code</div><div className="invite-guest-detail-val">{f.dress}</div></div>
-              </div>}
-              {f.rsvpDeadline&&<div className="invite-guest-detail-row">
-                <div className="invite-guest-detail-icon" style={{ background:it.cover }}>✉️</div>
-                <div><div className="invite-guest-detail-label">RSVP by</div><div className="invite-guest-detail-val">{new Date(f.rsvpDeadline).toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"})}</div></div>
-              </div>}
             </div>
-            {f.note&&<div className="invite-guest-note">"{f.note}"</div>}
-            {f.location&&(
-              <div style={{ borderTop:"1px solid rgba(42,21,8,.06)" }}>
-                <iframe
-                  src={"https://maps.google.com/maps?q="+encodeURIComponent(f.location)+"&output=embed&z=15"}
-                  width="100%" height="200" style={{ display:"block",border:"none" }} loading="lazy" title="Map"/>
-                <a href={"https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(f.location)}
-                  target="_blank" rel="noopener noreferrer"
-                  style={{ display:"flex",alignItems:"center",justifyContent:"center",gap:6,padding:"10px",background:"#FAF5EE",fontFamily:"'Jost',sans-serif",fontSize:11,color:"#8B6E4E",textDecoration:"none" }}>
-                  Open in Google Maps {Icon.arrow(11,"#8B6E4E")}
-                </a>
+          ) : (
+            <div className="ig-cover-fallback" style={{ background:it.cover }}>
+              <span className="ig-cover-emoji">{it.emoji}</span>
+              {f.host&&<div className="ig-cover-host" style={{ color:it.accent }}>{f.host} invites you to</div>}
+              <div className="ig-cover-title" style={{ color:it.accent }}>{f.title||it.label}</div>
+              {f.subtext&&<div style={{ fontFamily:"'Lora',serif",fontSize:14,fontStyle:"italic",color:it.accent,opacity:.7,marginTop:4 }}>{f.subtext}</div>}
+              {yesCount>0&&<div style={{ fontFamily:"'Jost',sans-serif",fontSize:12,color:it.accent,opacity:.55,marginTop:10 }}>{yesCount} {yesCount===1?"person is":"people are"} coming</div>}
+            </div>
+          )}
+
+          {/* Floating card body */}
+          <div className="ig-body">
+            <div className="ig-card">
+              <div className="ig-details">
+                {f.date&&<div className="ig-detail-row">
+                  <div className="ig-detail-icon" style={{ background:it.cover }} style={{ display:"flex",alignItems:"center",justifyContent:"center",color:"currentColor",opacity:.65 }}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+                  <div><div className="ig-detail-label">Date &amp; Time</div><div className="ig-detail-val">{new Date(f.date).toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric",year:"numeric"})}{f.time&&" at "+f.time}</div></div>
+                </div>}
+                {f.location&&<div className="ig-detail-row">
+                  <div className="ig-detail-icon" style={{ background:it.cover }} style={{ display:"flex",alignItems:"center",justifyContent:"center",color:"currentColor",opacity:.65 }}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+                  <div><div className="ig-detail-label">Location</div><div className="ig-detail-val">{f.location}</div></div>
+                </div>}
+                {f.dress&&<div className="ig-detail-row">
+                  <div className="ig-detail-icon" style={{ background:it.cover }} style={{ display:"flex",alignItems:"center",justifyContent:"center",color:"currentColor",opacity:.65 }}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.57a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.57a2 2 0 0 0-1.34-2.23z"/></svg></div>
+                  <div><div className="ig-detail-label">Dress Code</div><div className="ig-detail-val">{f.dress}</div></div>
+                </div>}
+                {f.rsvpDeadline&&<div className="ig-detail-row">
+                  <div className="ig-detail-icon" style={{ background:it.cover }} style={{ display:"flex",alignItems:"center",justifyContent:"center",color:"currentColor",opacity:.65 }}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+                  <div><div className="ig-detail-label">RSVP by</div><div className="ig-detail-val">{new Date(f.rsvpDeadline).toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"})}</div></div>
+                </div>}
               </div>
-            )}
-            {f.musicUrl&&(
-              <div style={{ padding:"16px 28px",borderTop:"1px solid rgba(42,21,8,.06)",background:"#FDFAF6" }}>
-                {f.musicLabel&&<div style={{ fontFamily:"'Jost',sans-serif",fontSize:11,color:"rgba(42,21,8,.45)",marginBottom:8 }}>{"🎵"} {f.musicLabel}</div>}
-                <audio controls src={f.musicFile||f.musicUrl} style={{ width:"100%",height:36,borderRadius:6 }}/>
-              </div>
-            )}
+              {f.note&&<div className="ig-note">"{f.note}"</div>}
+              {f.location&&(
+                <div style={{ borderTop:"1px solid rgba(42,21,8,.06)" }}>
+                  <iframe src={"https://maps.google.com/maps?q="+encodeURIComponent(f.location)+"&output=embed&z=15"}
+                    width="100%" height="200" style={{ display:"block",border:"none" }} loading="lazy" title="Map"/>
+                  <a href={"https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(f.location)}
+                    target="_blank" rel="noopener noreferrer"
+                    style={{ display:"flex",alignItems:"center",justifyContent:"center",gap:6,padding:"12px",background:"#FAF5EE",fontFamily:"'Jost',sans-serif",fontSize:12,color:"#8B6E4E",textDecoration:"none",borderTop:"1px solid rgba(42,21,8,.06)" }}>
+                    Open in Google Maps {Icon.arrow(11,"#8B6E4E")}
+                  </a>
+                </div>
+              )}
+              {(f.musicFile||f.musicUrl)&&(
+                <div className="ig-music">
+                  {f.musicLabel&&<div className="ig-music-label"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" style={{marginRight:4,verticalAlign:"middle"}}><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>{f.musicLabel}</div>}
+                  <audio controls src={f.musicFile||f.musicUrl} style={{ flex:1,height:36,borderRadius:6,minWidth:0 }}/>
+                </div>
+              )}
+            </div>
           </div>
 
+          {/* RSVP section */}
+          <div className="ig-rsvp-wrap">
           {!rsvpSent ? (
-            <div className="rsvp-section">
-              <div className="rsvp-title">Will you be there?</div>
-              <div className="rsvp-btns">
-                <button className={`rsvp-btn${rsvpChoice==="yes"?" yes":""}`} onClick={()=>setRsvpChoice("yes")}>✓ Yes</button>
-                <button className={`rsvp-btn${rsvpChoice==="maybe"?" maybe":""}`} onClick={()=>setRsvpChoice("maybe")}>~ Maybe</button>
-                <button className={`rsvp-btn${rsvpChoice==="no"?" no":""}`} onClick={()=>setRsvpChoice("no")}>✗ Can't make it</button>
+            <div className="ig-rsvp">
+              <div className="ig-rsvp-title">Will you be there?</div>
+              <div className="ig-rsvp-btns">
+                <button className={"ig-rsvp-btn"+(rsvpChoice==="yes"?" yes":"")} onClick={()=>setRsvpChoice("yes")}>
+                  <span className="ig-rsvp-btn-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                  </span>
+                  Joining
+                </button>
+                <button className={"ig-rsvp-btn"+(rsvpChoice==="maybe"?" maybe":"")} onClick={()=>setRsvpChoice("maybe")}>
+                  <span className="ig-rsvp-btn-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9 10a3 3 0 0 1 6 0c0 2-3 3-3 3"/><circle cx="12" cy="17" r=".5" fill="currentColor"/></svg>
+                  </span>
+                  Maybe
+                </button>
+                <button className={"ig-rsvp-btn"+(rsvpChoice==="no"?" no":"")} onClick={()=>setRsvpChoice("no")}>
+                  <span className="ig-rsvp-btn-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  </span>
+                  Can't make it
+                </button>
               </div>
-              <label style={{ fontFamily:"'Jost',sans-serif",fontSize:11,fontWeight:500,letterSpacing:1.5,textTransform:"uppercase",color:"rgba(42,21,8,.38)",display:"block",marginBottom:6 }}>Your name</label>
-              <input className="f-input" placeholder="Your name" value={rsvpName} onChange={e=>setRsvpName(e.target.value)} style={{ marginBottom:10 }}/>
-              <label style={{ fontFamily:"'Jost',sans-serif",fontSize:11,fontWeight:500,letterSpacing:1.5,textTransform:"uppercase",color:"rgba(42,21,8,.38)",display:"block",marginBottom:6 }}>Email (optional)</label>
-              <input className="f-input" type="email" placeholder="you@example.com" value={rsvpEmail} onChange={e=>setRsvpEmail(e.target.value)} style={{ marginBottom:16 }}/>
-              <button className="btn-dark" style={{ width:"100%",justifyContent:"center",opacity:(!rsvpName.trim()||!rsvpChoice)?.5:1 }} onClick={submitRsvp} disabled={!rsvpName.trim()||!rsvpChoice}>
-                Send my RSVP
+              <div className="ig-fields">
+                <input className="f-input" placeholder="Your name *" value={rsvpName} onChange={e=>setRsvpName(e.target.value)} style={{ fontSize:15,padding:"12px 16px" }}/>
+                <input className="f-input" type="email" placeholder="Email (optional)" value={rsvpEmail} onChange={e=>setRsvpEmail(e.target.value)} style={{ fontSize:15,padding:"12px 16px" }}/>
+              </div>
+              <button className="ig-send-btn" onClick={submitRsvp} disabled={!rsvpName.trim()||!rsvpChoice}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                Send RSVP
               </button>
             </div>
           ) : (
-            <div style={{ textAlign:"center",padding:"32px 20px",background:"white",borderRadius:16,boxShadow:"0 4px 24px rgba(42,21,8,.08)" }}>
-              {Icon.check(52)}
-              <div style={{ fontFamily:"'Jost',sans-serif",fontSize:20,fontWeight:400,color:"#2A1508",marginTop:14,marginBottom:8 }}>
-                {rsvpChoice==="yes"?"See you there! 🎉":rsvpChoice==="maybe"?"Hopefully see you soon!":"Thanks for letting us know."}
+            <div style={{ background:"white",borderRadius:20,padding:"36px 24px",textAlign:"center",boxShadow:"0 8px 32px rgba(42,21,8,.1)" }}>
+              {Icon.check(56)}
+              <div style={{ fontFamily:"'Jost',sans-serif",fontSize:22,fontWeight:400,color:"#2A1508",marginTop:16,marginBottom:10 }}>
+                {rsvpChoice==="yes"?"See you there!":rsvpChoice==="maybe"?"Hopefully see you soon.":"Thanks for letting us know."}
               </div>
-              <p style={{ fontFamily:"'Jost',sans-serif",fontSize:13,fontWeight:300,color:"#8B6E4E",lineHeight:1.7 }}>Your RSVP has been recorded.</p>
+              <p style={{ fontFamily:"'Jost',sans-serif",fontSize:14,fontWeight:300,color:"#8B6E4E",lineHeight:1.75 }}>Your RSVP has been recorded.</p>
             </div>
           )}
+          </div>
         </div>
       </div>
     );
@@ -2263,19 +2331,19 @@ export default function Steeped() {
                     )}
                     <div className="invite-guest-details">
                       {pf.date&&<div className="invite-guest-detail-row">
-                        <div className="invite-guest-detail-icon" style={{ background:pit.cover }}>{"📅"}</div>
+                        <div className="invite-guest-detail-icon" style={{ background:pit.cover }} style={{ display:"flex",alignItems:"center",justifyContent:"center",color:"currentColor",opacity:.65 }}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
                         <div><div className="invite-guest-detail-label">Date &amp; Time</div><div className="invite-guest-detail-val">{new Date(pf.date).toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric",year:"numeric"})}{pf.time&&" at "+pf.time}</div></div>
                       </div>}
                       {pf.location&&<div className="invite-guest-detail-row">
-                        <div className="invite-guest-detail-icon" style={{ background:pit.cover }}>{"📍"}</div>
+                        <div className="invite-guest-detail-icon" style={{ background:pit.cover }} style={{ display:"flex",alignItems:"center",justifyContent:"center",color:"currentColor",opacity:.65 }}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
                         <div><div className="invite-guest-detail-label">Location</div><div className="invite-guest-detail-val">{pf.location}</div></div>
                       </div>}
                       {pf.dress&&<div className="invite-guest-detail-row">
-                        <div className="invite-guest-detail-icon" style={{ background:pit.cover }}>{"👗"}</div>
+                        <div className="invite-guest-detail-icon" style={{ background:pit.cover }} style={{ display:"flex",alignItems:"center",justifyContent:"center",color:"currentColor",opacity:.65 }}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.57a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.57a2 2 0 0 0-1.34-2.23z"/></svg></div>
                         <div><div className="invite-guest-detail-label">Dress Code</div><div className="invite-guest-detail-val">{pf.dress}</div></div>
                       </div>}
                       {pf.rsvpDeadline&&<div className="invite-guest-detail-row">
-                        <div className="invite-guest-detail-icon" style={{ background:pit.cover }}>{"✉️"}</div>
+                        <div className="invite-guest-detail-icon" style={{ background:pit.cover }} style={{ display:"flex",alignItems:"center",justifyContent:"center",color:"currentColor",opacity:.65 }}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
                         <div><div className="invite-guest-detail-label">RSVP by</div><div className="invite-guest-detail-val">{new Date(pf.rsvpDeadline).toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"})}</div></div>
                       </div>}
                     </div>
