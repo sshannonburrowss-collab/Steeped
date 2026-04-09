@@ -79,16 +79,16 @@ const THEMES = [
 ];
 
 const INVITE_TYPES = [
-  { id:"birthday",    label:"Birthday Party",   emoji:"🎂", accent:"#c0392b", cover:"linear-gradient(135deg,#fff0f0,#ffd6d6,#ffb3b3)", icon:"🎉" },
-  { id:"wedding",     label:"Wedding",          emoji:"💍", accent:"#8e6b3e", cover:"linear-gradient(135deg,#fefdf8,#f5edd8,#eedcb8)", icon:"🌸" },
-  { id:"babyshower",  label:"Baby Shower",      emoji:"🍼", accent:"#5b9bd5", cover:"linear-gradient(135deg,#f0f8ff,#d6ebff,#c0deff)", icon:"⭐" },
-  { id:"dinnerparty", label:"Dinner Party",     emoji:"🍽️", accent:"#2c5f2e", cover:"linear-gradient(135deg,#f0fff4,#d6f5dc,#b8ecc0)", icon:"🕯️" },
-  { id:"bookclub",    label:"Book Club",        emoji:"📚", accent:"#6b4f3a", cover:"linear-gradient(135deg,#fdf6f0,#f5e6d8,#edd6c0)", icon:"🍵" },
-  { id:"girlstrip",   label:"Girls' Trip",      emoji:"✈️", accent:"#7b3f9e", cover:"linear-gradient(135deg,#fdf0ff,#f0d6ff,#e8b8ff)", icon:"🌺" },
-  { id:"workevent",   label:"Work Event",       emoji:"💼", accent:"#1a4a7a", cover:"linear-gradient(135deg,#f0f4ff,#d6e4ff,#b8d0ff)", icon:"🎯" },
-  { id:"holiday",     label:"Holiday Gathering",emoji:"🎄", accent:"#1a5c2e", cover:"linear-gradient(135deg,#f0fff4,#c8f0d8,#a8e4bc)", icon:"❄️" },
-  { id:"graduation",  label:"Graduation",       emoji:"🎓", accent:"#7a5c00", cover:"linear-gradient(135deg,#fffdf0,#fff3c8,#ffe8a0)", icon:"⭐" },
-  { id:"housewarming",label:"Housewarming",     emoji:"🏡", accent:"#a0522d", cover:"linear-gradient(135deg,#fff8f0,#ffe8d0,#ffd4b0)", icon:"🌿" },
+  { id:"birthday",    label:"Birthday Party",   svg:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M4 16s.5-1 2-1 2.5 2 4 2 2.5-2 4-2 2.5 2 4 2 2-1 2-1"/><line x1="2" y1="21" x2="22" y2="21"/><path d="M7 8v2"/><path d="M12 8v2"/><path d="M17 8v2"/><path d="M7 4a1 1 0 0 1 1-1 1 1 0 0 0 0-2 3 3 0 0 0-3 3"/><path d="M12 4a1 1 0 0 1 1-1 1 1 0 0 0 0-2 3 3 0 0 0-3 3"/><path d="M17 4a1 1 0 0 1 1-1 1 1 0 0 0 0-2 3 3 0 0 0-3 3"/></svg>', accent:"#c0392b", cover:"linear-gradient(135deg,#fff0f0,#ffd6d6,#ffb3b3)" },
+  { id:"wedding",     label:"Wedding",          svg:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',     accent:"#8e6b3e", cover:"linear-gradient(135deg,#fefdf8,#f5edd8,#eedcb8)" },
+  { id:"babyshower",  label:"Baby Shower",      svg:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a5 5 0 0 1 5 5c0 3-5 11-5 11S7 10 7 7a5 5 0 0 1 5-5z"/><circle cx="12" cy="7" r="2"/></svg>',  accent:"#5b9bd5", cover:"linear-gradient(135deg,#f0f8ff,#d6ebff,#c0deff)" },
+  { id:"dinnerparty", label:"Dinner Party",     svg:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6h5zm0 0v7"/></svg>', accent:"#2c5f2e", cover:"linear-gradient(135deg,#f0fff4,#d6f5dc,#b8ecc0)" },
+  { id:"bookclub",    label:"Book Club",        svg:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>',    accent:"#6b4f3a", cover:"linear-gradient(135deg,#fdf6f0,#f5e6d8,#edd6c0)" },
+  { id:"girlstrip",   label:"Girls\' Trip",    svg:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-2"/><polygon points="12 15 17 21 7 21 12 15"/></svg>',   accent:"#7b3f9e", cover:"linear-gradient(135deg,#fdf0ff,#f0d6ff,#e8b8ff)" },
+  { id:"workevent",   label:"Work Event",       svg:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>',   accent:"#1a4a7a", cover:"linear-gradient(135deg,#f0f4ff,#d6e4ff,#b8d0ff)" },
+  { id:"holiday",     label:"Holiday Gathering",svg:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><path d="M17 14l-5-5-5 5"/><path d="M19 18l-7-7-7 7"/><line x1="12" y1="22" x2="12" y2="9"/></svg>',     accent:"#1a5c2e", cover:"linear-gradient(135deg,#f0fff4,#c8f0d8,#a8e4bc)" },
+  { id:"graduation",  label:"Graduation",       svg:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 22 8.5 12 15 2 8.5 12 2"/><line x1="12" y1="15" x2="12" y2="22"/><path d="M20 12v5a8 8 0 0 1-16 0v-5"/></svg>',  accent:"#7a5c00", cover:"linear-gradient(135deg,#fffdf0,#fff3c8,#ffe8a0)" },
+  { id:"housewarming",label:"Housewarming",     svg:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M9 21V12h6v9"/></svg>',accent:"#a0522d", cover:"linear-gradient(135deg,#fff8f0,#ffe8d0,#ffd4b0)" },
 ];
 
 const FONTS = [
@@ -461,7 +461,7 @@ html,body{width:100%;min-height:100%;background:#FAF5EE;}
 .invite-types-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;margin-top:24px;}
 .invite-type-card{border-radius:12px;padding:28px 16px 20px;text-align:center;cursor:pointer;transition:all .2s;box-shadow:0 2px 14px rgba(42,21,8,.07);border:1.5px solid transparent;animation:fadeUp .4s ease both;}
 .invite-type-card:hover{transform:translateY(-4px);box-shadow:0 14px 36px rgba(42,21,8,.14);border-color:rgba(42,21,8,.1);}
-.invite-type-emoji{font-size:38px;margin-bottom:12px;display:block;line-height:1;}
+.invite-type-svg{width:44px;height:44px;margin:0 auto 14px;display:block;}
 .invite-type-label{font-family:'Jost',sans-serif;font-size:13px;font-weight:400;color:#2A1508;margin-top:4px;}
 /* Invite editor */
 .invite-editor-wrap{max-width:700px;margin:0 auto;padding:40px 40px 80px;box-sizing:border-box;}
@@ -957,7 +957,7 @@ export default function Steeped() {
   const [inviteId, setInviteId] = useState(null);
   const [inviteForm, setInviteForm] = useState({
     title:"", host:"", subtext:"", date:"", time:"", location:"", dress:"", note:"", rsvpDeadline:"",
-    photo:"", photoPosition:"center", overlayOpacity:0.5, photoZoom:100, musicUrl:"", musicLabel:"", musicFile:""
+    photo:"", photoPosition:"center", overlayOpacity:0.5, photoZoom:100, musicUrl:"", musicLabel:"", musicFile:"", registries:[]
   });
   const [myInvites, setMyInvites] = useState([]);
   const [guestInvite, setGuestInvite] = useState(null);
@@ -1529,8 +1529,8 @@ export default function Steeped() {
   };
   const openInviteEditor = (type, existingInvite=null) => {
     setInviteType(type);
-    if(existingInvite){ setInviteId(existingInvite.id); setInviteForm(existingInvite.form||{}); setInviteUrl(`${window.location.origin}/?invite=${existingInvite.id}`); }
-    else { setInviteId(null); setInviteForm({title:"",host:user?.user_metadata?.full_name||"",date:"",time:"",location:"",dress:"",note:"",rsvpDeadline:""}); setInviteUrl(""); }
+    if(existingInvite){ setInviteId(existingInvite.id); setInviteForm({...existingInvite.form, registries:existingInvite.form?.registries||[]}); setInviteUrl(`${window.location.origin}/?invite=${existingInvite.id}`); }
+    else { setInviteId(null); setInviteForm({title:"",host:user?.user_metadata?.full_name||"",date:"",time:"",location:"",dress:"",note:"",rsvpDeadline:"",photo:"",photoPosition:"center",overlayOpacity:0.5,photoZoom:100,musicUrl:"",musicLabel:"",musicFile:"",registries:[]}); setInviteUrl(""); }
     setView("invite-editor");
   };
   const loadMyInvites = () => {
@@ -1978,7 +1978,7 @@ export default function Steeped() {
             </div>
           ) : (
             <div className="ig-cover-fallback" style={{ background:it.cover }}>
-              <span className="ig-cover-emoji">{it.emoji}</span>
+              <div style={{ width:56,height:56,margin:"0 auto 14px",color:it.accent }} dangerouslySetInnerHTML={{ __html:it.svg }}/>
               {f.host&&<div className="ig-cover-host" style={{ color:it.accent }}>{f.host} invites you to</div>}
               <div className="ig-cover-title" style={{ color:it.accent }}>{f.title||it.label}</div>
               {f.subtext&&<div style={{ fontFamily:"'Lora',serif",fontSize:14,fontStyle:"italic",color:it.accent,opacity:.7,marginTop:4 }}>{f.subtext}</div>}
@@ -2008,6 +2008,31 @@ export default function Steeped() {
                 </div>}
               </div>
               {f.note&&<div className="ig-note">"{f.note}"</div>}
+              {(f.registries||[]).length>0&&(
+                <div style={{ padding:"20px 22px",borderTop:"1px solid rgba(42,21,8,.06)" }}>
+                  <div style={{ fontFamily:"'Jost',sans-serif",fontSize:10,fontWeight:500,letterSpacing:2,textTransform:"uppercase",color:"rgba(42,21,8,.38)",marginBottom:12 }}>Registry &amp; Wishlists</div>
+                  <div style={{ display:"flex",flexDirection:"column",gap:8 }}>
+                    {(f.registries||[]).filter(r=>r.url).map((reg,ri)=>(
+                      <a key={ri} href={reg.url.startsWith("http")?reg.url:"https://"+reg.url}
+                        target="_blank" rel="noopener noreferrer"
+                        style={{ display:"flex",alignItems:"center",justifyContent:"space-between",padding:"11px 16px",borderRadius:10,border:"1.5px solid rgba(42,21,8,.1)",background:"#FDFAF6",textDecoration:"none",transition:"all .15s" }}
+                        onMouseEnter={e=>{ e.currentTarget.style.borderColor="rgba(42,21,8,.25)"; e.currentTarget.style.background="white"; }}
+                        onMouseLeave={e=>{ e.currentTarget.style.borderColor="rgba(42,21,8,.1)"; e.currentTarget.style.background="#FDFAF6"; }}>
+                        <div style={{ display:"flex",alignItems:"center",gap:10 }}>
+                          <div style={{ width:32,height:32,borderRadius:8,background:"white",border:"1px solid rgba(42,21,8,.1)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0 }}>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(42,21,8,.5)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
+                          </div>
+                          <div>
+                            <div style={{ fontFamily:"'Jost',sans-serif",fontSize:13,fontWeight:500,color:"#2A1508" }}>{reg.name}</div>
+                            <div style={{ fontFamily:"'Jost',sans-serif",fontSize:11,fontWeight:300,color:"rgba(42,21,8,.4)",marginTop:1 }}>View wishlist</div>
+                          </div>
+                        </div>
+                        {Icon.arrow(13,"rgba(42,21,8,.3)")}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
               {f.location&&(
                 <div style={{ borderTop:"1px solid rgba(42,21,8,.06)" }}>
                   <iframe src={"https://maps.google.com/maps?q="+encodeURIComponent(f.location)+"&output=embed&z=15"}
@@ -2093,7 +2118,7 @@ export default function Steeped() {
         <div className="invite-types-grid">
           {INVITE_TYPES.map((it,i)=>(
             <div key={it.id} className="invite-type-card" style={{ background:it.cover,animationDelay:`${i*.05}s` }} onClick={()=>openInviteEditor(it.id)}>
-              <span className="invite-type-emoji">{it.emoji}</span>
+              <div className="invite-type-svg" style={{ color:it.accent }} dangerouslySetInnerHTML={{ __html:it.svg }}/>
               <div className="invite-type-label" style={{ color:it.accent }}>{it.label}</div>
             </div>
           ))}
@@ -2280,6 +2305,48 @@ export default function Steeped() {
               </div>
             )}
           </div>
+          {/* Section 5: Registry & Wishlists */}
+          <div style={{ background:"white",borderRadius:12,padding:"24px 28px",boxShadow:"0 2px 14px rgba(42,21,8,.07)",marginBottom:14 }}>
+            <div style={{ display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:16 }}>
+              <div style={{ fontFamily:"'Jost',sans-serif",fontSize:10,fontWeight:500,letterSpacing:2,textTransform:"uppercase",color:"rgba(42,21,8,.38)" }}>Registry &amp; Wishlists</div>
+              <span style={{ fontFamily:"'Jost',sans-serif",fontSize:10,fontWeight:300,color:"rgba(42,21,8,.35)" }}>optional</span>
+            </div>
+            <p style={{ fontFamily:"'Jost',sans-serif",fontSize:12,fontWeight:300,color:"#8B6E4E",lineHeight:1.6,marginBottom:16 }}>
+              Add links to your registries — Amazon, Zola, Target, or any custom wishlist.
+            </p>
+            {(f.registries||[]).map((reg,ri)=>(
+              <div key={ri} style={{ display:"grid",gridTemplateColumns:"130px 1fr auto",gap:8,marginBottom:8,alignItems:"center" }}>
+                <select className="f-select" value={reg.name} onChange={e=>{
+                  const updated=[...(f.registries||[])]; updated[ri]={...reg,name:e.target.value};
+                  setInviteForm(fm=>({...fm,registries:updated}));
+                }} style={{ fontSize:12 }}>
+                  <option value="Amazon">Amazon</option>
+                  <option value="Zola">Zola</option>
+                  <option value="Target">Target</option>
+                  <option value="Babylist">Babylist</option>
+                  <option value="Williams Sonoma">Williams Sonoma</option>
+                  <option value="Crate & Barrel">Crate &amp; Barrel</option>
+                  <option value="The Knot">The Knot</option>
+                  <option value="MyRegistry">MyRegistry</option>
+                  <option value="Other">Other</option>
+                </select>
+                <input className="f-input" placeholder="Paste your registry link" value={reg.url}
+                  onChange={e=>{ const updated=[...(f.registries||[])]; updated[ri]={...reg,url:e.target.value}; setInviteForm(fm=>({...fm,registries:updated})); }}
+                  style={{ fontSize:12 }}/>
+                <button onClick={()=>setInviteForm(fm=>({...fm,registries:(fm.registries||[]).filter((_,i)=>i!==ri)}))}
+                  style={{ background:"none",border:"none",cursor:"pointer",color:"rgba(42,21,8,.3)",padding:"4px",display:"flex",alignItems:"center",flexShrink:0 }}>
+                  {Icon.x(12,"rgba(42,21,8,.3)")}
+                </button>
+              </div>
+            ))}
+            <button onClick={()=>setInviteForm(fm=>({...fm,registries:[...(fm.registries||[]),{name:"Amazon",url:""}]}))}
+              style={{ display:"flex",alignItems:"center",gap:6,background:"none",border:"1.5px dashed rgba(42,21,8,.16)",borderRadius:8,padding:"8px 14px",cursor:"pointer",fontFamily:"'Jost',sans-serif",fontSize:12,color:"#8B6E4E",width:"100%",justifyContent:"center",marginTop:4,transition:"border-color .15s" }}
+              onMouseEnter={e=>e.currentTarget.style.borderColor="rgba(42,21,8,.32)"}
+              onMouseLeave={e=>e.currentTarget.style.borderColor="rgba(42,21,8,.16)"}>
+              {Icon.plus(12,"#8B6E4E")} Add a registry
+            </button>
+          </div>
+
           {/* Share */}
           {inviteUrl ? (
             <div style={{ background:"white",borderRadius:12,padding:"20px 24px",boxShadow:"0 2px 14px rgba(42,21,8,.07)",display:"flex",gap:10,alignItems:"center" }}>
@@ -2323,7 +2390,7 @@ export default function Steeped() {
                       </div>
                     ) : (
                       <div className="invite-guest-cover" style={{ background:pit.cover }}>
-                        <div style={{ fontSize:52,marginBottom:12 }}>{pit.emoji}</div>
+                        <div style={{ width:52,height:52,margin:"0 auto 12px",color:pit.accent }} dangerouslySetInnerHTML={{ __html:pit.svg }}/>
                         {pf.host&&<div className="invite-guest-host" style={{ color:pit.accent }}>{pf.host} invites you to</div>}
                         <div className="invite-guest-title" style={{ color:pit.accent }}>{pf.title||pit.label}</div>
                         {pf.subtext&&<div style={{ fontFamily:"'Lora',serif",fontSize:14,fontStyle:"italic",color:pit.accent,opacity:.7,marginTop:6 }}>{pf.subtext}</div>}
@@ -2348,6 +2415,17 @@ export default function Steeped() {
                       </div>}
                     </div>
                     {pf.note&&<div className="invite-guest-note">"{pf.note}"</div>}
+                    {(pf.registries||[]).filter(r=>r.url).length>0&&(
+                      <div style={{ padding:"16px 22px",borderTop:"1px solid rgba(42,21,8,.06)" }}>
+                        <div style={{ fontFamily:"'Jost',sans-serif",fontSize:10,letterSpacing:2,textTransform:"uppercase",color:"rgba(42,21,8,.38)",marginBottom:10 }}>Registry &amp; Wishlists</div>
+                        {(pf.registries||[]).filter(r=>r.url).map((reg,ri)=>(
+                          <div key={ri} style={{ display:"flex",alignItems:"center",justifyContent:"space-between",padding:"10px 14px",borderRadius:8,border:"1.5px solid rgba(42,21,8,.1)",background:"#FDFAF6",marginBottom:6 }}>
+                            <div style={{ fontFamily:"'Jost',sans-serif",fontSize:13,fontWeight:500,color:"#2A1508" }}>{reg.name}</div>
+                            <div style={{ fontFamily:"'Jost',sans-serif",fontSize:11,color:"rgba(42,21,8,.4)" }}>View wishlist {Icon.arrow(10,"rgba(42,21,8,.3)")}</div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                     {pf.location&&<div style={{ borderTop:"1px solid rgba(42,21,8,.06)" }}>
                       <iframe src={"https://maps.google.com/maps?q="+encodeURIComponent(pf.location)+"&output=embed&z=15"} width="100%" height="180" style={{ display:"block",border:"none" }} loading="lazy" title="Map"/>
                     </div>}
@@ -2405,7 +2483,7 @@ export default function Steeped() {
               return (
                 <div key={inv.id} className="my-inv-card" style={{ animationDelay:`${i*.05}s` }}>
                   <div className="my-inv-cover" style={{ background:it.cover }} onClick={()=>openInviteEditor(it.id,inv)}>
-                    <div style={{ fontSize:32 }}>{it.emoji}</div>
+                    <div style={{ color:it.accent,width:32,height:32,margin:"0 auto" }} dangerouslySetInnerHTML={{ __html:it.svg }}/>
                     <div style={{ fontFamily:"'Jost',sans-serif",fontSize:12,fontWeight:300,color:it.accent,textAlign:"center" }}>{f.title||it.label}</div>
                   </div>
                   <div className="my-inv-body">
