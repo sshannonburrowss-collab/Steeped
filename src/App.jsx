@@ -1489,27 +1489,32 @@ export default function Steeped() {
       const inv = { id, type:inviteType, form:inviteForm, rsvps:[], createdAt:now, updatedAt:now };
       // Save to localStorage first — always works, no API needed
       persistInviteLocally(inv);
-      const url = window.location.origin + "/?invite=" + id;
-      setInviteUrl(url);
-      // Try API in background (strips photo from payload to avoid size limits)
+
+      // Encode invite data (minus photo/audio) into the URL itself
+      // so guests can open the invite on any device without needing the API
+      const sharePayload = {
+        id, type:inviteType,
+        form:{ ...inviteForm, photo:"", musicFile:"" },
+        rsvps:[]
+      };
+      let encodedData = "";
       try {
-        const formForApi = { ...inviteForm, photo:"" }; // don't send base64 to API
-        const res = await fetch("/api/save-invite", {
+        encodedData = btoa(unescape(encodeURIComponent(JSON.stringify(sharePayload))));
+      } catch(e) { console.warn("Could not encode invite data:", e.message); }
+
+      const url = window.location.origin + "/?invite=" + id + (encodedData ? "&d=" + encodedData : "");
+      setInviteUrl(url);
+
+      // Also try API so RSVPs persist in Supabase (non-blocking)
+      try {
+        const formForApi = { ...inviteForm, photo:"", musicFile:"" };
+        await fetch("/api/save-invite", {
           method:"POST",
           headers:{"Content-Type":"application/json"},
           body:JSON.stringify({ inviteId:id, type:inviteType, form:formForApi, userId:user?.id })
         });
-        if (res.ok) {
-          const data = await res.json();
-          if (data.inviteId && data.inviteId !== id) {
-            const remoteUrl = window.location.origin + "/?invite=" + data.inviteId;
-            setInviteId(data.inviteId);
-            setInviteUrl(remoteUrl);
-            persistInviteLocally({ ...inv, id:data.inviteId });
-          }
-        }
       } catch(apiErr) {
-        console.warn("save-invite API unavailable, saved locally:", apiErr.message);
+        console.warn("save-invite API unavailable — invite data is embedded in share link:", apiErr.message);
       }
     } catch(err) {
       console.error("saveInvite failed:", err);
@@ -1519,13 +1524,30 @@ export default function Steeped() {
   };
   const loadGuestInvite = async (iid) => {
     setLoadingInvite(true);
-    // 1. Try localStorage first — works instantly for the creator
+
+    // 1. Try URL-embedded data first — works for all guests, no API needed
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const encoded = urlParams.get("d");
+      if (encoded) {
+        const decoded = JSON.parse(decodeURIComponent(escape(atob(encoded))));
+        if (decoded && (decoded.id === iid || decoded.form)) {
+          const inv = { ...decoded, id: iid };
+          persistInviteLocally(inv);
+          setGuestInvite(inv); setView("invite-guest");
+          setLoadingInvite(false); return;
+        }
+      }
+    } catch(e) { console.warn("URL decode failed:", e.message); }
+
+    // 2. Try localStorage — works for the creator on the same device
     const local = readLocalInvites().find(i=>i.id===iid);
     if (local) {
       setGuestInvite(local); setView("invite-guest");
       setLoadingInvite(false); return;
     }
-    // 2. Try API for guests on other devices
+
+    // 3. Try API — works if Supabase is connected
     try {
       const res = await fetch("/api/get-invite?id="+iid);
       if (res.ok) {
@@ -1537,7 +1559,8 @@ export default function Steeped() {
     } catch(e) {
       console.error("loadGuestInvite API error:", e.message);
     }
-    // Neither localStorage nor API worked — show error (not home)
+
+    // All three failed — show error
     setInviteError(true);
     setLoadingInvite(false);
   };
@@ -2513,14 +2536,10 @@ export default function Steeped() {
           {/* Share */}
           {inviteUrl ? (
             <div style={{ background:"white",borderRadius:12,padding:"20px 24px",boxShadow:"0 2px 14px rgba(42,21,8,.07)" }}>
-              {inviteUrl.includes("local=1")&&(
-                <div style={{ fontFamily:"'Jost',sans-serif",fontSize:12,fontWeight:400,color:"#c8860a",background:"rgba(200,134,10,.08)",border:"1px solid rgba(200,134,10,.2)",borderRadius:8,padding:"10px 14px",marginBottom:12,lineHeight:1.6 }}>
-                  <strong style={{ fontWeight:500 }}>Heads up:</strong> This invite is saved on your device only. Deploy the API files to Supabase so guests on other devices can open the link.
-                </div>
-              )}
+
               <div style={{ display:"flex",gap:10,alignItems:"center" }}>
-                <div style={{ flex:1,fontFamily:"'Jost',sans-serif",fontSize:12,color:"#8B6E4E",background:"#FAF5EE",padding:"8px 12px",borderRadius:6,border:"1px solid rgba(42,21,8,.1)",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap" }}>{inviteUrl.replace("&local=1","")}</div>
-                <button className="btn-dark" style={{ flexShrink:0,padding:"8px 18px",fontSize:12 }} onClick={async()=>{ await navigator.clipboard.writeText(inviteUrl.replace("&local=1","")); setInviteCopied(true); setTimeout(()=>setInviteCopied(false),2200); }}>
+                <div style={{ flex:1,fontFamily:"'Jost',sans-serif",fontSize:12,color:"#8B6E4E",background:"#FAF5EE",padding:"8px 12px",borderRadius:6,border:"1px solid rgba(42,21,8,.1)",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap" }}>{inviteUrl}</div>
+                <button className="btn-dark" style={{ flexShrink:0,padding:"8px 18px",fontSize:12 }} onClick={async()=>{ await navigator.clipboard.writeText(inviteUrl); setInviteCopied(true); setTimeout(()=>setInviteCopied(false),2200); }}>
                   {inviteCopied?"✓ Copied!":"Copy link"}
                 </button>
               </div>
