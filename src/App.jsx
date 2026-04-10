@@ -1508,14 +1508,15 @@ export default function Steeped() {
           });
           if (uploadRes.ok) {
             const uploadData = await uploadRes.json();
+            console.log("[upload-photo] Success:", uploadData);
             if (uploadData.url) {
               photoUrl = uploadData.url;
-              // Update local form so editor preview stays correct
               setInviteForm(f=>({...f, photo:uploadData.url}));
             }
           } else {
             const errText = await uploadRes.text();
             console.error("[upload-photo] API error:", uploadRes.status, errText);
+            alert("Photo upload failed (" + uploadRes.status + "): " + errText.slice(0,200));
           }
         } catch(e) {
           console.error("[upload-photo] Failed:", e.message);
