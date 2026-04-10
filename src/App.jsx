@@ -962,7 +962,7 @@ export default function Steeped() {
   const [inviteId, setInviteId] = useState(null);
   const [inviteForm, setInviteForm] = useState({
     title:"", host:"", subtext:"", date:"", time:"", location:"", dress:"", note:"", rsvpDeadline:"",
-    photo:"", photoPosition:"center", overlayOpacity:0.5, photoZoom:100, musicUrl:"", musicLabel:"", musicFile:"", registries:[]
+    photo:"", photoCompressed:"", photoPosition:"center", overlayOpacity:0.5, photoZoom:100, musicUrl:"", musicLabel:"", musicFile:"", registries:[]
   });
   const [myInvites, setMyInvites] = useState([]);
   const [guestInvite, setGuestInvite] = useState(null);
@@ -1493,14 +1493,21 @@ export default function Steeped() {
 
       // Encode invite data (minus photo/audio) into the URL itself
       // so guests can open the invite on any device without needing the API
+      // Use compressed photo for URL (small enough to embed, ~30-80KB base64)
+      const photoForShare = inviteForm.photoCompressed || inviteForm.photo || "";
       const sharePayload = {
         id, type:inviteType,
-        form:{ ...inviteForm, photo:"", musicFile:"" },
+        form:{ ...inviteForm, photo:photoForShare, photoCompressed:"", musicFile:"" },
         rsvps:[]
       };
       let encodedData = "";
       try {
         encodedData = btoa(unescape(encodeURIComponent(JSON.stringify(sharePayload))));
+        // Safety check: if URL would be absurdly long, drop the photo
+        if (encodedData.length > 200000) {
+          const fallback = { ...sharePayload, form:{ ...sharePayload.form, photo:"" } };
+          encodedData = btoa(unescape(encodeURIComponent(JSON.stringify(fallback))));
+        }
       } catch(e) { console.warn("Could not encode invite data:", e.message); }
 
       const url = window.location.origin + "/?invite=" + id + (encodedData ? "&d=" + encodedData : "");
@@ -1592,7 +1599,7 @@ export default function Steeped() {
   };
   const openInviteEditor = (type, existingInvite=null) => {
     setInviteType(type);
-    if(existingInvite){ setInviteId(existingInvite.id); setInviteForm({...existingInvite.form, registries:existingInvite.form?.registries||[]}); setInviteUrl(`${window.location.origin}/?invite=${existingInvite.id}`); }
+    if(existingInvite){ setInviteId(existingInvite.id); setInviteForm({...existingInvite.form, registries:existingInvite.form?.registries||[], photoCompressed:existingInvite.form?.photoCompressed||""}); setInviteUrl(`${window.location.origin}/?invite=${existingInvite.id}`); }
     else { setInviteId(null); setInviteForm({title:"",host:user?.user_metadata?.full_name||"",date:"",time:"",location:"",dress:"",note:"",rsvpDeadline:"",photo:"",photoPosition:"center",overlayOpacity:0.5,photoZoom:100,musicUrl:"",musicLabel:"",musicFile:"",registries:[]}); setInviteUrl(""); }
     setView("invite-editor");
   };
@@ -1601,11 +1608,32 @@ export default function Steeped() {
     setView("my-invites");
   };
 
+  // Compress an image to a max width/height while keeping aspect ratio
+  const compressPhoto = (base64, maxPx=800, quality=0.55) => new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => {
+      const ratio = Math.min(maxPx/img.width, maxPx/img.height, 1);
+      const w = Math.round(img.width*ratio), h = Math.round(img.height*ratio);
+      const canvas = document.createElement("canvas");
+      canvas.width=w; canvas.height=h;
+      canvas.getContext("2d").drawImage(img,0,0,w,h);
+      resolve(canvas.toDataURL("image/jpeg", quality));
+    };
+    img.onerror = ()=>resolve(base64);
+    img.src = base64;
+  });
+
   const handleInvitePhoto = (e) => {
     const file = e.target.files?.[0]; if(!file) return;
     setInvitePhotoUploading(true);
     const reader = new FileReader();
-    reader.onload = ev => { setInviteForm(f=>({...f, photo:ev.target.result})); setInvitePhotoUploading(false); };
+    reader.onload = async ev => {
+      const full = ev.target.result;
+      // Compress for sharing — keep full res for editor preview
+      const compressed = await compressPhoto(full, 900, 0.6);
+      setInviteForm(f=>({...f, photo:full, photoCompressed:compressed}));
+      setInvitePhotoUploading(false);
+    };
     reader.readAsDataURL(file);
   };
   const handleInviteAudio = (e) => {
