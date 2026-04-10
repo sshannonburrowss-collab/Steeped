@@ -966,7 +966,6 @@ export default function Steeped() {
   const [rsvpEmail, setRsvpEmail] = useState("");
   const [rsvpChoice, setRsvpChoice] = useState(null); // "yes"|"maybe"|"no"
   const [rsvpGuests, setRsvpGuests] = useState([]); // additional guests [{name}]
-  const [rsvpReminder, setRsvpReminder] = useState(true); // opt-in reminder email
   const [rsvpSent, setRsvpSent] = useState(false);
   const [inviteSaving, setInviteSaving] = useState(false);
   const [inviteCopied, setInviteCopied] = useState(false);
@@ -1015,6 +1014,7 @@ export default function Steeped() {
   const [cardUrl, setCardUrl] = useState("");
   const [saving, setSaving] = useState(false);
   const [loadingCard, setLoadingCard] = useState(false);
+  const [loadingInvite, setLoadingInvite] = useState(false);
   const [viewCard, setViewCard] = useState(null);
   const [viewSignName, setViewSignName] = useState("");
   const [viewSignMsg, setViewSignMsg] = useState("");
@@ -1069,12 +1069,17 @@ export default function Steeped() {
   const coverRef = useRef(null);
   const pageRefs = useRef({});
 
+  // Keep a ref to loader functions so the effect always calls latest version
+  const loadCardRef = useRef(null);
+  const loadGuestInviteRef = useRef(null);
+
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const cid = params.get("card");
-    if (cid) loadCard(cid);
     const iid = params.get("invite");
-    if (iid) loadGuestInvite(iid);
+    // Defer to next tick so all functions are defined
+    if (cid) setTimeout(()=>loadCardRef.current?.(cid), 0);
+    if (iid) setTimeout(()=>loadGuestInviteRef.current?.(iid), 0);
     supabase.auth.getSession().then(({ data: { session } }) => { if (session?.user) setUser(session.user); });
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => { setUser(session?.user||null); });
     return () => listener?.subscription?.unsubscribe();
@@ -1516,13 +1521,36 @@ export default function Steeped() {
     }
   };
   const loadGuestInvite = async (iid) => {
+    setLoadingInvite(true);
+    // 1. Try localStorage first — works instantly for the creator
     const local = readLocalInvites().find(i=>i.id===iid);
-    if(local){ setGuestInvite(local); setView("invite-guest"); return; }
+    if (local) {
+      setGuestInvite(local); setView("invite-guest");
+      setLoadingInvite(false); return;
+    }
+    // 2. Try API for guests on other devices
     try {
-      const res = await fetch(`/api/get-invite?id=${iid}`);
-      if(res.ok){ const data=await res.json(); persistInviteLocally(data); setGuestInvite(data); setView("invite-guest"); }
-    } catch(e){ console.error(e); }
+      const res = await fetch("/api/get-invite?id="+iid);
+      if (res.ok) {
+        const data = await res.json();
+        persistInviteLocally(data);
+        setGuestInvite(data); setView("invite-guest");
+      } else {
+        // Not found — clear param and go home
+        window.history.replaceState({}, "", window.location.pathname);
+        setView("home");
+      }
+    } catch(e) {
+      console.error("loadGuestInvite failed:", e.message);
+      window.history.replaceState({}, "", window.location.pathname);
+      setView("home");
+    }
+    setLoadingInvite(false);
   };
+  // Keep refs current so the startup effect can call the latest versions
+  loadCardRef.current = loadCard;
+  loadGuestInviteRef.current = loadGuestInvite;
+
   const submitRsvp = async () => {
     if(!rsvpName.trim()||!rsvpChoice) return;
     const validGuests = rsvpGuests.filter(g=>g.name.trim());
@@ -1534,7 +1562,6 @@ export default function Steeped() {
       response: rsvpChoice,
       guests: validGuests,
       totalCount,
-      reminder: rsvpEmail.trim() && rsvpReminder,
       at: new Date().toISOString(),
     };
     const updated = {...guestInvite, rsvps:[...(guestInvite.rsvps||[]), rsvp]};
@@ -1543,7 +1570,7 @@ export default function Steeped() {
       await fetch("/api/rsvp-invite", {
         method:"POST",
         headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({inviteId:guestInvite.id, rsvp, scheduleReminder:rsvp.reminder, eventDate:guestInvite.form?.date})
+        body:JSON.stringify({inviteId:guestInvite.id, rsvp})
       });
     } catch(e){ console.warn("RSVP API unavailable"); }
   };
@@ -1622,6 +1649,15 @@ export default function Steeped() {
       <div className="loading-screen">
         <div className="spinner" style={{ width:28,height:28,borderWidth:3,borderColor:"rgba(42,21,8,.15)",borderTopColor:"#d4a843" }}/>
         <p className="loading-text">Opening your card…</p>
+      </div>
+    </div>
+  );
+
+  if (loadingInvite) return (
+    <div className="app"><style>{CSS}</style>
+      <div className="loading-screen">
+        <div className="spinner" style={{ width:28,height:28,borderWidth:3,borderColor:"rgba(42,21,8,.15)",borderTopColor:"#d4a843" }}/>
+        <p className="loading-text">Opening your invite…</p>
       </div>
     </div>
   );
@@ -2103,19 +2139,6 @@ export default function Steeped() {
                 <input className="f-input" placeholder="Your name *" value={rsvpName} onChange={e=>setRsvpName(e.target.value)} style={{ fontSize:15,padding:"12px 16px" }}/>
                 <input className="f-input" type="email" placeholder="Your email (for reminder)" value={rsvpEmail} onChange={e=>setRsvpEmail(e.target.value)} style={{ fontSize:15,padding:"12px 16px" }}/>
 
-                {/* Email reminder opt-in — only show if email entered */}
-                {rsvpEmail.trim()&&guestInvite.form?.date&&(
-                  <label style={{ display:"flex",alignItems:"center",gap:10,padding:"10px 14px",borderRadius:10,background:"rgba(212,168,67,.08)",border:"1px solid rgba(212,168,67,.25)",cursor:"pointer" }} onClick={()=>setRsvpReminder(r=>!r)}>
-                    <input type="checkbox" checked={rsvpReminder} onChange={()=>{}} style={{ accentColor:"#d4a843",width:16,height:16,flexShrink:0 }}/>
-                    <div>
-                      <div style={{ fontFamily:"'Jost',sans-serif",fontSize:13,fontWeight:500,color:"#5a3a10" }}>Send me a reminder</div>
-                      <div style={{ fontFamily:"'Jost',sans-serif",fontSize:11,fontWeight:300,color:"#8B6E4E",marginTop:1 }}>
-                        {"We'll email you 3 days before — "}
-                        {new Date(new Date(guestInvite.form.date).getTime()-3*24*60*60*1000).toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"})}
-                      </div>
-                    </div>
-                  </label>
-                )}
 
                 {/* Additional guests */}
                 {rsvpChoice!=="no"&&(
@@ -2164,11 +2187,56 @@ export default function Steeped() {
                   ? `You’ve RSVPed for ${1+rsvpGuests.filter(g=>g.name.trim()).length} guests.`
                   : "Your RSVP has been recorded."}
               </p>
-              {rsvpEmail.trim()&&rsvpReminder&&guestInvite.form?.date&&(
-                <p style={{ fontFamily:"'Jost',sans-serif",fontSize:12,fontWeight:300,color:"rgba(42,21,8,.45)",lineHeight:1.7 }}>
-                  {"We’ll send you a reminder on "}
-                  {new Date(new Date(guestInvite.form.date).getTime()-3*24*60*60*1000).toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"})}.
-                </p>
+              {guestInvite.form?.date&&rsvpChoice!=="no"&&(
+                <div style={{ marginTop:16 }}>
+                  <button onClick={()=>{
+                    const f=guestInvite.form||{};
+                    // Build ICS content
+                    const dt = f.date.replace(/-/g,"");
+                    const tm = f.time ? f.time.replace(":","")+"00" : "120000";
+                    // End time: 2 hours after start
+                    const startH = f.time ? parseInt(f.time.split(":")[0]) : 12;
+                    const startM = f.time ? parseInt(f.time.split(":")[1]) : 0;
+                    const endH = String(startH+2).padStart(2,"0");
+                    const endM = String(startM).padStart(2,"0");
+                    const dtStart = dt+"T"+tm;
+                    const dtEnd = dt+"T"+endH+endM+"00";
+                    const uid2 = "steeped-"+guestInvite.id+"-"+Date.now();
+                    const ics = [
+                      "BEGIN:VCALENDAR",
+                      "VERSION:2.0",
+                      "PRODID:-//Steeped//EN",
+                      "BEGIN:VEVENT",
+                      "UID:"+uid2,
+                      "DTSTART:"+dtStart,
+                      "DTEND:"+dtEnd,
+                      "SUMMARY:"+(f.title||"Event"),
+                      f.location?"LOCATION:"+f.location:"",
+                      f.note?"DESCRIPTION:"+f.note.replace(/
+/g,"\n"):"",
+                      "STATUS:CONFIRMED",
+                      "BEGIN:VALARM",
+                      "TRIGGER:-P3D",
+                      "ACTION:DISPLAY",
+                      "DESCRIPTION:Reminder: "+(f.title||"Event")+" is in 3 days",
+                      "END:VALARM",
+                      "END:VEVENT",
+                      "END:VCALENDAR"
+                    ].filter(Boolean).join("
+");
+                    const blob = new Blob([ics],{type:"text/calendar;charset=utf-8"});
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href=url; a.download=(f.title||"event").replace(/[ ]+/g,"-").toLowerCase()+".ics";
+                    a.click(); URL.revokeObjectURL(url);
+                  }} style={{ display:"flex",alignItems:"center",justifyContent:"center",gap:8,width:"100%",padding:"12px 20px",borderRadius:10,border:"1.5px solid rgba(42,21,8,.15)",background:"white",fontFamily:"'Jost',sans-serif",fontSize:13,fontWeight:400,color:"#2A1508",cursor:"pointer",transition:"all .15s" }}
+                    onMouseEnter={e=>{ e.currentTarget.style.background="#FAF5EE"; e.currentTarget.style.borderColor="rgba(42,21,8,.28)"; }}
+                    onMouseLeave={e=>{ e.currentTarget.style.background="white"; e.currentTarget.style.borderColor="rgba(42,21,8,.15)"; }}>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    Add to Calendar
+                  </button>
+                  <p style={{ fontFamily:"'Jost',sans-serif",fontSize:11,fontWeight:300,color:"rgba(42,21,8,.38)",marginTop:7,textAlign:"center" }}>Works with Apple Calendar, Google Calendar &amp; Android</p>
+                </div>
               )}
             </div>
           )}
