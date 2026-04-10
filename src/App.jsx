@@ -1493,21 +1493,33 @@ export default function Steeped() {
 
       // Encode invite data (minus photo/audio) into the URL itself
       // so guests can open the invite on any device without needing the API
-      // Use compressed photo for URL (small enough to embed, ~30-80KB base64)
-      const photoForShare = inviteForm.photoCompressed || inviteForm.photo || "";
+      // Photo is NOT embedded in the URL (causes URI_TOO_LONG).
+      // It is uploaded to Supabase Storage by the API and a URL is returned.
+      // Until the API is connected, the photo shows only on the creator's device (localStorage).
+      let photoUrl = "";
+      try {
+        // Try uploading photo to API storage
+        if (inviteForm.photo && user) {
+          const uploadRes = await fetch("/api/upload-photo", {
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({ photo:inviteForm.photo, inviteId:id, userId:user.id })
+          });
+          if (uploadRes.ok) {
+            const uploadData = await uploadRes.json();
+            if (uploadData.url) photoUrl = uploadData.url;
+          }
+        }
+      } catch(e) { /* photo stays local if API unavailable */ }
+
       const sharePayload = {
         id, type:inviteType,
-        form:{ ...inviteForm, photo:photoForShare, photoCompressed:"", musicFile:"" },
+        form:{ ...inviteForm, photo:photoUrl, photoCompressed:"", musicFile:"" },
         rsvps:[]
       };
       let encodedData = "";
       try {
         encodedData = btoa(unescape(encodeURIComponent(JSON.stringify(sharePayload))));
-        // Safety check: if URL would be absurdly long, drop the photo
-        if (encodedData.length > 200000) {
-          const fallback = { ...sharePayload, form:{ ...sharePayload.form, photo:"" } };
-          encodedData = btoa(unescape(encodeURIComponent(JSON.stringify(fallback))));
-        }
       } catch(e) { console.warn("Could not encode invite data:", e.message); }
 
       const url = window.location.origin + "/?invite=" + id + (encodedData ? "&d=" + encodedData : "");
@@ -1542,6 +1554,11 @@ export default function Steeped() {
         const decoded = JSON.parse(decodeURIComponent(escape(atob(encoded))));
         if (decoded && (decoded.id === iid || decoded.form)) {
           const inv = { ...decoded, id: iid };
+          // If photo missing from URL (not uploaded yet), try merging from localStorage
+          if (!inv.form?.photo) {
+            const local = readLocalInvites().find(i=>i.id===iid);
+            if (local?.form?.photo) inv.form = { ...inv.form, photo:local.form.photo };
+          }
           persistInviteLocally(inv);
           setGuestInvite(inv); setView("invite-guest");
           setLoadingInvite(false); return;
@@ -2424,7 +2441,13 @@ export default function Steeped() {
             <input type="file" accept="image/*" ref={inviteFileRef} style={{ display:"none" }} onChange={handleInvitePhoto}/>
             {f.photo ? (
               <>
-                {/* Preview with live overlay — uses background-image for zoom control */}
+                {/* Note: photo is local until API/storage is connected */}
+                {inviteForm.photo&&!inviteForm.photo.startsWith("http")&&(
+                  <div style={{ fontFamily:"'Jost',sans-serif",fontSize:11,fontWeight:300,color:"#c8860a",background:"rgba(200,134,10,.07)",border:"1px solid rgba(200,134,10,.2)",borderRadius:7,padding:"8px 12px",marginBottom:10,lineHeight:1.6 }}>
+                    Photo visible to you now. It will show for all guests once image storage is connected.
+                  </div>
+                )}
+              {/* Preview with live overlay — uses background-image for zoom control */}
                 <div style={{ position:"relative",borderRadius:8,overflow:"hidden",marginBottom:14,height:200,
                   backgroundImage:"url("+f.photo+")",
                   backgroundSize:(f.photoZoom||100)+"%",
