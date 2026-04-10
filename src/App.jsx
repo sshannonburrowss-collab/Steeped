@@ -973,6 +973,7 @@ export default function Steeped() {
   const [rsvpSent, setRsvpSent] = useState(false);
   const [inviteSaving, setInviteSaving] = useState(false);
   const [inviteCopied, setInviteCopied] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
   const [inviteUrl, setInviteUrl] = useState("");
   const [showInvitePreview, setShowInvitePreview] = useState(false);
   const [invitePhotoUploading, setInvitePhotoUploading] = useState(false);
@@ -1504,6 +1505,7 @@ export default function Steeped() {
 
       const url = window.location.origin + "/?invite=" + id + (encodedData ? "&d=" + encodedData : "");
       setInviteUrl(url);
+      setShowShareModal(true); // open share popup immediately
 
       // Also try API so RSVPs persist in Supabase (non-blocking)
       try {
@@ -2533,23 +2535,69 @@ export default function Steeped() {
             </button>
           </div>
 
-          {/* Share */}
-          {inviteUrl ? (
-            <div style={{ background:"white",borderRadius:12,padding:"20px 24px",boxShadow:"0 2px 14px rgba(42,21,8,.07)" }}>
-
-              <div style={{ display:"flex",gap:10,alignItems:"center" }}>
-                <div style={{ flex:1,fontFamily:"'Jost',sans-serif",fontSize:12,color:"#8B6E4E",background:"#FAF5EE",padding:"8px 12px",borderRadius:6,border:"1px solid rgba(42,21,8,.1)",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap" }}>{inviteUrl}</div>
-                <button className="btn-dark" style={{ flexShrink:0,padding:"8px 18px",fontSize:12 }} onClick={async()=>{ await navigator.clipboard.writeText(inviteUrl); setInviteCopied(true); setTimeout(()=>setInviteCopied(false),2200); }}>
-                  {inviteCopied?"✓ Copied!":"Copy link"}
-                </button>
-              </div>
-            </div>
-          ) : (
-            <div style={{ textAlign:"center",padding:"16px",fontFamily:"'Jost',sans-serif",fontSize:12,color:"rgba(42,21,8,.38)",fontWeight:300 }}>
-              Hit "Save &amp; Share" to generate your invite link
+          {/* Share — subtle re-open prompt once saved */}
+          {inviteUrl && (
+            <div style={{ textAlign:"center",padding:"12px" }}>
+              <button onClick={()=>setShowShareModal(true)}
+                style={{ background:"none",border:"none",cursor:"pointer",fontFamily:"'Jost',sans-serif",fontSize:12,color:"#d4a843",display:"inline-flex",alignItems:"center",gap:5 }}>
+                {Icon.copy(12,"#d4a843")} View share link
+              </button>
             </div>
           )}
         </div>
+
+        {/* ── Share modal ── */}
+        {showShareModal&&inviteUrl&&(
+          <div style={{ position:"fixed",inset:0,background:"rgba(42,21,8,.55)",zIndex:9100,display:"flex",alignItems:"center",justifyContent:"center",padding:24 }}
+            onClick={e=>e.target===e.currentTarget&&setShowShareModal(false)}>
+            <div style={{ background:"white",borderRadius:16,padding:"32px 28px 28px",maxWidth:480,width:"100%",boxShadow:"0 28px 72px rgba(42,21,8,.24)",animation:"cardIn .22s cubic-bezier(.16,1,.3,1)" }}>
+              {/* Header */}
+              <div style={{ display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:20 }}>
+                <div>
+                  <div style={{ fontFamily:"'Jost',sans-serif",fontSize:10,fontWeight:500,letterSpacing:2,textTransform:"uppercase",color:"rgba(42,21,8,.38)",marginBottom:4 }}>Your invite is ready</div>
+                  <div style={{ fontFamily:"'Jost',sans-serif",fontSize:20,fontWeight:400,color:"#2A1508" }}>Share with guests</div>
+                </div>
+                <button onClick={()=>setShowShareModal(false)} style={{ background:"rgba(42,21,8,.07)",border:"none",borderRadius:8,width:32,height:32,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center" }}>
+                  {Icon.x(13,"#2A1508")}
+                </button>
+              </div>
+
+              {/* URL box */}
+              <div style={{ background:"#FAF5EE",borderRadius:10,padding:"14px 16px",border:"1px solid rgba(42,21,8,.1)",marginBottom:16,wordBreak:"break-all",fontFamily:"'Jost',sans-serif",fontSize:11,color:"#8B6E4E",lineHeight:1.6,maxHeight:72,overflow:"hidden",position:"relative" }}>
+                {inviteUrl.replace(/&d=[^&]*/,"")}
+                <div style={{ position:"absolute",bottom:0,left:0,right:0,height:28,background:"linear-gradient(transparent,#FAF5EE)" }}/>
+              </div>
+
+              {/* Primary: copy */}
+              <button onClick={async()=>{
+                  await navigator.clipboard.writeText(inviteUrl);
+                  setInviteCopied(true);
+                  setTimeout(()=>setInviteCopied(false),2500);
+                }}
+                style={{ width:"100%",padding:"14px",borderRadius:10,border:"none",background:inviteCopied?"#2a7a50":"#2A1508",fontFamily:"'Jost',sans-serif",fontSize:14,fontWeight:400,color:"#FAF5EE",cursor:"pointer",transition:"all .2s",display:"flex",alignItems:"center",justifyContent:"center",gap:8,marginBottom:10 }}>
+                {inviteCopied
+                  ? <><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Link copied!</>
+                  : <>{Icon.copy(15,"#FAF5EE")} Copy invite link</>
+                }
+              </button>
+
+              {/* Secondary: native share (mobile) */}
+              {"share" in navigator&&(
+                <button onClick={()=>navigator.share({title:inviteForm.title||"You're invited",url:inviteUrl})}
+                  style={{ width:"100%",padding:"12px",borderRadius:10,border:"1.5px solid rgba(42,21,8,.14)",background:"white",fontFamily:"'Jost',sans-serif",fontSize:13,fontWeight:400,color:"#2A1508",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:7,marginBottom:10 }}>
+                  {Icon.share(14,"#2A1508")} Share via…
+                </button>
+              )}
+
+              {/* Preview link */}
+              <button onClick={()=>{ setShowShareModal(false); setShowInvitePreview(true); }}
+                style={{ width:"100%",padding:"10px",borderRadius:10,border:"none",background:"none",fontFamily:"'Jost',sans-serif",fontSize:12,fontWeight:300,color:"rgba(42,21,8,.45)",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:6 }}>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                Preview what guests see
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* ── Preview modal ── */}
         {showInvitePreview&&(
