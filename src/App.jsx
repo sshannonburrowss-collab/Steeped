@@ -1499,31 +1499,36 @@ export default function Steeped() {
       let photoUrl = "";
       if (inviteForm.photo && !inviteForm.photo.startsWith("http")) {
         try {
-          // Compress photo before upload to stay under Vercel's 4.5MB body limit
           const compressed = await compressPhoto(inviteForm.photo, 1200, 0.7);
+          console.log("[photo] compressed to", Math.round(compressed.length/1024)+"KB, uploading...");
           const uploadRes = await fetch("/api/upload-photo", {
             method:"POST",
             headers:{"Content-Type":"application/json"},
             body:JSON.stringify({ photo:compressed, inviteId:id, userId:user?.id||"anon" })
           });
+          const resText = await uploadRes.text();
+          console.log("[photo] response", uploadRes.status, resText.slice(0,200));
           if (uploadRes.ok) {
-            const uploadData = await uploadRes.json();
-            console.log("[upload-photo] Success:", uploadData);
-            if (uploadData.url) {
-              photoUrl = uploadData.url;
-              setInviteForm(f=>({...f, photo:uploadData.url}));
-            }
+            try {
+              const uploadData = JSON.parse(resText);
+              if (uploadData.url) {
+                photoUrl = uploadData.url;
+                setInviteForm(f=>({...f, photo:uploadData.url}));
+              } else {
+                alert("Upload OK but no URL returned. Check Vercel function logs.");
+              }
+            } catch(pe) { alert("Upload response parse error: "+resText.slice(0,200)); }
           } else {
-            const errText = await uploadRes.text();
-            console.error("[upload-photo] API error:", uploadRes.status, errText);
-            alert("Photo upload failed (" + uploadRes.status + "): " + errText.slice(0,200));
+            alert("Photo upload failed ("+uploadRes.status+"): "+resText.slice(0,300));
           }
         } catch(e) {
-          console.error("[upload-photo] Failed:", e.message);
+          alert("Photo upload error: "+e.message);
         }
       } else if (inviteForm.photo?.startsWith("http")) {
-        // Already a storage URL from a previous save
         photoUrl = inviteForm.photo;
+        console.log("[photo] already a URL:", photoUrl);
+      } else {
+        console.log("[photo] no photo in form");
       }
 
       const sharePayload = {
