@@ -1019,6 +1019,7 @@ export default function Steeped() {
   const [saving, setSaving] = useState(false);
   const [loadingCard, setLoadingCard] = useState(!!_initCard);
   const [loadingInvite, setLoadingInvite] = useState(!!_initInvite);
+  const [inviteError, setInviteError] = useState(false);
   const [viewCard, setViewCard] = useState(null);
   const [viewSignName, setViewSignName] = useState("");
   const [viewSignMsg, setViewSignMsg] = useState("");
@@ -1531,16 +1532,13 @@ export default function Steeped() {
         const data = await res.json();
         persistInviteLocally(data);
         setGuestInvite(data); setView("invite-guest");
-      } else {
-        // Not found — clear param and go home
-        window.history.replaceState({}, "", window.location.pathname);
-        setView("home");
+        setLoadingInvite(false); return;
       }
     } catch(e) {
-      console.error("loadGuestInvite failed:", e.message);
-      window.history.replaceState({}, "", window.location.pathname);
-      setView("home");
+      console.error("loadGuestInvite API error:", e.message);
     }
+    // Neither localStorage nor API worked — show error (not home)
+    setInviteError(true);
     setLoadingInvite(false);
   };
   // Keep refs current so the startup effect can call the latest versions
@@ -1646,12 +1644,28 @@ export default function Steeped() {
     </div>
   );
 
-  if (loadingInvite) return (
+  if (loadingInvite||inviteError) return (
     <div className="app"><style>{CSS}</style>
-      <div className="loading-screen">
-        <div className="spinner" style={{ width:28,height:28,borderWidth:3,borderColor:"rgba(42,21,8,.15)",borderTopColor:"#d4a843" }}/>
-        <p className="loading-text">Opening your invite…</p>
-      </div>
+      {inviteError ? (
+        <div style={{ minHeight:"100vh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:32,background:"#FAF5EE",textAlign:"center" }}>
+          <div style={{ fontSize:48,marginBottom:20,opacity:.4 }}>
+            <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="rgba(42,21,8,.4)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </div>
+          <h2 style={{ fontFamily:"'Jost',sans-serif",fontSize:22,fontWeight:400,color:"#2A1508",marginBottom:10 }}>Invite not found</h2>
+          <p style={{ fontFamily:"'Jost',sans-serif",fontSize:14,fontWeight:300,color:"#8B6E4E",lineHeight:1.8,maxWidth:360,marginBottom:28 }}>
+            This invite link couldn't be loaded. The organiser may need to re-open and re-save the invite, then share the link again.
+          </p>
+          <button onClick={()=>{ setInviteError(false); window.history.replaceState({},"",window.location.pathname); window.location.reload(); }}
+            style={{ fontFamily:"'Jost',sans-serif",fontSize:13,padding:"11px 28px",borderRadius:6,border:"none",background:"#2A1508",color:"#FAF5EE",cursor:"pointer" }}>
+            Go to Steeped
+          </button>
+        </div>
+      ) : (
+        <div className="loading-screen">
+          <div className="spinner" style={{ width:28,height:28,borderWidth:3,borderColor:"rgba(42,21,8,.15)",borderTopColor:"#d4a843" }}/>
+          <p className="loading-text">Opening your invite…</p>
+        </div>
+      )}
     </div>
   );
 
@@ -2498,11 +2512,18 @@ export default function Steeped() {
 
           {/* Share */}
           {inviteUrl ? (
-            <div style={{ background:"white",borderRadius:12,padding:"20px 24px",boxShadow:"0 2px 14px rgba(42,21,8,.07)",display:"flex",gap:10,alignItems:"center" }}>
-              <div style={{ flex:1,fontFamily:"'Jost',sans-serif",fontSize:12,color:"#8B6E4E",background:"#FAF5EE",padding:"8px 12px",borderRadius:6,border:"1px solid rgba(42,21,8,.1)",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap" }}>{inviteUrl}</div>
-              <button className="btn-dark" style={{ flexShrink:0,padding:"8px 18px",fontSize:12 }} onClick={async()=>{ await navigator.clipboard.writeText(inviteUrl); setInviteCopied(true); setTimeout(()=>setInviteCopied(false),2200); }}>
-                {inviteCopied?"✓ Copied!":"Copy link"}
-              </button>
+            <div style={{ background:"white",borderRadius:12,padding:"20px 24px",boxShadow:"0 2px 14px rgba(42,21,8,.07)" }}>
+              {inviteUrl.includes("local=1")&&(
+                <div style={{ fontFamily:"'Jost',sans-serif",fontSize:12,fontWeight:400,color:"#c8860a",background:"rgba(200,134,10,.08)",border:"1px solid rgba(200,134,10,.2)",borderRadius:8,padding:"10px 14px",marginBottom:12,lineHeight:1.6 }}>
+                  <strong style={{ fontWeight:500 }}>Heads up:</strong> This invite is saved on your device only. Deploy the API files to Supabase so guests on other devices can open the link.
+                </div>
+              )}
+              <div style={{ display:"flex",gap:10,alignItems:"center" }}>
+                <div style={{ flex:1,fontFamily:"'Jost',sans-serif",fontSize:12,color:"#8B6E4E",background:"#FAF5EE",padding:"8px 12px",borderRadius:6,border:"1px solid rgba(42,21,8,.1)",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap" }}>{inviteUrl.replace("&local=1","")}</div>
+                <button className="btn-dark" style={{ flexShrink:0,padding:"8px 18px",fontSize:12 }} onClick={async()=>{ await navigator.clipboard.writeText(inviteUrl.replace("&local=1","")); setInviteCopied(true); setTimeout(()=>setInviteCopied(false),2200); }}>
+                  {inviteCopied?"✓ Copied!":"Copy link"}
+                </button>
+              </div>
             </div>
           ) : (
             <div style={{ textAlign:"center",padding:"16px",fontFamily:"'Jost',sans-serif",fontSize:12,color:"rgba(42,21,8,.38)",fontWeight:300 }}>
