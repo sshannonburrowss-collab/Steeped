@@ -1497,20 +1497,33 @@ export default function Steeped() {
       // It is uploaded to Supabase Storage by the API and a URL is returned.
       // Until the API is connected, the photo shows only on the creator's device (localStorage).
       let photoUrl = "";
-      try {
-        // Try uploading photo to API storage
-        if (inviteForm.photo && user) {
+      if (inviteForm.photo && !inviteForm.photo.startsWith("http")) {
+        try {
+          // Compress photo before upload to stay under Vercel's 4.5MB body limit
+          const compressed = await compressPhoto(inviteForm.photo, 1200, 0.7);
           const uploadRes = await fetch("/api/upload-photo", {
             method:"POST",
             headers:{"Content-Type":"application/json"},
-            body:JSON.stringify({ photo:inviteForm.photo, inviteId:id, userId:user.id })
+            body:JSON.stringify({ photo:compressed, inviteId:id, userId:user?.id||"anon" })
           });
           if (uploadRes.ok) {
             const uploadData = await uploadRes.json();
-            if (uploadData.url) photoUrl = uploadData.url;
+            if (uploadData.url) {
+              photoUrl = uploadData.url;
+              // Update local form so editor preview stays correct
+              setInviteForm(f=>({...f, photo:uploadData.url}));
+            }
+          } else {
+            const errText = await uploadRes.text();
+            console.error("[upload-photo] API error:", uploadRes.status, errText);
           }
+        } catch(e) {
+          console.error("[upload-photo] Failed:", e.message);
         }
-      } catch(e) { /* photo stays local if API unavailable */ }
+      } else if (inviteForm.photo?.startsWith("http")) {
+        // Already a storage URL from a previous save
+        photoUrl = inviteForm.photo;
+      }
 
       const sharePayload = {
         id, type:inviteType,
@@ -2373,7 +2386,9 @@ export default function Steeped() {
             <button className="btn-ghost-sm" onClick={()=>setView("invite-types")}>{Icon.back(13)} Back</button>
             <button className="btn-ghost-sm" onClick={()=>setShowInvitePreview(true)}>Preview</button>
             <button className="btn-send" onClick={saveInvite} disabled={inviteSaving}>
-              {inviteSaving?<><span className="spinner"/> Saving…</>:<>{Icon.send(14,"#FAF5EE")} Save & Share</>}
+              {inviteSaving
+                ? <><span className="spinner"/> {inviteForm.photo&&!inviteForm.photo.startsWith("http")?"Uploading photo…":"Saving…"}</>
+                : <>{Icon.send(14,"#FAF5EE")} Save & Share</>}
             </button>
           </div>
         </nav>

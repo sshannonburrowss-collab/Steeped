@@ -1,3 +1,11 @@
+/**
+ * /api/upload-photo.js
+ * POST /api/upload-photo
+ * Body: { photo: "data:image/jpeg;base64,...", inviteId, userId? }
+ *
+ * Uploads a compressed base64 photo to Supabase Storage.
+ * Requires: Storage bucket "invite-photos" with Public = ON
+ */
 import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
@@ -8,35 +16,34 @@ const supabase = createClient(
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
-  const { photo, inviteId, userId } = req.body || {};
-  if (!photo || !inviteId) return res.status(400).json({ error: "photo and inviteId required" });
+  const { photo, inviteId } = req.body || {};
 
-  // Strip the data URL prefix to get raw base64
-  const base64 = photo.replace(/^data:image\/\w+;base64,/, "");
-  const buffer = Buffer.from(base64, "base64");
+  if (!photo) return res.status(400).json({ error: "photo is required" });
+  if (!inviteId) return res.status(400).json({ error: "inviteId is required" });
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL) return res.status(500).json({ error: "SUPABASE_URL not configured" });
+  if (!process.env.SUPABASE_SERVICE_KEY) return res.status(500).json({ error: "SUPABASE_SERVICE_KEY not configured" });
 
-  // Detect format from data URL
-  const mimeMatch = photo.match(/^data:(image\/\w+);base64,/);
-  const mime = mimeMatch ? mimeMatch[1] : "image/jpeg";
-  const ext = mime.split("/")[1] || "jpg";
+  // Parse base64
+  const match = photo.match(/^data:(image\/[\w+]+);base64,(.+)$/);
+  if (!match) return res.status(400).json({ error: "Invalid photo format — must be a data URL" });
 
+  const mime = match[1];
+  const ext = mime === "image/png" ? "png" : mime === "image/webp" ? "webp" : "jpg";
+  const buffer = Buffer.from(match[2], "base64");
   const filename = `invites/${inviteId}.${ext}`;
 
-  const { error } = await supabase.storage
-    .from("invite-photos")
-    .upload(filename, buffer, {
-      contentType: mime,
-      upsert: true, // overwrite if re-saving
-    });
+  console.log(`[upload-photo] Uploading ${filename} (${Math.round(buffer.length/1024)}KB)`);
 
-  if (error) {
-    console.error("[upload-photo]", error.message);
-    return res.status(500).json({ error: error.message });
+  const { error: uploadErr } = await supabase.storage
+    .from("invite-photos")
+    .upload(filename, buffer, { contentType: mime, upsert: true });
+
+  if (uploadErr) {
+    console.error("[upload-photo] Supabase upload error:", uploadErr.message);
+    return res.status(500).json({ error: uploadErr.message });
   }
 
-  const { data: urlData } = supabase.storage
-    .from("invite-photos")
-    .getPublicUrl(filename);
-
-  return res.status(200).json({ url: urlData.publicUrl });
+  const { data } = supabase.storage.from("invite-photos").getPublicUrl(filename);
+  console.log(`[upload-photo] Success: ${data.publicUrl}`);
+  return res.status(200).json({ url: data.publicUrl });
 }
