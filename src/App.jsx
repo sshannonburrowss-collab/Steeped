@@ -949,6 +949,10 @@ function ColorPicker({ value, onChange }) {
 
 /* ─── Main Component ─────────────────────────────────────────── */
 export default function Steeped() {
+  // Read URL params at init so first render shows loading, never home
+  const _initParams = new URLSearchParams(window.location.search);
+  const _initInvite = _initParams.get("invite");
+  const _initCard   = _initParams.get("card");
   const [view, setView] = useState("home");
   const [theme, setTheme] = useState(null);
   const [pendingTheme, setPendingTheme] = useState(null);
@@ -1013,8 +1017,8 @@ export default function Steeped() {
   const [cardId, setCardId] = useState(null);
   const [cardUrl, setCardUrl] = useState("");
   const [saving, setSaving] = useState(false);
-  const [loadingCard, setLoadingCard] = useState(false);
-  const [loadingInvite, setLoadingInvite] = useState(false);
+  const [loadingCard, setLoadingCard] = useState(!!_initCard);
+  const [loadingInvite, setLoadingInvite] = useState(!!_initInvite);
   const [viewCard, setViewCard] = useState(null);
   const [viewSignName, setViewSignName] = useState("");
   const [viewSignMsg, setViewSignMsg] = useState("");
@@ -1069,17 +1073,9 @@ export default function Steeped() {
   const coverRef = useRef(null);
   const pageRefs = useRef({});
 
-  // Keep a ref to loader functions so the effect always calls latest version
-  const loadCardRef = useRef(null);
-  const loadGuestInviteRef = useRef(null);
-
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const cid = params.get("card");
-    const iid = params.get("invite");
-    // Defer to next tick so all functions are defined
-    if (cid) setTimeout(()=>loadCardRef.current?.(cid), 0);
-    if (iid) setTimeout(()=>loadGuestInviteRef.current?.(iid), 0);
+    if (_initCard) loadCard(_initCard);
+    if (_initInvite) loadGuestInvite(_initInvite);
     supabase.auth.getSession().then(({ data: { session } }) => { if (session?.user) setUser(session.user); });
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => { setUser(session?.user||null); });
     return () => listener?.subscription?.unsubscribe();
@@ -1548,9 +1544,6 @@ export default function Steeped() {
     setLoadingInvite(false);
   };
   // Keep refs current so the startup effect can call the latest versions
-  loadCardRef.current = loadCard;
-  loadGuestInviteRef.current = loadGuestInvite;
-
   const submitRsvp = async () => {
     if(!rsvpName.trim()||!rsvpChoice) return;
     const validGuests = rsvpGuests.filter(g=>g.name.trim());
@@ -2221,8 +2214,7 @@ export default function Steeped() {
                       "END:VALARM",
                       "END:VEVENT",
                       "END:VCALENDAR"
-                    ].filter(Boolean).join("
-");
+                    ].filter(Boolean).join("\r\n");
                     const blob = new Blob([ics],{type:"text/calendar;charset=utf-8"});
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement("a");
