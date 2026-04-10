@@ -562,6 +562,38 @@ html,body{width:100%;min-height:100%;background:#FAF5EE;}
 @media(max-width:400px){
   .my-inv-grid{grid-template-columns:1fr;}
 }
+/* ══ PRINT / PDF ══════════════════════════════════════════════════════ */
+@media print {
+  /* Hide everything except the print layout */
+  body > #root > * { display:none !important; }
+  .print-layout { display:block !important; }
+  /* Page setup */
+  @page { size:A4 portrait; margin:12mm; }
+  .print-page { page-break-after:always; page-break-inside:avoid; margin-bottom:0; }
+  .print-page:last-child { page-break-after:auto; }
+}
+/* Print layout — hidden on screen, visible when printing */
+.print-layout { display:none; }
+.print-page {
+  width:100%; min-height:240mm; padding:16mm;
+  box-sizing:border-box; position:relative; overflow:hidden;
+  display:flex; flex-direction:column;
+}
+.print-cover-area {
+  min-height:180mm; border-radius:6px; padding:28px 32px 24px;
+  position:relative; overflow:hidden; flex:1;
+}
+.print-sig-page {
+  min-height:200mm; background:white; border-radius:6px;
+  padding:28px 32px; position:relative;
+}
+.print-sig-grid {
+  display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:16px;
+}
+.print-sig-item {
+  border:1px solid rgba(42,21,8,.1); border-radius:8px;
+  padding:14px 16px; break-inside:avoid;
+}
 `;
 
 const uid = () => Date.now() + Math.random();
@@ -3360,7 +3392,15 @@ export default function Steeped() {
                     <button className="btn-send" style={{ width:"100%",marginTop:16,justifyContent:"center" }} onClick={doSend}>{Icon.calendar(14,"#FAF5EE")} Schedule this Card</button>
                   </div>
                 )}
-                {sendTab==="pdf"&&<div className="modal-center">{Icon.download(52,"#d4a843")}<h3 className="modal-sec-title">Save as PDF</h3><p className="modal-sec-body">Download all {pages.length+1} pages as a beautifully formatted PDF.</p><button className="btn-send" style={{ padding:"13px 40px" }} onClick={()=>window.print()}>Download PDF</button></div>}
+                {sendTab==="pdf"&&<div className="modal-center">
+  {Icon.download(52,"#d4a843")}
+  <h3 className="modal-sec-title">Save as PDF</h3>
+  <p className="modal-sec-body">Downloads all {pages.length+1} pages — cover + {pages.length} signing {pages.length===1?"page":"pages"}.</p>
+  <button className="btn-send" style={{ padding:"13px 40px" }} onClick={()=>{
+    setShowSend(false);
+    setTimeout(()=>window.print(), 120);
+  }}>Download PDF</button>
+</div>}
                 {sendTab==="ship"&&(
                   <div>
                   {shipResult?.ok ? (
@@ -3457,6 +3497,69 @@ export default function Steeped() {
           </div>
         </div>
       )}
+
+    {/* ── Hidden print layout — visible only when printing ── */}
+    <div className="print-layout">
+      {/* Cover page */}
+      <div className="print-page">
+        <div className="print-cover-area" style={{ background:theme?.cover||"#FAF5EE",position:"relative" }}>
+          <div style={{ position:"absolute",inset:12,border:"1px solid rgba(255,255,255,.3)",borderRadius:4,pointerEvents:"none" }}/>
+          <div style={{ position:"absolute",top:20,right:24,opacity:.1,color:theme?.accent }}>
+            {theme&&Icon[theme.icon]?.(64,theme?.accent)}
+          </div>
+          {coverItems.length===0 ? (
+            <div style={{ display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",height:"100%",gap:16,paddingTop:60 }}>
+              <div style={{ color:theme?.accent }}>{theme&&Icon[theme.icon]?.(56,theme?.accent)}</div>
+              <div style={{ fontFamily:"'Playfair Display',serif",fontSize:36,color:theme?.accent }}>{theme?.name}</div>
+            </div>
+          ) : coverItems.map(item=>
+            item.type==="text"
+              ? <div key={item.id} style={{ position:"absolute",left:item.x,top:item.y,fontFamily:item.font,fontSize:item.size,color:item.color,fontWeight:item.bold?700:400,fontStyle:item.italic?"italic":"normal",whiteSpace:"pre-wrap",maxWidth:item.width||420 }}>{item.text}</div>
+              : (item.type==="photo"||item.type==="gif")
+                ? <img key={item.id} src={item.url} alt="" style={{ position:"absolute",left:item.x,top:item.y,width:item.width||130,height:item.height||100,objectFit:"cover",borderRadius:7 }}/>
+                : item.type==="emoji"
+                  ? <span key={item.id} style={{ position:"absolute",left:item.x,top:item.y,fontSize:Math.max(20,(item.width||52)*0.62) }}>{item.content}</span>
+                  : null
+          )}
+          <div style={{ position:"absolute",bottom:16,right:20,fontFamily:"'Jost',sans-serif",fontSize:10,letterSpacing:2,textTransform:"uppercase",color:theme?.accent,opacity:.35 }}>made with steeped</div>
+        </div>
+      </div>
+      {/* Signing pages */}
+      {pages.map((pg)=>{
+        const sigs = pg.items.filter(it=>it.type==="text");
+        const media = pg.items.filter(it=>it.type==="photo"||it.type==="gif"||it.type==="emoji");
+        return (
+          <div key={pg.id} className="print-page">
+            <div className="print-sig-page" style={{ background:theme?.cover||"#FAF5EE" }}>
+              <div style={{ display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:16,paddingBottom:12,borderBottom:"1px solid rgba(42,21,8,.12)" }}>
+                <div style={{ fontFamily:"'Playfair Display',serif",fontSize:16,color:theme?.accent||"#2A1508" }}>Page {pg.num}</div>
+                <div style={{ fontFamily:"'Jost',sans-serif",fontSize:9,letterSpacing:2,textTransform:"uppercase",color:"rgba(42,21,8,.35)" }}>made with steeped</div>
+              </div>
+              {sigs.length===0 ? (
+                <div style={{ textAlign:"center",padding:"40px 0",fontFamily:"'Lora',serif",fontSize:14,color:"rgba(42,21,8,.25)",fontStyle:"italic" }}>No signatures yet</div>
+              ) : (
+                <div className="print-sig-grid">
+                  {sigs.map(sig=>(
+                    <div key={sig.id} className="print-sig-item">
+                      <div style={{ fontFamily:sig.font,fontSize:Math.min(sig.size||15,18),color:sig.color||"#2A1508",lineHeight:1.6,marginBottom:6 }}>{sig.text}</div>
+                      <div style={{ fontFamily:"'Jost',sans-serif",fontSize:11,color:"rgba(42,21,8,.45)",fontStyle:"italic" }}>
+                        {sig.anonymous?"— A secret admirer ✨":sig.signerName?`— ${sig.signerName}`:""}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {media.length>0&&<div style={{ display:"flex",flexWrap:"wrap",gap:10,marginTop:16 }}>
+                {media.map(it=>(it.type==="photo"||it.type==="gif")
+                  ? <img key={it.id} src={it.url} alt="" style={{ width:it.width||100,height:it.height||80,objectFit:"cover",borderRadius:6 }}/>
+                  : <span key={it.id} style={{ fontSize:36 }}>{it.content}</span>
+                )}
+              </div>}
+            </div>
+          </div>
+        );
+      })}
+    </div>
     </div>
   );
 }
