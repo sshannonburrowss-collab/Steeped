@@ -2212,8 +2212,7 @@ export default function Steeped() {
                       "DTEND:"+dtEnd,
                       "SUMMARY:"+(f.title||"Event"),
                       f.location?"LOCATION:"+f.location:"",
-                      f.note?"DESCRIPTION:"+f.note.replace(/
-/g,"\n"):"",
+                      f.note?"DESCRIPTION:"+f.note.split("\n").join("\\n"):"",
                       "STATUS:CONFIRMED",
                       "BEGIN:VALARM",
                       "TRIGGER:-P3D",
