@@ -1992,7 +1992,7 @@ export default function Steeped() {
                 <div style={{ position:"absolute",top:16,right:16,display:"flex",flexDirection:"column",gap:4,alignItems:"flex-end" }}>
                   {INVITE_TYPES.slice(0,4).map((it,i)=>(
                     <div key={it.id} style={{ background:"white",borderRadius:100,padding:"4px 10px",fontSize:11,fontFamily:"'Jost',sans-serif",color:"#5a3a10",opacity:1-i*.18,boxShadow:"0 2px 8px rgba(42,21,8,.1)" }}>
-                      {it.emoji} {it.label}
+                      {it.label}
                     </div>
                   ))}
                 </div>
@@ -2492,6 +2492,8 @@ export default function Steeped() {
   if (view==="invite-editor"&&inviteType) {
     const it = INVITE_TYPES.find(x=>x.id===inviteType)||INVITE_TYPES[0];
     const f = inviteForm;
+    const eCover = f.coverColor || it.cover;
+    const eAccent = f.accentColor || it.accent;
     return (
       <div className="app"><style>{CSS}</style>
         <nav className="nav">
@@ -2510,7 +2512,7 @@ export default function Steeped() {
         <div className="invite-editor-wrap">
           {/* Live preview */}
           <div className="invite-preview" style={{ background:eCover,color:eAccent }}>
-            <div className="invite-preview-watermark">{it.emoji}</div>
+            <div className="invite-preview-watermark" style={{ opacity:.12,color:eAccent }} dangerouslySetInnerHTML={{ __html:it.svg }}/>
             {f.host&&<div className="invite-preview-host">{f.host} invites you to</div>}
             <div className="invite-preview-title">{f.title||it.label}</div>
             {f.subtext&&<div style={{ fontFamily:"'Lora',serif",fontSize:14,fontStyle:"italic",opacity:.7,marginBottom:12,lineHeight:1.6 }}>{f.subtext}</div>}
