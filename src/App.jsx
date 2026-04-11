@@ -994,7 +994,8 @@ export default function Steeped() {
   const [inviteId, setInviteId] = useState(null);
   const [inviteForm, setInviteForm] = useState({
     title:"", host:"", subtext:"", date:"", time:"", location:"", dress:"", note:"", rsvpDeadline:"",
-    photo:"", photoCompressed:"", photoPosition:"center", overlayOpacity:0.5, photoZoom:100, musicUrl:"", musicLabel:"", musicFile:"", registries:[]
+    photo:"", photoCompressed:"", photoPosition:"center", overlayOpacity:0.5, photoZoom:100, musicUrl:"", musicLabel:"", musicFile:"", registries:[],
+    coverColor:"", accentColor:""
   });
   const [myInvites, setMyInvites] = useState([]);
   const [selectedInvite, setSelectedInvite] = useState(null); // invite open in RSVP dashboard
@@ -1502,6 +1503,22 @@ export default function Steeped() {
   // ── Invite helpers ────────────────────────────────────────────
   const iSet = k => e => setInviteForm(f=>({...f,[k]:e.target.value}));
 
+  // Preset color palettes for invite cover
+  const COVER_PRESETS = [
+    { label:"Blush",     cover:"linear-gradient(135deg,#fff0f0,#ffd6d6,#ffb3b3)", accent:"#c0392b" },
+    { label:"Gold",      cover:"linear-gradient(135deg,#fefdf8,#f5edd8,#eedcb8)", accent:"#8e6b3e" },
+    { label:"Sky",       cover:"linear-gradient(135deg,#f0f8ff,#d6ebff,#c0deff)", accent:"#1a4a7a" },
+    { label:"Sage",      cover:"linear-gradient(135deg,#f0fff4,#d6f5dc,#b8ecc0)", accent:"#2c5f2e" },
+    { label:"Lavender",  cover:"linear-gradient(135deg,#fdf0ff,#f0d6ff,#e8b8ff)", accent:"#7b3f9e" },
+    { label:"Peach",     cover:"linear-gradient(135deg,#fff8f0,#ffe8d0,#ffd4b0)", accent:"#a0522d" },
+    { label:"Amber",     cover:"linear-gradient(135deg,#fffdf0,#fff3c8,#ffe8a0)", accent:"#7a5c00" },
+    { label:"Rose",      cover:"linear-gradient(135deg,#fff0f5,#ffd6e8,#ffb3d4)", accent:"#9e1a5e" },
+    { label:"Mint",      cover:"linear-gradient(135deg,#f0fffc,#c8f0e8,#a0e4d4)", accent:"#1a7a5e" },
+    { label:"Slate",     cover:"linear-gradient(135deg,#f0f4ff,#d6dff5,#b8caee)", accent:"#2a3a6a" },
+    { label:"Warm",      cover:"linear-gradient(135deg,#faf7f2,#f0e8dc,#e8ddd0)", accent:"#5a4030" },
+    { label:"Midnight",  cover:"linear-gradient(135deg,#1a1a2e,#16213e,#0f3460)", accent:"#e8c97a" },
+  ];
+
   const readLocalInvites = () => {
     try { return JSON.parse(localStorage.getItem("steeped_invites")||"[]"); } catch(e){ return []; }
   };
@@ -1712,7 +1729,7 @@ export default function Steeped() {
   const openInviteEditor = (type, existingInvite=null) => {
     setInviteType(type);
     if(existingInvite){ setInviteId(existingInvite.id); setInviteForm({...existingInvite.form, registries:existingInvite.form?.registries||[], photoCompressed:"", musicFile:""}); setInviteUrl(`${window.location.origin}/?invite=${existingInvite.id}`); }
-    else { setInviteId(null); setInviteForm({title:"",host:user?.user_metadata?.full_name||"",date:"",time:"",location:"",dress:"",note:"",rsvpDeadline:"",photo:"",photoPosition:"center",overlayOpacity:0.5,photoZoom:100,musicUrl:"",musicLabel:"",musicFile:"",registries:[]}); setInviteUrl(""); }
+    else { setInviteId(null); setInviteForm({title:"",host:user?.user_metadata?.full_name||"",date:"",time:"",location:"",dress:"",note:"",rsvpDeadline:"",photo:"",photoPosition:"center",overlayOpacity:0.5,photoZoom:100,musicUrl:"",musicLabel:"",musicFile:"",registries:[],coverColor:"",accentColor:""}); setInviteUrl(""); }
     setView("invite-editor");
   };
   const loadMyInvites = async () => {
@@ -2195,6 +2212,8 @@ export default function Steeped() {
   if (view==="invite-guest"&&guestInvite) {
     const it = INVITE_TYPES.find(x=>x.id===guestInvite.type)||INVITE_TYPES[0];
     const f = guestInvite.form||{};
+    const gCover = f.coverColor || it.cover;
+    const gAccent = f.accentColor || it.accent;
     const yesCount = (guestInvite.rsvps||[]).filter(r=>r.response==="yes").length;
     return (
       <div className="app"><style>{CSS}</style>
@@ -2219,12 +2238,12 @@ export default function Steeped() {
               </div>
             </div>
           ) : (
-            <div className="ig-cover-fallback" style={{ background:it.cover }}>
-              <div style={{ width:56,height:56,margin:"0 auto 14px",color:it.accent }} dangerouslySetInnerHTML={{ __html:it.svg }}/>
-              {f.host&&<div className="ig-cover-host" style={{ color:it.accent }}>{f.host} invites you to</div>}
-              <div className="ig-cover-title" style={{ color:it.accent }}>{f.title||it.label}</div>
-              {f.subtext&&<div style={{ fontFamily:"'Lora',serif",fontSize:14,fontStyle:"italic",color:it.accent,opacity:.7,marginTop:4 }}>{f.subtext}</div>}
-              {yesCount>0&&<div style={{ fontFamily:"'Jost',sans-serif",fontSize:12,color:it.accent,opacity:.55,marginTop:10 }}>{yesCount} {yesCount===1?"person is":"people are"} coming</div>}
+            <div className="ig-cover-fallback" style={{ background:gCover }}>
+              <div style={{ width:56,height:56,margin:"0 auto 14px",color:gAccent }} dangerouslySetInnerHTML={{ __html:it.svg }}/>
+              {f.host&&<div className="ig-cover-host" style={{ color:gAccent }}>{f.host} invites you to</div>}
+              <div className="ig-cover-title" style={{ color:gAccent }}>{f.title||it.label}</div>
+              {f.subtext&&<div style={{ fontFamily:"'Lora',serif",fontSize:14,fontStyle:"italic",color:gAccent,opacity:.7,marginTop:4 }}>{f.subtext}</div>}
+              {yesCount>0&&<div style={{ fontFamily:"'Jost',sans-serif",fontSize:12,color:gAccent,opacity:.55,marginTop:10 }}>{yesCount} {yesCount===1?"person is":"people are"} coming</div>}
             </div>
           )}
 
@@ -2233,19 +2252,19 @@ export default function Steeped() {
             <div className="ig-card">
               <div className="ig-details">
                 {f.date&&<div className="ig-detail-row">
-                  <div className="ig-detail-icon" style={{ background:it.cover }} style={{ display:"flex",alignItems:"center",justifyContent:"center",color:"currentColor",opacity:.65 }}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+                  <div className="ig-detail-icon" style={{ background:gCover }} style={{ display:"flex",alignItems:"center",justifyContent:"center",color:"currentColor",opacity:.65 }}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
                   <div><div className="ig-detail-label">Date &amp; Time</div><div className="ig-detail-val">{new Date(f.date).toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric",year:"numeric"})}{f.time&&" at "+f.time}</div></div>
                 </div>}
                 {f.location&&<div className="ig-detail-row">
-                  <div className="ig-detail-icon" style={{ background:it.cover }} style={{ display:"flex",alignItems:"center",justifyContent:"center",color:"currentColor",opacity:.65 }}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+                  <div className="ig-detail-icon" style={{ background:gCover }} style={{ display:"flex",alignItems:"center",justifyContent:"center",color:"currentColor",opacity:.65 }}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
                   <div><div className="ig-detail-label">Location</div><div className="ig-detail-val">{f.location}</div></div>
                 </div>}
                 {f.dress&&<div className="ig-detail-row">
-                  <div className="ig-detail-icon" style={{ background:it.cover }} style={{ display:"flex",alignItems:"center",justifyContent:"center",color:"currentColor",opacity:.65 }}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.57a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.57a2 2 0 0 0-1.34-2.23z"/></svg></div>
+                  <div className="ig-detail-icon" style={{ background:gCover }} style={{ display:"flex",alignItems:"center",justifyContent:"center",color:"currentColor",opacity:.65 }}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.57a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.57a2 2 0 0 0-1.34-2.23z"/></svg></div>
                   <div><div className="ig-detail-label">Dress Code</div><div className="ig-detail-val">{f.dress}</div></div>
                 </div>}
                 {f.rsvpDeadline&&<div className="ig-detail-row">
-                  <div className="ig-detail-icon" style={{ background:it.cover }} style={{ display:"flex",alignItems:"center",justifyContent:"center",color:"currentColor",opacity:.65 }}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+                  <div className="ig-detail-icon" style={{ background:gCover }} style={{ display:"flex",alignItems:"center",justifyContent:"center",color:"currentColor",opacity:.65 }}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
                   <div><div className="ig-detail-label">RSVP by</div><div className="ig-detail-val">{new Date(f.rsvpDeadline).toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"})}</div></div>
                 </div>}
               </div>
@@ -2490,7 +2509,7 @@ export default function Steeped() {
         </nav>
         <div className="invite-editor-wrap">
           {/* Live preview */}
-          <div className="invite-preview" style={{ background:it.cover,color:it.accent }}>
+          <div className="invite-preview" style={{ background:eCover,color:eAccent }}>
             <div className="invite-preview-watermark">{it.emoji}</div>
             {f.host&&<div className="invite-preview-host">{f.host} invites you to</div>}
             <div className="invite-preview-title">{f.title||it.label}</div>
@@ -2527,6 +2546,49 @@ export default function Steeped() {
               </div>
             </div>
           </div>
+
+          {/* Section: Cover color */}
+          {(()=>{
+            const effectiveCover = f.coverColor || it.cover;
+            const effectiveAccent = f.accentColor || it.accent;
+            return (
+              <div style={{ background:"white",borderRadius:12,padding:"24px 28px",boxShadow:"0 2px 14px rgba(42,21,8,.07)",marginBottom:14 }}>
+                <div style={{ fontFamily:"'Jost',sans-serif",fontSize:10,fontWeight:500,letterSpacing:2,textTransform:"uppercase",color:"rgba(42,21,8,.38)",marginBottom:16 }}>Cover color</div>
+                {/* Preset swatches */}
+                <div style={{ display:"grid",gridTemplateColumns:"repeat(6,1fr)",gap:8,marginBottom:16 }}>
+                  {COVER_PRESETS.map(p=>(
+                    <button key={p.label} onClick={()=>setInviteForm(fm=>({...fm,coverColor:p.cover,accentColor:p.accent}))}
+                      title={p.label}
+                      style={{ height:36,borderRadius:8,background:p.cover,border:f.coverColor===p.cover?"2.5px solid #2A1508":"2px solid rgba(42,21,8,.1)",cursor:"pointer",transition:"all .15s",position:"relative" }}>
+                      {f.coverColor===p.cover&&<div style={{ position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center" }}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={effectiveAccent} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                      </div>}
+                    </button>
+                  ))}
+                </div>
+                {/* Custom color pickers */}
+                <div style={{ display:"grid",gridTemplateColumns:"1fr 1fr",gap:12 }}>
+                  <div>
+                    <label className="field-label">Custom background</label>
+                    <div style={{ display:"flex",gap:8,alignItems:"center" }}>
+                      <input type="color" value={effectiveAccent}
+                        onChange={e=>setInviteForm(fm=>({...fm,accentColor:e.target.value,coverColor:fm.coverColor||it.cover}))}
+                        style={{ width:36,height:36,borderRadius:6,border:"1px solid rgba(42,21,8,.15)",cursor:"pointer",padding:2 }}/>
+                      <span style={{ fontFamily:"'Jost',sans-serif",fontSize:11,fontWeight:300,color:"rgba(42,21,8,.45)" }}>Pick accent color</span>
+                    </div>
+                  </div>
+                  {(f.coverColor||f.accentColor)&&(
+                    <div style={{ display:"flex",alignItems:"flex-end" }}>
+                      <button onClick={()=>setInviteForm(fm=>({...fm,coverColor:"",accentColor:""}))}
+                        style={{ background:"none",border:"1px solid rgba(42,21,8,.14)",borderRadius:6,padding:"7px 12px",fontFamily:"'Jost',sans-serif",fontSize:11,color:"#8B6E4E",cursor:"pointer" }}>
+                        Reset to default
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })()}
 
           {/* Section 2: Location + map */}
           <div style={{ background:"white",borderRadius:12,padding:"24px 28px",boxShadow:"0 2px 14px rgba(42,21,8,.07)",marginBottom:14 }}>
