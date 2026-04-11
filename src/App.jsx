@@ -1563,9 +1563,28 @@ export default function Steeped() {
         console.log("[photo] no photo in form");
       }
 
+      // Upload audio file to Supabase Storage if uploaded as base64
+      let musicUrl = inviteForm.musicUrl || "";
+      if (inviteForm.musicFile && inviteForm.musicFile.startsWith("data:")) {
+        try {
+          const audioRes = await fetch("/api/upload-photo", {
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({ photo:inviteForm.musicFile, inviteId:id+"-audio", userId:user?.id||"anon" })
+          });
+          if (audioRes.ok) {
+            const audioData = await audioRes.json();
+            if (audioData.url) {
+              musicUrl = audioData.url;
+              setInviteForm(f=>({...f, musicUrl:audioData.url, musicFile:""}));
+            }
+          }
+        } catch(e) { console.warn("Audio upload failed:", e.message); }
+      }
+
       const sharePayload = {
         id, type:inviteType,
-        form:{ ...inviteForm, photo:photoUrl, photoCompressed:"", musicFile:"" },
+        form:{ ...inviteForm, photo:photoUrl, photoCompressed:"", musicFile:"", musicUrl },
         rsvps:[]
       };
       let encodedData = "";
@@ -1579,7 +1598,7 @@ export default function Steeped() {
 
       // Also try API so RSVPs persist in Supabase (non-blocking)
       try {
-        const formForApi = { ...inviteForm, photo:"", musicFile:"" };
+        const formForApi = { ...inviteForm, photo:"", musicFile:"", musicUrl };
         await fetch("/api/save-invite", {
           method:"POST",
           headers:{"Content-Type":"application/json"},
