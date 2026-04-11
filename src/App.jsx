@@ -2713,8 +2713,13 @@ export default function Steeped() {
                 </div>
                 <div style={{ border:"1.5px solid rgba(42,21,8,.1)",borderRadius:8,padding:"14px 12px" }}>
                   <div style={{ fontFamily:"'Jost',sans-serif",fontSize:11,fontWeight:500,color:"#8B6E4E",marginBottom:6 }}>Or paste a URL</div>
-                  <input className="f-input" placeholder="https://cdn.pixabay.com/..." value={f.musicUrl||""} onChange={iSet("musicUrl")} style={{ fontSize:11,padding:"7px 10px",marginBottom:0 }}/>
-                  <div style={{ fontFamily:"'Jost',sans-serif",fontSize:9,fontWeight:300,color:"rgba(42,21,8,.38)",marginTop:5,lineHeight:1.5 }}>On Pixabay: click a track, then right-click "Download" and copy the .mp3 link</div>
+                  <input className="f-input" placeholder="https://cdn.pixabay.com/..."
+                    defaultValue={f.musicUrl||""}
+                    onBlur={e=>{ if(e.target.value.trim()) setInviteForm(fm=>({...fm,musicUrl:e.target.value.trim()})); }}
+                    onKeyDown={e=>{ if(e.key==="Enter"){ e.preventDefault(); if(e.target.value.trim()) setInviteForm(fm=>({...fm,musicUrl:e.target.value.trim()})); } }}
+                    onPaste={e=>{ setTimeout(()=>{ const v=e.target.value.trim(); if(v) setInviteForm(fm=>({...fm,musicUrl:v})); },50); }}
+                    style={{ fontSize:11,padding:"7px 10px",marginBottom:0 }}/>
+                  <div style={{ fontFamily:"'Jost',sans-serif",fontSize:9,fontWeight:300,color:"rgba(42,21,8,.38)",marginTop:5,lineHeight:1.5 }}>Paste link then press Enter or click away to apply</div>
                 </div>
               </div>
             )}
