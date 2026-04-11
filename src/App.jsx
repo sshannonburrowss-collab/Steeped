@@ -2692,9 +2692,9 @@ export default function Steeped() {
             <input className="f-input" placeholder="e.g. Happy Birthday Song" value={f.musicLabel||""} onChange={iSet("musicLabel")} style={{ marginBottom:14 }}/>
             {/* Tab: upload vs URL */}
             <input type="file" accept="audio/*" ref={inviteAudioRef} style={{ display:"none" }} onChange={handleInviteAudio}/>
-            {(f.musicFile||f.musicUrl) ? (
+            {(f.musicFile||(f.musicUrl&&f.musicUrl.startsWith("http"))) ? (
               <div>
-                <audio controls src={f.musicFile||f.musicUrl} style={{ width:"100%",height:36,borderRadius:6 }}
+                <audio controls src={f.musicFile||(f.musicUrl&&f.musicUrl.startsWith("http")?f.musicUrl:"")} style={{ width:"100%",height:36,borderRadius:6 }}
                   onError={()=>setInviteForm(fm=>({...fm,musicUrl:"",musicFile:""}))}/>
                 <button onClick={()=>setInviteForm(fm=>({...fm,musicFile:"",musicUrl:""}))}
                   style={{ marginTop:8,background:"none",border:"none",cursor:"pointer",fontFamily:"'Jost',sans-serif",fontSize:11,color:"#b84848" }}>
@@ -2714,12 +2714,13 @@ export default function Steeped() {
                 <div style={{ border:"1.5px solid rgba(42,21,8,.1)",borderRadius:8,padding:"14px 12px" }}>
                   <div style={{ fontFamily:"'Jost',sans-serif",fontSize:11,fontWeight:500,color:"#8B6E4E",marginBottom:6 }}>Or paste a URL</div>
                   <input className="f-input" placeholder="https://cdn.pixabay.com/..."
-                    defaultValue={f.musicUrl||""}
-                    onBlur={e=>{ if(e.target.value.trim()) setInviteForm(fm=>({...fm,musicUrl:e.target.value.trim()})); }}
-                    onKeyDown={e=>{ if(e.key==="Enter"){ e.preventDefault(); if(e.target.value.trim()) setInviteForm(fm=>({...fm,musicUrl:e.target.value.trim()})); } }}
-                    onPaste={e=>{ setTimeout(()=>{ const v=e.target.value.trim(); if(v) setInviteForm(fm=>({...fm,musicUrl:v})); },50); }}
+                    value={f.musicUrl||""}
+                    onChange={e=>setInviteForm(fm=>({...fm,musicUrl:e.target.value}))}
                     style={{ fontSize:11,padding:"7px 10px",marginBottom:0 }}/>
-                  <div style={{ fontFamily:"'Jost',sans-serif",fontSize:9,fontWeight:300,color:"rgba(42,21,8,.38)",marginTop:5,lineHeight:1.5 }}>Paste link then press Enter or click away to apply</div>
+                  {f.musicUrl&&!f.musicUrl.startsWith("http")&&(
+                    <div style={{ fontFamily:"'Jost',sans-serif",fontSize:9,color:"#b84848",marginTop:4 }}>URL must start with https://</div>
+                  )}
+                  <div style={{ fontFamily:"'Jost',sans-serif",fontSize:9,fontWeight:300,color:"rgba(42,21,8,.38)",marginTop:5,lineHeight:1.5 }}>Right-click any Pixabay track → Download → copy the .mp3 link</div>
                 </div>
               </div>
             )}
