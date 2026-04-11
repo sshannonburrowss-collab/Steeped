@@ -2694,8 +2694,7 @@ export default function Steeped() {
             <input type="file" accept="audio/*" ref={inviteAudioRef} style={{ display:"none" }} onChange={handleInviteAudio}/>
             {(f.musicFile||(f.musicUrl&&f.musicUrl.startsWith("http"))) ? (
               <div>
-                <audio controls src={f.musicFile||(f.musicUrl&&f.musicUrl.startsWith("http")?f.musicUrl:"")} style={{ width:"100%",height:36,borderRadius:6 }}
-                  onError={()=>setInviteForm(fm=>({...fm,musicUrl:"",musicFile:""}))}/>
+                <audio controls src={f.musicFile||(f.musicUrl&&f.musicUrl.startsWith("http")?f.musicUrl:"")} style={{ width:"100%",height:36,borderRadius:6 }}/>
                 <button onClick={()=>setInviteForm(fm=>({...fm,musicFile:"",musicUrl:""}))}
                   style={{ marginTop:8,background:"none",border:"none",cursor:"pointer",fontFamily:"'Jost',sans-serif",fontSize:11,color:"#b84848" }}>
                   Remove music
