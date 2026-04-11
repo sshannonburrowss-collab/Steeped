@@ -998,6 +998,7 @@ export default function Steeped() {
   });
   const [myInvites, setMyInvites] = useState([]);
   const [selectedInvite, setSelectedInvite] = useState(null); // invite open in RSVP dashboard
+  const [refreshingRsvps, setRefreshingRsvps] = useState(false);
   const [guestInvite, setGuestInvite] = useState(null);
   const [rsvpName, setRsvpName] = useState("");
   const [rsvpEmail, setRsvpEmail] = useState("");
@@ -2903,13 +2904,31 @@ export default function Steeped() {
             {/* Refresh + share row */}
             <div style={{ display:"flex",gap:10,marginBottom:20 }}>
               <button onClick={async()=>{
+                setRefreshingRsvps(true);
                 try {
                   const res = await fetch("/api/get-invite?id="+selectedInvite.id);
-                  if(res.ok){ const fresh=await res.json(); persistInviteLocally(fresh); setSelectedInvite(fresh); setMyInvites(readLocalInvites()); }
-                } catch(e){}
-              }} style={{ display:"flex",alignItems:"center",gap:6,padding:"8px 16px",borderRadius:8,border:"1px solid rgba(42,21,8,.14)",background:"white",fontFamily:"'Jost',sans-serif",fontSize:12,color:"#8B6E4E",cursor:"pointer" }}>
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-                Refresh RSVPs
+                  if (res.ok) {
+                    const fresh = await res.json();
+                    // Merge: keep any local RSVPs that might not be in Supabase yet
+                    const supabaseRsvpIds = new Set((fresh.rsvps||[]).map(r=>r.id));
+                    const localOnly = (selectedInvite.rsvps||[]).filter(r=>!supabaseRsvpIds.has(r.id));
+                    const merged = { ...fresh, rsvps:[...(fresh.rsvps||[]), ...localOnly] };
+                    persistInviteLocally(merged);
+                    setSelectedInvite(merged);
+                    setMyInvites(readLocalInvites());
+                  } else {
+                    const errText = await res.text();
+                    alert("Refresh failed ("+res.status+"): "+errText.slice(0,200));
+                  }
+                } catch(e) {
+                  alert("Refresh error: "+e.message);
+                }
+                setRefreshingRsvps(false);
+              }} disabled={refreshingRsvps} style={{ display:"flex",alignItems:"center",gap:6,padding:"8px 16px",borderRadius:8,border:"1px solid rgba(42,21,8,.14)",background:"white",fontFamily:"'Jost',sans-serif",fontSize:12,color:refreshingRsvps?"rgba(42,21,8,.3)":"#8B6E4E",cursor:refreshingRsvps?"default":"pointer",transition:"all .15s" }}>
+                {refreshingRsvps
+                  ? <><span className="spinner" style={{ width:12,height:12,borderWidth:2,borderColor:"rgba(42,21,8,.1)",borderTopColor:"#8B6E4E" }}/> Refreshing…</>
+                  : <><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Refresh RSVPs</>
+                }
               </button>
               <button onClick={async()=>{ await navigator.clipboard.writeText(iurl); }} style={{ display:"flex",alignItems:"center",gap:6,padding:"8px 16px",borderRadius:8,border:"none",background:"#2A1508",fontFamily:"'Jost',sans-serif",fontSize:12,color:"#FAF5EE",cursor:"pointer" }}>
                 {Icon.copy(12,"#FAF5EE")} Copy invite link
