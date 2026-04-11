@@ -1606,25 +1606,31 @@ export default function Steeped() {
         encodedData = btoa(unescape(encodeURIComponent(JSON.stringify(sharePayload))));
       } catch(e) { console.warn("Could not encode invite data:", e.message); }
 
-      console.log("[share] photoUrl:", photoUrl ? photoUrl.slice(0,60) : "none");
-      console.log("[share] musicUrl:", musicUrl ? musicUrl.slice(0,60) : "none");
-      console.log("[share] encodedData length:", encodedData.length);
-      const url = window.location.origin + "/?invite=" + id + (encodedData ? "&d=" + encodedData : "");
-      console.log("[share] total URL length:", url.length);
-      setInviteUrl(url);
-      setShowShareModal(true); // open share popup immediately
-
-      // Also try API so RSVPs persist in Supabase (non-blocking)
+      // Try saving to Supabase first — if it works, use a clean short URL
+      let apiSaveOk = false;
       try {
-        const formForApi = { ...inviteForm, photo:"", musicFile:"", musicUrl };
-        await fetch("/api/save-invite", {
+        const formForApi = { ...inviteForm, photo:photoUrl, musicFile:"", musicUrl };
+        const saveRes = await fetch("/api/save-invite", {
           method:"POST",
           headers:{"Content-Type":"application/json"},
           body:JSON.stringify({ inviteId:id, type:inviteType, form:formForApi, userId:user?.id })
         });
+        if (saveRes.ok) apiSaveOk = true;
       } catch(apiErr) {
-        console.warn("save-invite API unavailable — invite data is embedded in share link:", apiErr.message);
+        console.warn("save-invite API unavailable:", apiErr.message);
       }
+
+      // If API saved successfully: short clean URL. Otherwise: encode data in URL as fallback.
+      let url;
+      if (apiSaveOk) {
+        url = window.location.origin + "/?invite=" + id;
+        console.log("[share] saved to Supabase, using short URL");
+      } else {
+        url = window.location.origin + "/?invite=" + id + (encodedData ? "&d=" + encodedData : "");
+        console.log("[share] API unavailable, using encoded URL, length:", url.length);
+      }
+      setInviteUrl(url);
+      setShowShareModal(true);
     } catch(err) {
       console.error("saveInvite failed:", err);
     } finally {
