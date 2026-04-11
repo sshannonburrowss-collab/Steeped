@@ -1564,10 +1564,11 @@ export default function Steeped() {
         console.log("[photo] no photo in form");
       }
 
-      // Upload audio file to Supabase Storage if uploaded as base64
+      // Upload audio file to Supabase Storage if it's a local base64 file
       let musicUrl = inviteForm.musicUrl || "";
       if (inviteForm.musicFile && inviteForm.musicFile.startsWith("data:")) {
         try {
+          console.log("[audio] uploading file, size:", Math.round(inviteForm.musicFile.length/1024)+"KB");
           const audioRes = await fetch("/api/upload-photo", {
             method:"POST",
             headers:{"Content-Type":"application/json"},
@@ -1577,10 +1578,22 @@ export default function Steeped() {
             const audioData = await audioRes.json();
             if (audioData.url) {
               musicUrl = audioData.url;
+              console.log("[audio] uploaded:", musicUrl);
               setInviteForm(f=>({...f, musicUrl:audioData.url, musicFile:""}));
             }
+          } else {
+            const errText = await audioRes.text();
+            console.error("[audio] upload failed:", audioRes.status, errText);
+            alert("Music upload failed ("+audioRes.status+"): "+errText.slice(0,200));
           }
-        } catch(e) { console.warn("Audio upload failed:", e.message); }
+        } catch(e) {
+          console.warn("Audio upload exception:", e.message);
+          alert("Music upload error: "+e.message);
+        }
+      } else if (musicUrl) {
+        console.log("[audio] using existing URL:", musicUrl);
+      } else {
+        console.log("[audio] no music");
       }
 
       const sharePayload = {
@@ -1593,7 +1606,11 @@ export default function Steeped() {
         encodedData = btoa(unescape(encodeURIComponent(JSON.stringify(sharePayload))));
       } catch(e) { console.warn("Could not encode invite data:", e.message); }
 
+      console.log("[share] photoUrl:", photoUrl ? photoUrl.slice(0,60) : "none");
+      console.log("[share] musicUrl:", musicUrl ? musicUrl.slice(0,60) : "none");
+      console.log("[share] encodedData length:", encodedData.length);
       const url = window.location.origin + "/?invite=" + id + (encodedData ? "&d=" + encodedData : "");
+      console.log("[share] total URL length:", url.length);
       setInviteUrl(url);
       setShowShareModal(true); // open share popup immediately
 
@@ -1687,7 +1704,7 @@ export default function Steeped() {
   };
   const openInviteEditor = (type, existingInvite=null) => {
     setInviteType(type);
-    if(existingInvite){ setInviteId(existingInvite.id); setInviteForm({...existingInvite.form, registries:existingInvite.form?.registries||[], photoCompressed:existingInvite.form?.photoCompressed||""}); setInviteUrl(`${window.location.origin}/?invite=${existingInvite.id}`); }
+    if(existingInvite){ setInviteId(existingInvite.id); setInviteForm({...existingInvite.form, registries:existingInvite.form?.registries||[], photoCompressed:"", musicFile:""}); setInviteUrl(`${window.location.origin}/?invite=${existingInvite.id}`); }
     else { setInviteId(null); setInviteForm({title:"",host:user?.user_metadata?.full_name||"",date:"",time:"",location:"",dress:"",note:"",rsvpDeadline:"",photo:"",photoPosition:"center",overlayOpacity:0.5,photoZoom:100,musicUrl:"",musicLabel:"",musicFile:"",registries:[]}); setInviteUrl(""); }
     setView("invite-editor");
   };
