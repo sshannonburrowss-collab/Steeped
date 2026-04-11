@@ -997,6 +997,7 @@ export default function Steeped() {
     photo:"", photoCompressed:"", photoPosition:"center", overlayOpacity:0.5, photoZoom:100, musicUrl:"", musicLabel:"", musicFile:"", registries:[]
   });
   const [myInvites, setMyInvites] = useState([]);
+  const [selectedInvite, setSelectedInvite] = useState(null); // invite open in RSVP dashboard
   const [guestInvite, setGuestInvite] = useState(null);
   const [rsvpName, setRsvpName] = useState("");
   const [rsvpEmail, setRsvpEmail] = useState("");
@@ -1690,9 +1691,23 @@ export default function Steeped() {
     else { setInviteId(null); setInviteForm({title:"",host:user?.user_metadata?.full_name||"",date:"",time:"",location:"",dress:"",note:"",rsvpDeadline:"",photo:"",photoPosition:"center",overlayOpacity:0.5,photoZoom:100,musicUrl:"",musicLabel:"",musicFile:"",registries:[]}); setInviteUrl(""); }
     setView("invite-editor");
   };
-  const loadMyInvites = () => {
-    setMyInvites(readLocalInvites());
+  const loadMyInvites = async () => {
+    const local = readLocalInvites();
+    setMyInvites(local);
     setView("my-invites");
+    // Refresh from API to get RSVPs submitted by guests on other devices
+    for (const inv of local) {
+      try {
+        const res = await fetch("/api/get-invite?id="+inv.id);
+        if (res.ok) {
+          const fresh = await res.json();
+          if (fresh && (fresh.rsvps||[]).length >= (inv.rsvps||[]).length) {
+            persistInviteLocally(fresh);
+          }
+        }
+      } catch(e) { /* API unavailable, use local */ }
+    }
+    setMyInvites(readLocalInvites());
   };
 
   // Compress an image to a max width/height while keeping aspect ratio
@@ -2812,7 +2827,116 @@ export default function Steeped() {
   }
 
   // ── My Invites view ───────────────────────────────────────────────────────
-  if (view==="my-invites") return (
+  if (view==="my-invites") {
+    // If an invite is selected, show the RSVP dashboard for it
+    if (selectedInvite) {
+      const it = INVITE_TYPES.find(x=>x.id===selectedInvite.type)||INVITE_TYPES[0];
+      const f = selectedInvite.form||{};
+      const rsvps = selectedInvite.rsvps||[];
+      const yes = rsvps.filter(r=>r.response==="yes");
+      const maybe = rsvps.filter(r=>r.response==="maybe");
+      const no = rsvps.filter(r=>r.response==="no");
+      const totalGuests = rsvps.reduce((a,r)=>a+(r.totalCount||1),0);
+      const yesGuests = yes.reduce((a,r)=>a+(r.totalCount||1),0);
+      const iurl = window.location.origin+"/?invite="+selectedInvite.id;
+      return (
+        <div className="app"><style>{CSS}</style>
+          <nav className="nav">
+            <NavLogo onClick={()=>setView("home")}/>
+            <div style={{ display:"flex",gap:8,alignItems:"center" }}>
+              <button className="btn-ghost-sm" onClick={()=>{ setSelectedInvite(null); }}>{Icon.back(13)} All invites</button>
+              <button className="btn-send" onClick={()=>openInviteEditor(it.id,selectedInvite)}>{Icon.edit(13,"#FAF5EE")} Edit invite</button>
+            </div>
+          </nav>
+          <div style={{ maxWidth:760,margin:"0 auto",padding:"36px 24px 80px",boxSizing:"border-box" }}>
+            {/* Header */}
+            <div style={{ display:"flex",alignItems:"flex-start",gap:16,marginBottom:28 }}>
+              <div style={{ width:52,height:52,borderRadius:12,background:it.cover,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0 }}>
+                <div style={{ width:26,height:26,color:it.accent }} dangerouslySetInnerHTML={{ __html:it.svg }}/>
+              </div>
+              <div style={{ flex:1 }}>
+                <div style={{ fontFamily:"'Jost',sans-serif",fontSize:11,letterSpacing:2,textTransform:"uppercase",color:"rgba(42,21,8,.38)",marginBottom:4 }}>RSVP Dashboard</div>
+                <h1 style={{ fontFamily:"'Jost',sans-serif",fontSize:26,fontWeight:400,color:"#2A1508",margin:"0 0 4px" }}>{f.title||it.label}</h1>
+                {f.date&&<div style={{ fontFamily:"'Jost',sans-serif",fontSize:13,fontWeight:300,color:"#8B6E4E" }}>{new Date(f.date).toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric",year:"numeric"})}{f.time&&" at "+f.time}</div>}
+              </div>
+            </div>
+
+            {/* Summary stats */}
+            <div style={{ display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:12,marginBottom:24 }}>
+              {[
+                { label:"Total RSVPs", val:rsvps.length, color:"#2A1508" },
+                { label:"Joining", val:yes.length, sub:yesGuests+" guests", color:"#2a7a50" },
+                { label:"Maybe", val:maybe.length, color:"#c8860a" },
+                { label:"Can't make it", val:no.length, color:"#b84848" },
+              ].map(s=>(
+                <div key={s.label} style={{ background:"white",borderRadius:12,padding:"16px",boxShadow:"0 2px 14px rgba(42,21,8,.07)",textAlign:"center" }}>
+                  <div style={{ fontFamily:"'Jost',sans-serif",fontSize:28,fontWeight:400,color:s.color,marginBottom:2 }}>{s.val}</div>
+                  {s.sub&&<div style={{ fontFamily:"'Jost',sans-serif",fontSize:10,color:"rgba(42,21,8,.4)",marginBottom:2 }}>{s.sub}</div>}
+                  <div style={{ fontFamily:"'Jost',sans-serif",fontSize:10,fontWeight:500,letterSpacing:1.5,textTransform:"uppercase",color:"rgba(42,21,8,.35)" }}>{s.label}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Refresh + share row */}
+            <div style={{ display:"flex",gap:10,marginBottom:20 }}>
+              <button onClick={async()=>{
+                try {
+                  const res = await fetch("/api/get-invite?id="+selectedInvite.id);
+                  if(res.ok){ const fresh=await res.json(); persistInviteLocally(fresh); setSelectedInvite(fresh); setMyInvites(readLocalInvites()); }
+                } catch(e){}
+              }} style={{ display:"flex",alignItems:"center",gap:6,padding:"8px 16px",borderRadius:8,border:"1px solid rgba(42,21,8,.14)",background:"white",fontFamily:"'Jost',sans-serif",fontSize:12,color:"#8B6E4E",cursor:"pointer" }}>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                Refresh RSVPs
+              </button>
+              <button onClick={async()=>{ await navigator.clipboard.writeText(iurl); }} style={{ display:"flex",alignItems:"center",gap:6,padding:"8px 16px",borderRadius:8,border:"none",background:"#2A1508",fontFamily:"'Jost',sans-serif",fontSize:12,color:"#FAF5EE",cursor:"pointer" }}>
+                {Icon.copy(12,"#FAF5EE")} Copy invite link
+              </button>
+            </div>
+
+            {/* RSVP list */}
+            {rsvps.length===0 ? (
+              <div style={{ textAlign:"center",padding:"52px 20px",background:"white",borderRadius:12,boxShadow:"0 2px 14px rgba(42,21,8,.07)" }}>
+                <div style={{ fontSize:36,marginBottom:12,opacity:.3 }}>📨</div>
+                <div style={{ fontFamily:"'Jost',sans-serif",fontSize:16,fontWeight:400,color:"#2A1508",marginBottom:8 }}>No RSVPs yet</div>
+                <p style={{ fontFamily:"'Jost',sans-serif",fontSize:13,fontWeight:300,color:"#8B6E4E" }}>Share your invite link and responses will appear here.</p>
+              </div>
+            ) : (
+              <div style={{ background:"white",borderRadius:12,boxShadow:"0 2px 14px rgba(42,21,8,.07)",overflow:"hidden" }}>
+                {/* Table header */}
+                <div style={{ display:"grid",gridTemplateColumns:"1fr 100px 120px 140px",padding:"12px 20px",background:"#FAF5EE",borderBottom:"1px solid rgba(42,21,8,.08)" }}>
+                  {["Guest","Response","Party size","RSVP'd"].map(h=>(
+                    <div key={h} style={{ fontFamily:"'Jost',sans-serif",fontSize:10,fontWeight:500,letterSpacing:2,textTransform:"uppercase",color:"rgba(42,21,8,.38)" }}>{h}</div>
+                  ))}
+                </div>
+                {/* Rows */}
+                {rsvps.map((r,i)=>{
+                  const responseColor = r.response==="yes"?"#2a7a50":r.response==="maybe"?"#c8860a":"#b84848";
+                  const responseLabel = r.response==="yes"?"Joining":r.response==="maybe"?"Maybe":"Can't make it";
+                  const guests = [r.name,...(r.guests||[]).filter(g=>g.name).map(g=>g.name)];
+                  return (
+                    <div key={r.id||i} style={{ display:"grid",gridTemplateColumns:"1fr 100px 120px 140px",padding:"14px 20px",borderBottom:i<rsvps.length-1?"1px solid rgba(42,21,8,.06)":"none",alignItems:"start" }}>
+                      <div>
+                        <div style={{ fontFamily:"'Jost',sans-serif",fontSize:14,fontWeight:400,color:"#2A1508",marginBottom:guests.length>1?4:0 }}>{r.name}</div>
+                        {guests.length>1&&<div style={{ fontFamily:"'Jost',sans-serif",fontSize:11,fontWeight:300,color:"rgba(42,21,8,.45)",lineHeight:1.6 }}>+{guests.slice(1).join(", ")}</div>}
+                        {r.email&&<div style={{ fontFamily:"'Jost',sans-serif",fontSize:11,fontWeight:300,color:"rgba(42,21,8,.4)",marginTop:2 }}>{r.email}</div>}
+                      </div>
+                      <div>
+                        <span style={{ fontFamily:"'Jost',sans-serif",fontSize:12,fontWeight:500,color:responseColor,background:responseColor+"18",padding:"3px 10px",borderRadius:100,display:"inline-block" }}>{responseLabel}</span>
+                      </div>
+                      <div style={{ fontFamily:"'Jost',sans-serif",fontSize:13,color:"#2A1508" }}>{r.totalCount||1} {(r.totalCount||1)===1?"person":"people"}</div>
+                      <div style={{ fontFamily:"'Jost',sans-serif",fontSize:12,fontWeight:300,color:"rgba(42,21,8,.45)" }}>{r.at?new Date(r.at).toLocaleDateString("en-US",{month:"short",day:"numeric",hour:"2-digit",minute:"2-digit"}):""}</div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    // Main my-invites grid
+    return (
     <div className="app"><style>{CSS}</style>
       <nav className="nav">
         <NavLogo onClick={()=>setView("home")}/>
@@ -2823,8 +2947,8 @@ export default function Steeped() {
       </nav>
       <div style={{ maxWidth:960,margin:"0 auto",padding:"44px 44px 80px",boxSizing:"border-box" }}>
         <div style={{ fontFamily:"'Jost',sans-serif",fontSize:11,fontWeight:300,letterSpacing:4,textTransform:"uppercase",color:"rgba(42,21,8,.45)",marginBottom:10 }}>my invites</div>
-        <h1 style={{ fontFamily:"'Jost',sans-serif",fontSize:34,fontWeight:400,color:"#2A1508",margin:"0 0 8px" }}>Your Invites ✉️</h1>
-        <p style={{ fontFamily:"'Jost',sans-serif",fontSize:14,fontWeight:300,color:"#8B6E4E",marginBottom:32 }}>All your created invitations in one place.</p>
+        <h1 style={{ fontFamily:"'Jost',sans-serif",fontSize:34,fontWeight:400,color:"#2A1508",margin:"0 0 8px" }}>Your Invites</h1>
+        <p style={{ fontFamily:"'Jost',sans-serif",fontSize:14,fontWeight:300,color:"#8B6E4E",marginBottom:32 }}>Click any invite to see who's coming.</p>
         {myInvites.length===0 ? (
           <div style={{ textAlign:"center",padding:"72px 20px" }}>
             <div style={{ fontSize:52,marginBottom:16,opacity:.4 }}>✉️</div>
@@ -2838,26 +2962,24 @@ export default function Steeped() {
               const it = INVITE_TYPES.find(x=>x.id===inv.type)||INVITE_TYPES[0];
               const f = inv.form||{};
               const yCount=(inv.rsvps||[]).filter(r=>r.response==="yes").length;
+              const totalGuests=(inv.rsvps||[]).reduce((a,r)=>a+(r.totalCount||1),0);
               const iid=inv.id;
-              const iurl=`${window.location.origin}/?invite=${iid}`;
               return (
-                <div key={inv.id} className="my-inv-card" style={{ animationDelay:`${i*.05}s` }}>
-                  <div className="my-inv-cover" style={{ background:it.cover }} onClick={()=>openInviteEditor(it.id,inv)}>
+                <div key={inv.id} className="my-inv-card" style={{ animationDelay:`${i*.05}s` }}
+                  onClick={()=>setSelectedInvite(inv)}>
+                  <div className="my-inv-cover" style={{ background:it.cover }}>
                     <div style={{ color:it.accent,width:32,height:32,margin:"0 auto" }} dangerouslySetInnerHTML={{ __html:it.svg }}/>
                     <div style={{ fontFamily:"'Jost',sans-serif",fontSize:12,fontWeight:300,color:it.accent,textAlign:"center" }}>{f.title||it.label}</div>
                   </div>
                   <div className="my-inv-body">
                     <div style={{ fontFamily:"'Jost',sans-serif",fontSize:13,fontWeight:400,color:"#2A1508",marginBottom:4 }}>{f.title||it.label}</div>
                     <div style={{ fontFamily:"'Jost',sans-serif",fontSize:11,fontWeight:300,color:"#8B6E4E",marginBottom:10,display:"flex",gap:10,flexWrap:"wrap" }}>
-                      {f.date&&<span>📅 {new Date(f.date).toLocaleDateString("en-US",{month:"short",day:"numeric"})}</span>}
-                      <span>✓ {yCount} going</span>
-                      <span>📨 {(inv.rsvps||[]).length} RSVPs</span>
+                      {f.date&&<span>{new Date(f.date).toLocaleDateString("en-US",{month:"short",day:"numeric"})}</span>}
+                      <span style={{ color:"#2a7a50",fontWeight:500 }}>{yCount} joining</span>
+                      <span>{(inv.rsvps||[]).length} RSVPs</span>
                     </div>
-                    <div style={{ display:"grid",gridTemplateColumns:"1fr 1fr",gap:5 }}>
-                      <button style={{ padding:"6px 4px",borderRadius:4,border:"1px solid rgba(42,21,8,.11)",background:"white",fontFamily:"'Jost',sans-serif",fontSize:10.5,color:"#8B6E4E",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:3 }} onClick={()=>openInviteEditor(it.id,inv)}>{Icon.edit(10,"#8B6E4E")} Edit</button>
-                      <button style={{ padding:"6px 4px",borderRadius:4,border:"none",background:"#2A1508",fontFamily:"'Jost',sans-serif",fontSize:10.5,color:"#FAF5EE",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:3 }} onClick={async()=>{ await navigator.clipboard.writeText(iurl); }}>
-                        {Icon.copy(10,"#FAF5EE")} Copy link
-                      </button>
+                    <div style={{ fontFamily:"'Jost',sans-serif",fontSize:10,color:"rgba(42,21,8,.4)",display:"flex",alignItems:"center",gap:4 }}>
+                      View RSVP list {Icon.arrow(9,"rgba(42,21,8,.4)")}
                     </div>
                   </div>
                 </div>
@@ -2867,7 +2989,8 @@ export default function Steeped() {
         )}
       </div>
     </div>
-  );
+    );
+  }
 
   if (view==="themes"||pendingTheme) return (
     <div className="app"><style>{CSS}</style>
