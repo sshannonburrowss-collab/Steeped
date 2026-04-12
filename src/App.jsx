@@ -1289,15 +1289,55 @@ export default function Steeped() {
     if (cid) setShowSend(true);
   };
 
+  const launchConfetti = () => {
+    const canvas = document.createElement("canvas");
+    canvas.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:99999;";
+    document.body.appendChild(canvas);
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const pieces = Array.from({length:120}, () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * -canvas.height,
+      w: Math.random()*8+4, h: Math.random()*14+6,
+      r: Math.random()*Math.PI*2,
+      vx: (Math.random()-0.5)*4,
+      vy: Math.random()*4+2,
+      vr: (Math.random()-0.5)*0.15,
+      color: ["#d4a843","#f0c87a","#c0392b","#8e6b3e","#2c5f2e","#7b3f9e","#5b9bd5","#FAF5EE","#2A1508"][Math.floor(Math.random()*9)],
+      opacity: 1
+    }));
+    let frame = 0;
+    const animate = () => {
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      pieces.forEach(p => {
+        p.x += p.vx; p.y += p.vy; p.r += p.vr;
+        p.vy += 0.08; // gravity
+        if (frame > 90) p.opacity = Math.max(0, p.opacity - 0.015);
+        ctx.save();
+        ctx.globalAlpha = p.opacity;
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.r);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+        ctx.restore();
+      });
+      frame++;
+      if (frame < 180) requestAnimationFrame(animate);
+      else document.body.removeChild(canvas);
+    };
+    animate();
+  };
+
   const doSend = async () => {
     if (sendTab==="email") {
       try {
         const res = await fetch("/api/send-email", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ to:form.to, recipientName:form.name||"there", senderNote:form.note, cardUrl }) });
         const data = await res.json();
-        if (res.ok) { setSent(true); setTimeout(()=>{ setSent(false); setShowSend(false); },2800); }
+        if (res.ok) { setSent(true); launchConfetti(); setTimeout(()=>{ setSent(false); setShowSend(false); },2800); }
         else alert("Email error: "+(data.error||"Unknown error"));
       } catch(e) { alert("Network error: "+e.message); }
-    } else { setSent(true); setTimeout(()=>{ setSent(false); setShowSend(false); },2800); }
+    } else { setSent(true); launchConfetti(); setTimeout(()=>{ setSent(false); setShowSend(false); },2800); }
   };
 
   const copyUrl = async (url) => { await navigator.clipboard.writeText(url||cardUrl); setCopied(true); setTimeout(()=>setCopied(false),2000); };
