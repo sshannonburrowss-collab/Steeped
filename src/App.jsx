@@ -594,10 +594,210 @@ html,body{width:100%;min-height:100%;background:#FAF5EE;}
   border:1px solid rgba(42,21,8,.1); border-radius:8px;
   padding:14px 16px; break-inside:avoid;
 }
+/* ══ FOOTER ═══════════════════════════════════════════════════════════ */
+.site-footer{background:#2A1508;color:#FAF5EE;padding:64px 44px 40px;margin-top:80px;}
+.site-footer-inner{max-width:960px;margin:0 auto;}
+.site-footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;margin-bottom:56px;}
+.site-footer-brand-name{font-family:"Playfair Display",serif;font-size:26px;font-weight:400;color:#FAF5EE;margin-bottom:8px;}
+.site-footer-brand-tag{font-family:"Jost",sans-serif;font-size:9px;font-weight:300;letter-spacing:4px;text-transform:uppercase;color:rgba(250,245,238,.4);margin-bottom:16px;}
+.site-footer-brand-desc{font-family:"Jost",sans-serif;font-size:13px;font-weight:300;color:rgba(250,245,238,.55);line-height:1.85;max-width:260px;}
+.site-footer-col-title{font-family:"Jost",sans-serif;font-size:9px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:rgba(250,245,238,.35);margin-bottom:16px;}
+.site-footer-link{display:block;font-family:"Jost",sans-serif;font-size:13px;font-weight:300;color:rgba(250,245,238,.6);text-decoration:none;margin-bottom:10px;transition:color .15s;cursor:pointer;background:none;border:none;padding:0;text-align:left;}
+.site-footer-link:hover{color:#FAF5EE;}
+.site-footer-divider{height:1px;background:rgba(250,245,238,.1);margin-bottom:28px;}
+.site-footer-bottom{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.site-footer-copy{font-family:"Jost",sans-serif;font-size:11px;font-weight:300;color:rgba(250,245,238,.3);}
+.site-footer-legal{display:flex;gap:20px;}
+.site-footer-legal a{font-family:"Jost",sans-serif;font-size:11px;font-weight:300;color:rgba(250,245,238,.3);text-decoration:none;transition:color .15s;}
+.site-footer-legal a:hover{color:rgba(250,245,238,.65);}
+@media(max-width:700px){
+  .site-footer{padding:48px 24px 32px;margin-top:48px;}
+  .site-footer-grid{grid-template-columns:1fr 1fr;gap:32px;}
+  .site-footer-brand-desc{max-width:100%;}
+  .site-footer-bottom{flex-direction:column;align-items:flex-start;gap:10px;}
+}
+@media(max-width:420px){
+  .site-footer-grid{grid-template-columns:1fr;}
+}
 `;
 
 const uid = () => Date.now() + Math.random();
 const makePage = (num) => ({ id: uid(), num, items: [] });
+
+/* ─── SiteFooter ────────────────────────────────────────────── */
+function SiteFooter({ onNav, onModal }) {
+  return (
+    <footer className="site-footer">
+      <div className="site-footer-inner">
+        <div className="site-footer-grid">
+          {/* Brand */}
+          <div>
+            <div className="site-footer-brand-name">St<em style={{color:"#d4a843",fontStyle:"italic"}}>ee</em>ped</div>
+            <div className="site-footer-brand-tag">Cards brewed with kindness</div>
+            <p className="site-footer-brand-desc">Beautiful group cards and event invitations — filled with warmth, signed by the people who care most. No account needed to sign.</p>
+          </div>
+          {/* Product */}
+          <div>
+            <div className="site-footer-col-title">Product</div>
+            <button className="site-footer-link" onClick={()=>onNav("themes")}>Group Cards</button>
+            <button className="site-footer-link" onClick={()=>onNav("invite-types")}>Event Invites</button>
+            <button className="site-footer-link" onClick={()=>onNav("my-cards")}>My Cards</button>
+            <button className="site-footer-link" onClick={()=>onNav("my-invites")}>My Invites</button>
+          </div>
+          {/* Company */}
+          <div>
+            <div className="site-footer-col-title">Company</div>
+            <button className="site-footer-link" onClick={()=>onModal("about")}>About Steeped</button>
+            <button className="site-footer-link" onClick={()=>onModal("contact")}>Contact Us</button>
+          </div>
+          {/* Legal */}
+          <div>
+            <div className="site-footer-col-title">Legal</div>
+            <button className="site-footer-link" onClick={()=>onModal("privacy")}>Privacy Policy</button>
+            <button className="site-footer-link" onClick={()=>onModal("terms")}>Terms of Service</button>
+            <button className="site-footer-link" onClick={()=>onModal("cookies")}>Cookie Policy</button>
+          </div>
+        </div>
+        <div className="site-footer-divider"/>
+        <div className="site-footer-bottom">
+          <div className="site-footer-copy">&copy; {new Date().getFullYear()} Steeped. All rights reserved.</div>
+          <div className="site-footer-legal">
+            <a onClick={()=>onModal("privacy")} href="#" onClickCapture={e=>e.preventDefault()}>Privacy</a>
+            <a onClick={()=>onModal("terms")} href="#" onClickCapture={e=>e.preventDefault()}>Terms</a>
+            <a onClick={()=>onModal("cookies")} href="#" onClickCapture={e=>e.preventDefault()}>Cookies</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+/* ─── Legal Modal Content ─────────────────────────────────────── */
+const LEGAL = {
+  about: {
+    title: "About Steeped",
+    content: `Steeped was built on a simple belief: the most meaningful gifts aren't bought — they're made together.
+
+We started Steeped because we wanted a better way to celebrate people. Not a generic e-card, not a store-bought card signed by two people in a hurry — but something real. Something that carries the voices of everyone who cares.
+
+Steeped lets groups of any size collaborate on a single beautiful card. Add photos, GIFs, drawings, and heartfelt messages. Share a link. Everyone signs. The recipient opens something that feels like a warm room full of the people they love.
+
+We also build invitations — for birthdays, weddings, baby showers, book clubs, dinners, and every occasion that deserves more than a calendar notification.
+
+Steeped is designed with care, built with kindness, and exists to help people feel seen and celebrated.`
+  },
+  contact: {
+    title: "Contact Us",
+    content: `We'd love to hear from you.
+
+Whether you have a question, a suggestion, feedback, or just want to say hello — reach out anytime.
+
+Email: hello@steepedcards.com
+
+We read every message and typically respond within 1–2 business days.
+
+For bug reports or technical issues, please include a brief description of what happened and what device/browser you were using — it helps us fix things faster.
+
+Thank you for using Steeped. It means the world to us.`
+  },
+  privacy: {
+    title: "Privacy Policy",
+    content: `Last updated: April 2026
+
+Your privacy matters to us. This policy explains what information Steeped collects, how we use it, and your rights.
+
+INFORMATION WE COLLECT
+
+Account information: If you create an account, we collect your name and email address.
+
+Card and invite content: Text, photos, GIFs, and other content you add to cards and invites is stored so it can be shared with recipients. Photos you upload may be stored in our cloud storage (Supabase).
+
+RSVP data: Names and email addresses submitted through invite RSVPs are stored and visible to the invite organiser.
+
+Usage data: We may collect basic analytics (page views, feature usage) to improve the product. We do not sell this data.
+
+HOW WE USE YOUR INFORMATION
+
+— To provide and improve the Steeped service
+— To send cards and invites on your behalf when you request it
+— To show you your cards and invite history
+— We do not sell your personal data to third parties
+
+DATA RETENTION
+
+Cards and invites remain accessible via their share link. You can delete your account and associated data at any time by emailing hello@steepedcards.com.
+
+COOKIES
+
+We use minimal cookies required for authentication and session management. See our Cookie Policy for details.
+
+CONTACT
+
+Questions about your privacy? Email us at hello@steepedcards.com.`
+  },
+  terms: {
+    title: "Terms of Service",
+    content: `Last updated: April 2026
+
+Welcome to Steeped. By using our service, you agree to these terms.
+
+USING STEEPED
+
+You may use Steeped to create group cards and event invitations for personal, non-commercial purposes. You must not use Steeped to send content that is illegal, harmful, harassing, or violates anyone's rights.
+
+YOUR CONTENT
+
+You own the content you create. By uploading content to Steeped, you grant us a limited licence to store and display it as part of the service. We will never use your content for advertising or share it with third parties.
+
+ACCEPTABLE USE
+
+— Do not use Steeped for spam or unsolicited messages
+— Do not upload content you don't have the right to share
+— Do not use Steeped in ways that harm others
+
+DISCLAIMER
+
+Steeped is provided "as is." We aim for reliability but cannot guarantee uninterrupted service. We are not responsible for any loss arising from your use of the platform.
+
+CHANGES
+
+We may update these terms from time to time. Continued use of Steeped means you accept the updated terms.
+
+CONTACT
+
+Questions? Email hello@steepedcards.com.`
+  },
+  cookies: {
+    title: "Cookie Policy",
+    content: `Last updated: April 2026
+
+Steeped uses a small number of cookies to make the service work properly.
+
+WHAT ARE COOKIES
+
+Cookies are small text files stored on your device when you visit a website. They help us keep you logged in and remember your preferences.
+
+COOKIES WE USE
+
+Authentication cookies: When you sign in, we store a session cookie so you stay logged in between visits. This cookie is essential for the service to function.
+
+Preference cookies: We may store lightweight preferences (such as your last-used theme) in browser localStorage.
+
+We do NOT use advertising cookies or tracking cookies. We do not share cookie data with advertisers.
+
+THIRD-PARTY SERVICES
+
+We use Supabase for database and authentication, which may set its own cookies for session management. We use Google Maps for map embeds on invitations.
+
+YOUR CHOICES
+
+You can clear cookies at any time through your browser settings. Note that clearing authentication cookies will log you out of Steeped.
+
+CONTACT
+
+Questions? Email hello@steepedcards.com.`
+  }
+};
 
 /* ─── Countdown Hook ─────────────────────────────────────────── */
 function useCountdown(deadline) {
@@ -986,6 +1186,7 @@ export default function Steeped() {
   const _initInvite = _initParams.get("invite");
   const _initCard   = _initParams.get("card");
   const [view, setView] = useState("home");
+  const [footerModal, setFooterModal] = useState(null); // "privacy"|"terms"|"about"|"contact"
   const [theme, setTheme] = useState(null);
   const [pendingTheme, setPendingTheme] = useState(null);
   // ── Invite state ───────────────────────────────────────────────
@@ -2073,7 +2274,31 @@ export default function Steeped() {
           </div>
         ); })()}
       </div>
+      <SiteFooter onNav={(v)=>{ if(v==="my-cards")openMyDashboard(); else if(v==="my-invites"){setMyInvites(readLocalInvites());setView("my-invites");} else setView(v); }} onModal={setFooterModal}/>
       {showAuth&&<AuthModal {...authProps}/>}
+
+      {/* Legal modal */}
+      {footerModal&&(
+        <div style={{ position:"fixed",inset:0,background:"rgba(42,21,8,.6)",zIndex:9999,overflowY:"auto",padding:"40px 16px" }} onClick={e=>e.target===e.currentTarget&&setFooterModal(null)}>
+          <div style={{ background:"white",borderRadius:16,maxWidth:640,margin:"0 auto",padding:"40px 44px 48px",position:"relative" }}>
+            <button onClick={()=>setFooterModal(null)} style={{ position:"absolute",top:20,right:20,background:"rgba(42,21,8,.08)",border:"none",borderRadius:8,width:32,height:32,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center" }}>
+              {Icon.x(13,"#2A1508")}
+            </button>
+            <div style={{ fontFamily:"'Jost',sans-serif",fontSize:10,fontWeight:500,letterSpacing:3,textTransform:"uppercase",color:"rgba(42,21,8,.38)",marginBottom:10 }}>Steeped</div>
+            <h2 style={{ fontFamily:"'Playfair Display',serif",fontSize:28,fontWeight:400,color:"#2A1508",margin:"0 0 24px" }}>{LEGAL[footerModal]?.title}</h2>
+            <div style={{ height:2,width:36,background:"#d4a843",marginBottom:28 }}/>
+            {LEGAL[footerModal]?.content.split("
+
+").map((para,i)=>(
+              para.trim() === para.trim().toUpperCase() && para.trim().length < 40
+                ? <div key={i} style={{ fontFamily:"'Jost',sans-serif",fontSize:9,fontWeight:600,letterSpacing:3,textTransform:"uppercase",color:"rgba(42,21,8,.4)",marginTop:24,marginBottom:10 }}>{para.trim()}</div>
+                : para.startsWith("—")
+                  ? <div key={i} style={{ fontFamily:"'Jost',sans-serif",fontSize:14,color:"#5a3a10",lineHeight:1.8,marginBottom:6,paddingLeft:12 }}>{para}</div>
+                  : <p key={i} style={{ fontFamily:"'Jost',sans-serif",fontSize:14,fontWeight:300,color:"#5a3a10",lineHeight:1.85,margin:"0 0 14px" }}>{para}</p>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 
